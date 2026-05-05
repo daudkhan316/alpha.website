@@ -111,6 +111,7 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   body {
@@ -122,6 +123,7 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     overflow-x: hidden;
+    width: 100%;
   }
 
   ::selection {
@@ -234,6 +236,7 @@
 
   .section {
     @apply relative py-28 lg:py-36;
+    overflow-x: clip;
   }
 
   .section-eyebrow {

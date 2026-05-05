@@ -157,6 +157,12 @@ const links = [
 
 <style>
   /* Drawer states — drive transitions via a single parent class. */
+  [data-mobile-panel] {
+    /* Critical: the drawer is parked off-screen at translate-x-full.
+       Without overflow:hidden here, the off-screen drawer makes
+       the page horizontally scrollable on iOS Safari. */
+    overflow: hidden;
+  }
   [data-mobile-panel].is-open                          { pointer-events: auto; }
   [data-mobile-panel].is-open [data-mobile-backdrop]   { opacity: 1; }
   [data-mobile-panel].is-open [data-mobile-drawer]     { transform: translateX(0); }
