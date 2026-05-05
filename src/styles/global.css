@@ -297,6 +297,10 @@
   .panel-dark-text { color: rgba(255, 255, 255, 0.92); }
   .panel-dark-text-muted { color: rgba(255, 255, 255, 0.65); }
   .panel-dark-text-faint { color: rgba(255, 255, 255, 0.45); }
+
+  /* Theme-conditional visibility: pair two assets, show the one that fits. */
+  :root[data-theme='dark']  .show-on-light { display: none !important; }
+  :root[data-theme='light'] .show-on-dark  { display: none !important; }
 }
 
 /* Floating ambient blobs — fills swap with theme. */
