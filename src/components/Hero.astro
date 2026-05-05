@@ -1,11 +1,15 @@
 ---
 import SystemFlow from './SystemFlow.astro';
 
+// Buyer-facing proof points, not engineering metrics.
+// Entity/service/controller counts say nothing to a broker, COO, or
+// compliance officer; coverage, retention, residency, and consolidation
+// are what they care about.
 const stats = [
-  { v: '64+', l: 'modules' },
-  { v: '1,131', l: 'entities' },
-  { v: '707', l: 'services' },
-  { v: '1,093', l: 'REST controllers' },
+  { v: '64+',      l: 'modules · clean core' },
+  { v: '7-year',   l: 'field-level audit' },
+  { v: 'Germany',  l: 'data residency' },
+  { v: '6 → 1',    l: 'tools replaced' },
 ];
 ---
 
