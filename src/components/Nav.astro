@@ -18,12 +18,12 @@ const links = [
 >
   <div class="container-wide">
     <nav class="mt-4 flex items-center justify-between rounded-full px-4 lg:px-6 py-3 glass">
-      <a href="/" class="flex items-center gap-3 group" aria-label="Klaus — Alpha Platform home">
+      <a href="/" class="flex items-center gap-2.5 sm:gap-3 group min-w-0" aria-label="Klaus — Alpha Platform home">
         <img
           src="/klaus-logo-white.svg"
           alt="Klaus"
           width="84" height="26"
-          class="show-on-dark h-[22px] w-auto select-none"
+          class="show-on-dark h-[22px] w-auto select-none shrink-0"
           loading="eager"
           decoding="async"
         />
@@ -31,12 +31,12 @@ const links = [
           src="/klaus-logo-color.svg"
           alt="Klaus"
           width="84" height="26"
-          class="show-on-light h-[22px] w-auto select-none"
+          class="show-on-light h-[22px] w-auto select-none shrink-0"
           loading="eager"
           decoding="async"
         />
-        <span class="hidden sm:inline-block w-px h-5 bg-white/15"></span>
-        <span class="hidden sm:inline font-semibold tracking-tight text-white text-sm">Alpha Platform</span>
+        <span class="inline-block w-px h-5 bg-white/15 shrink-0"></span>
+        <span class="font-semibold tracking-tight text-white text-sm truncate">Alpha Platform</span>
       </a>
 
       <div class="hidden lg:flex items-center gap-1">
@@ -50,16 +50,121 @@ const links = [
         ))}
       </div>
 
-      <div class="flex items-center gap-2">
-        <a href="#cta" class="hidden sm:inline-flex text-sm text-white/70 hover:text-white px-3 py-1.5 transition-colors">Documentation</a>
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="#cta" class="hidden lg:inline-flex text-sm text-white/70 hover:text-white px-3 py-1.5 transition-colors">Documentation</a>
         <ThemeToggle />
-        <a href="#cta" class="btn-primary text-sm py-2 px-4">Request demo</a>
+        <a href="#cta" class="hidden sm:inline-flex btn-primary text-sm py-2 px-4">Request demo</a>
+
+        <button
+          type="button"
+          data-mobile-toggle
+          aria-label="Open menu"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          class="lg:hidden relative inline-grid place-items-center w-9 h-9 rounded-full"
+          style="background: var(--surface-strong); border: 1px solid var(--border-3);"
+        >
+          <span data-icon="open" class="block">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16"/>
+            </svg>
+          </span>
+          <span data-icon="close" class="hidden">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+          </span>
+        </button>
       </div>
     </nav>
   </div>
 </header>
 
+{/* Mobile menu — drawer + backdrop, hidden on lg. */}
+<div
+  id="mobile-menu"
+  data-mobile-panel
+  class="lg:hidden fixed inset-0 z-[60] pointer-events-none"
+  aria-hidden="true"
+>
+  <div data-mobile-backdrop class="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300"></div>
+
+  <div
+    data-mobile-drawer
+    class="absolute right-0 top-0 bottom-0 w-[88%] max-w-sm translate-x-full transition-transform duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col"
+    style="background: var(--bg); border-left: 1px solid var(--border-3);"
+  >
+    <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color: var(--border-2);">
+      <span class="font-semibold tracking-tight text-sm" style="color: var(--fg);">Menu</span>
+      <button
+        type="button"
+        data-mobile-close
+        aria-label="Close menu"
+        class="inline-grid place-items-center w-9 h-9 rounded-full"
+        style="background: var(--surface-strong); border: 1px solid var(--border-3); color: var(--fg);"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
+      <ul class="space-y-1">
+        {links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              data-mobile-link
+              class="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-base font-medium transition-colors"
+              style="color: var(--fg);"
+            >
+              <span>{l.label}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true" class="opacity-40">
+                <path d="M9 6l6 6-6 6"/>
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="mt-6 pt-6 border-t" style="border-color: var(--border-2);">
+        <a
+          href="#cta"
+          data-mobile-link
+          class="block px-4 py-3 rounded-xl text-sm transition-colors"
+          style="color: var(--fg); opacity: 0.75;"
+        >
+          Documentation →
+        </a>
+      </div>
+    </nav>
+
+    <div class="px-5 py-4 border-t" style="border-color: var(--border-2);">
+      <a
+        href="#cta"
+        data-mobile-link
+        class="btn-primary w-full text-base"
+      >
+        Request a tailored demo
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Drawer states — drive transitions via a single parent class. */
+  [data-mobile-panel].is-open                          { pointer-events: auto; }
+  [data-mobile-panel].is-open [data-mobile-backdrop]   { opacity: 1; }
+  [data-mobile-panel].is-open [data-mobile-drawer]     { transform: translateX(0); }
+  [data-mobile-panel] [data-mobile-link]:hover         { background: var(--surface-elev); }
+</style>
+
 <script>
+  // Nav scroll tint + theme tracking
   const nav = document.querySelector<HTMLElement>('[data-nav]');
   const tintFor = () => {
     const theme = document.documentElement.getAttribute('data-theme');
@@ -73,6 +178,30 @@ const links = [
   };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
-  // Also re-tint when the user toggles theme.
   new MutationObserver(onScroll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // Mobile drawer
+  const panel    = document.querySelector<HTMLElement>('[data-mobile-panel]');
+  const toggle   = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
+  const backdrop = document.querySelector<HTMLElement>('[data-mobile-backdrop]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-mobile-close]');
+  const links    = document.querySelectorAll<HTMLAnchorElement>('[data-mobile-link]');
+
+  const setOpen = (open: boolean) => {
+    if (!panel || !toggle) return;
+    panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.style.overflow = open ? 'hidden' : '';
+    const openIcon  = toggle.querySelector('[data-icon="open"]');
+    const closeIcon = toggle.querySelector('[data-icon="close"]');
+    openIcon?.classList.toggle('hidden', open);
+    closeIcon?.classList.toggle('hidden', !open);
+  };
+
+  toggle?.addEventListener('click', () => setOpen(!panel?.classList.contains('is-open')));
+  backdrop?.addEventListener('click', () => setOpen(false));
+  closeBtn?.addEventListener('click', () => setOpen(false));
+  links.forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 </script>
