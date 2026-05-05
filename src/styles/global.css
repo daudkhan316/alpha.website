@@ -1,3 +1,11 @@
+/* Self-hosted variable fonts — no requests to fonts.googleapis.com,
+   so the page does not transfer any visitor IPs to Google.
+   This matters under DSGVO; the German Datenschutz page references
+   self-hosting explicitly. */
+@import '@fontsource-variable/inter/index.css';
+@import '@fontsource-variable/inter/wght-italic.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -120,7 +128,7 @@
       radial-gradient(ellipse 80% 50% at 50% -20%, var(--bg-overlay-1), transparent),
       radial-gradient(ellipse 60% 40% at 100% 0%, var(--bg-overlay-2), transparent);
     color: var(--fg);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter Variable', Inter, system-ui, -apple-system, sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     overflow-x: hidden;
     width: 100%;

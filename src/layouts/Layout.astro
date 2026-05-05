@@ -54,17 +54,8 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    />
+    {/* Fonts are self-hosted via @fontsource-variable in src/styles/global.css.
+        No third-party requests to fonts.googleapis.com — required for DSGVO. */}
 
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
