@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Impressum — Klaus · Alpha Platform"
+  description="Anbieterkennzeichnung gemäß §5 TMG."
+>
+  <Nav />
+
+  <main class="pt-36 pb-24 lg:pt-44 lg:pb-32">
+    <article class="container-narrow prose-lg">
+      <p class="section-eyebrow">Rechtliche Hinweise</p>
+      <h1 class="section-heading mt-3">Impressum</h1>
+      <p class="mt-5 text-white/65 max-w-2xl leading-relaxed">
+        Angaben gemäß §5 Telemediengesetz (TMG) und §55 Rundfunkstaatsvertrag (RStV).
+      </p>
+
+      <!-- TODO: company data — must be filled in before launch.
+           Required by §5 TMG for any commercial site targeting Germany. -->
+
+      <section class="mt-12 grid md:grid-cols-2 gap-8">
+        <div class="space-y-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Anbieter</h2>
+          <p class="text-white/75">
+            <!-- TODO: legal name + form, e.g. "Klaus Versicherer GmbH" -->
+            <span class="text-white/40 italic">[Firma · GmbH/AG/etc.]</span>
+          </p>
+          <p class="text-white/75">
+            <!-- TODO: registered address (street, postal code, city) -->
+            <span class="text-white/40 italic">[Straße Hausnummer]</span><br />
+            <span class="text-white/40 italic">[PLZ Ort]</span><br />
+            <span class="text-white/40 italic">Deutschland</span>
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Kontakt</h2>
+          <p class="text-white/75">
+            Telefon: <span class="text-white/40 italic">[+49 …]</span><br />
+            E-Mail: <span class="text-white/40 italic">[hello@…]</span>
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Vertretungsberechtigte/r</h2>
+          <p class="text-white/75">
+            <!-- TODO: name(s) of Geschäftsführer / Vorstand -->
+            Geschäftsführer: <span class="text-white/40 italic">[Name(n)]</span>
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Registereintrag</h2>
+          <p class="text-white/75">
+            <!-- TODO: Amtsgericht + HRB number -->
+            Eintragung im Handelsregister:<br />
+            Registergericht: <span class="text-white/40 italic">[Amtsgericht …]</span><br />
+            Registernummer: <span class="text-white/40 italic">[HRB …]</span>
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Umsatzsteuer-ID</h2>
+          <p class="text-white/75">
+            <!-- TODO: USt-IdNr. (format DE…) -->
+            Umsatzsteuer-Identifikationsnummer gemäß §27a UStG:<br />
+            <span class="text-white/40 italic">[DE…………]</span>
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Aufsichtsbehörde</h2>
+          <p class="text-white/75">
+            <!-- TODO: For regulated insurance distribution: BaFin / IHK supervisory authority,
+                 plus relevant Vermittlerregister entry (§34d GewO). -->
+            <span class="text-white/40 italic">[Aufsichtsbehörde + Anschrift]</span>
+          </p>
+        </div>
+
+        <div class="space-y-2 md:col-span-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Verantwortlich für den Inhalt nach §55 Abs. 2 RStV</h2>
+          <p class="text-white/75">
+            <!-- TODO: name + address of the editorially responsible person -->
+            <span class="text-white/40 italic">[Name, Anschrift]</span>
+          </p>
+        </div>
+
+        <div class="space-y-2 md:col-span-2">
+          <h2 class="text-lg font-semibold tracking-tight text-white">Streitschlichtung</h2>
+          <p class="text-white/75">
+            Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+            <a href="https://ec.europa.eu/consumers/odr" class="underline hover:text-white">https://ec.europa.eu/consumers/odr</a>.
+            <br />
+            <!-- TODO: confirm dispute-resolution participation statement -->
+            <span class="text-white/40 italic">
+              [Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.]
+            </span>
+          </p>
+        </div>
+      </section>
+
+      <hr class="mt-16 border-white/10" />
+
+      <p class="mt-8 text-xs text-white/40 max-w-2xl">
+        <!-- Internal note for the editor: this page is a §5 TMG skeleton. Replace every
+             italicised placeholder with real legal entity data before launch.
+             Recommended: have the final text reviewed by counsel or generated with a
+             vetted German legal generator (e.g. e-Recht24, anwalt.de). -->
+        Dieser Abschnitt ist ein gesetzliches Pflichtangebot. Vor Veröffentlichung von
+        einer/einem Rechtsanwält:in oder einem geprüften Generator (z. B. e-Recht24)
+        prüfen lassen.
+      </p>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

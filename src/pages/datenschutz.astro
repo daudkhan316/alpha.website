@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Datenschutzerklärung — Klaus · Alpha Platform"
+  description="Information zur Verarbeitung personenbezogener Daten gemäß Art. 13 DSGVO."
+>
+  <Nav />
+
+  <main class="pt-36 pb-24 lg:pt-44 lg:pb-32">
+    <article class="container-narrow space-y-12">
+      <header>
+        <p class="section-eyebrow">Datenschutz</p>
+        <h1 class="section-heading mt-3">Datenschutzerklärung</h1>
+        <p class="mt-5 text-white/65 max-w-2xl leading-relaxed">
+          Diese Datenschutzerklärung informiert über Art, Umfang und Zweck der Verarbeitung
+          personenbezogener Daten beim Besuch dieser Website (Art. 13 DSGVO).
+        </p>
+      </header>
+
+      <!-- TODO: full DSGVO text — must be filled in before launch.
+           Required by Art. 13/14 DSGVO. Recommended: vetted German generator
+           (e.g. e-Recht24, datenschutzgenerator.de) and counsel review. -->
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">1. Verantwortlicher</h2>
+        <p class="text-white/75 leading-relaxed">
+          <!-- TODO: controller (typically same as Impressum) -->
+          Verantwortlich im Sinne der DSGVO ist:<br />
+          <span class="text-white/40 italic">[Firma]</span><br />
+          <span class="text-white/40 italic">[Anschrift]</span><br />
+          E-Mail: <span class="text-white/40 italic">[datenschutz@…]</span>
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">2. Datenschutzbeauftragte/r</h2>
+        <p class="text-white/75 leading-relaxed">
+          <!-- TODO: DPO contact OR statement that none is required and why -->
+          <span class="text-white/40 italic">[Name, Kontakt — oder Hinweis, dass keine Pflicht zur Bestellung besteht.]</span>
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">3. Hosting und Datenverarbeitung</h2>
+        <p class="text-white/75 leading-relaxed">
+          Diese Website und die Alpha Platform werden bei Microsoft Azure in der Region
+          <em>Germany West Central</em> (Frankfurt am Main) gehostet.
+          <!-- TODO: confirm Auftragsverarbeitungsvertrag (AVV) is in place with Microsoft. -->
+          Es besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">4. Zugriffsdaten / Server-Logs</h2>
+        <p class="text-white/75 leading-relaxed">
+          <!-- TODO: actual log retention + categories — adjust to match infra reality -->
+          Beim Besuch dieser Website werden technisch notwendige Zugriffsdaten erfasst
+          (IP-Adresse in gekürzter Form, Datum/Uhrzeit, aufgerufene URL, Referrer,
+          Browser/Betriebssystem). Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.
+          Speicherdauer: <span class="text-white/40 italic">[XX Tage]</span>.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">5. Cookies und ähnliche Technologien</h2>
+        <p class="text-white/75 leading-relaxed">
+          <!-- TODO: confirm — site currently sets no tracking cookies. Update if analytics added. -->
+          Diese Website verwendet ausschließlich technisch notwendige Speicherinhalte
+          (z. B. <code class="font-mono text-xs text-white/60">localStorage</code> für die
+          Theme- und Spracheinstellung). Es werden keine Tracking- oder Analyse-Cookies
+          gesetzt; eine Einwilligung gemäß §25 TTDSG ist daher nicht erforderlich.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">6. Schriftarten</h2>
+        <p class="text-white/75 leading-relaxed">
+          Die verwendeten Schriftarten (Inter, JetBrains Mono) werden lokal vom eigenen
+          Server ausgeliefert. Es findet keine Verbindung zu Google Fonts oder anderen
+          Drittanbietern statt.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">7. Kontaktaufnahme</h2>
+        <p class="text-white/75 leading-relaxed">
+          <!-- TODO: how contact data is processed when users email / use forms -->
+          Bei Kontaktaufnahme per E-Mail werden die übermittelten Daten zur Bearbeitung
+          der Anfrage gespeichert (Art. 6 Abs. 1 lit. b/f DSGVO).
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">8. Betroffenenrechte</h2>
+        <p class="text-white/75 leading-relaxed">
+          Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung
+          (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit
+          (Art. 20) sowie Widerspruch gegen die Verarbeitung (Art. 21 DSGVO). Außerdem
+          besteht ein Beschwerderecht bei einer Aufsichtsbehörde (Art. 77 DSGVO).
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">9. Zuständige Aufsichtsbehörde</h2>
+        <p class="text-white/75 leading-relaxed">
+          <!-- TODO: state-level Landesdatenschutzbeauftragter for the company's seat -->
+          <span class="text-white/40 italic">[Landesbeauftragte/r für Datenschutz, Anschrift, Web]</span>
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold tracking-tight text-white">10. Änderungen</h2>
+        <p class="text-white/75 leading-relaxed">
+          Diese Erklärung wird bei Änderungen unserer Verarbeitungstätigkeiten oder der
+          rechtlichen Anforderungen angepasst. Maßgeblich ist die jeweils aktuelle
+          Fassung auf dieser Seite.
+        </p>
+      </section>
+
+      <hr class="border-white/10" />
+
+      <p class="text-xs text-white/40">
+        Stand: <span class="text-white/40 italic">[Monat Jahr]</span>.
+        <!-- Internal: replace italic placeholders with real values. Have counsel or a
+             vetted generator (e-Recht24, datenschutzgenerator.de) review the final text. -->
+      </p>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>
