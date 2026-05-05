@@ -1,0 +1,387 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ─────────────────────────────────────────────
+     Theme tokens
+     Dark is the default (no attribute or [data-theme="dark"]).
+     Light theme flips the canvas; gradient hues stay vibrant in both.
+     "Panel" surfaces (system flow, AI terminal, deployment diagram)
+     are intentionally dark-always — semantic dark UI inside a light page.
+     ───────────────────────────────────────────── */
+  :root {
+    --alpha-violet: #667eea;
+    --alpha-purple: #764ba2;
+    --alpha-pink: #f093fb;
+
+    /* Page surface */
+    --bg: #08061a;
+    --bg-overlay-1: rgba(118, 75, 162, 0.25);
+    --bg-overlay-2: rgba(240, 147, 251, 0.10);
+
+    --fg: rgba(255, 255, 255, 0.92);
+    --fg-strong: #ffffff;
+
+    /* Glass / cards */
+    --surface: rgba(255, 255, 255, 0.025);
+    --surface-strong: rgba(255, 255, 255, 0.04);
+    --surface-elev: rgba(255, 255, 255, 0.06);
+
+    /* Borders */
+    --border-1: rgba(255, 255, 255, 0.05);
+    --border-2: rgba(255, 255, 255, 0.08);
+    --border-3: rgba(255, 255, 255, 0.10);
+    --border-4: rgba(255, 255, 255, 0.18);
+
+    /* Decoration */
+    --grid-line: rgba(255, 255, 255, 0.04);
+    --scroll-track: #08061a;
+
+    --selection-bg: rgba(118, 75, 162, 0.5);
+    --selection-fg: #ffffff;
+
+    /* Soft gradient text (dark palette) */
+    --gtext-soft-from: #c4b5fd;
+    --gtext-soft-to:   #f093fb;
+
+    /* Strong gradient (used for the brand) — same in both themes */
+    --gtext-from: #667eea;
+    --gtext-mid:  #764ba2;
+    --gtext-to:   #f093fb;
+
+    /* Glow shadows */
+    --glow-violet: 0 0 60px rgba(102, 126, 234, 0.40);
+    --glow-purple: 0 0 80px rgba(118, 75, 162, 0.45);
+    --glow-pink:   0 0 60px rgba(240, 147, 251, 0.35);
+
+    /* Tinted blob fills */
+    --blob-violet: rgba(102, 126, 234, 0.55);
+    --blob-purple: rgba(118, 75, 162, 0.55);
+    --blob-pink:   rgba(240, 147, 251, 0.40);
+
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] {
+    --bg: #f6f5ff;
+    --bg-overlay-1: rgba(118, 75, 162, 0.10);
+    --bg-overlay-2: rgba(240, 147, 251, 0.08);
+
+    --fg: rgba(15, 18, 35, 0.92);
+    --fg-strong: #0a0820;
+
+    --surface: rgba(15, 18, 35, 0.025);
+    --surface-strong: rgba(15, 18, 35, 0.04);
+    --surface-elev: rgba(15, 18, 35, 0.06);
+
+    --border-1: rgba(15, 18, 35, 0.06);
+    --border-2: rgba(15, 18, 35, 0.09);
+    --border-3: rgba(15, 18, 35, 0.12);
+    --border-4: rgba(15, 18, 35, 0.20);
+
+    --grid-line: rgba(15, 18, 35, 0.05);
+    --scroll-track: #ece9ff;
+
+    --selection-bg: rgba(118, 75, 162, 0.30);
+    --selection-fg: #0a0820;
+
+    /* On light, the soft gradient needs darker stops to keep contrast. */
+    --gtext-soft-from: #6d28d9;
+    --gtext-soft-to:   #c026d3;
+
+    /* Strong brand gradient stays — vibrant on white too. */
+    --gtext-from: #5b6fe0;
+    --gtext-mid:  #6d3fa0;
+    --gtext-to:   #d946ef;
+
+    /* Glows soften on a bright canvas */
+    --glow-violet: 0 0 60px rgba(102, 126, 234, 0.22);
+    --glow-purple: 0 0 80px rgba(118, 75, 162, 0.25);
+    --glow-pink:   0 0 60px rgba(240, 147, 251, 0.18);
+
+    --blob-violet: rgba(102, 126, 234, 0.30);
+    --blob-purple: rgba(118, 75, 162, 0.28);
+    --blob-pink:   rgba(240, 147, 251, 0.26);
+
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, var(--bg-overlay-1), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, var(--bg-overlay-2), transparent);
+    color: var(--fg);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scroll-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 999px;
+    border: 2px solid var(--scroll-track);
+  }
+}
+
+@layer components {
+  .container-narrow {
+    @apply max-w-6xl mx-auto px-6;
+  }
+  .container-wide {
+    @apply max-w-7xl mx-auto px-6;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--gtext-soft-from) 0%, var(--gtext-soft-to) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .gradient-text-strong {
+    background: linear-gradient(135deg, var(--gtext-from) 0%, var(--gtext-mid) 50%, var(--gtext-to) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glass-strong {
+    background: var(--surface-strong);
+    border: 1px solid var(--border-3);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  /* "Panel-dark" — a dark UI surface that stays dark in both themes.
+     Used for system-flow, AI terminal, deployment models — semantic dark UI. */
+  .panel-dark {
+    background: rgba(8, 6, 26, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .panel-dark-strong {
+    background: rgba(13, 10, 43, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-white transition-all duration-300;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 60%, #f093fb 100%);
+    background-size: 200% 200%;
+    box-shadow: 0 10px 40px -8px rgba(118, 75, 162, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  .btn-primary:hover {
+    background-position: 100% 50%;
+    transform: translateY(-1px);
+    box-shadow: 0 16px 50px -8px rgba(118, 75, 162, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium transition-all duration-300;
+    color: var(--fg);
+    background: var(--surface-strong);
+    border: 1px solid var(--border-3);
+  }
+  .btn-secondary:hover {
+    background: var(--surface-elev);
+    border-color: var(--border-4);
+    transform: translateY(-1px);
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-wide uppercase;
+    background: var(--surface-strong);
+    border: 1px solid var(--border-3);
+    color: var(--fg);
+    opacity: 0.85;
+  }
+  .badge-dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f093fb;
+    box-shadow: 0 0 10px #f093fb;
+  }
+
+  .section {
+    @apply relative py-28 lg:py-36;
+  }
+
+  .section-eyebrow {
+    @apply text-sm font-medium uppercase tracking-[0.18em];
+    color: color-mix(in srgb, var(--fg) 60%, transparent);
+  }
+
+  .section-heading {
+    @apply text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05];
+    color: var(--fg-strong);
+  }
+
+  .module-tile {
+    @apply relative flex flex-col justify-between gap-2 rounded-xl p-3 transition-all duration-300 cursor-default;
+    min-height: 5.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+  }
+  .module-tile:hover {
+    background: var(--surface-elev);
+    border-color: var(--border-4);
+    transform: translateY(-2px);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .mask-fade-radial {
+    mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black 40%, transparent 100%);
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Panel-dark scoped utility classes for stuff that lives inside .panel-dark
+     and needs to stay light-on-dark regardless of the page theme. */
+  .panel-dark-text { color: rgba(255, 255, 255, 0.92); }
+  .panel-dark-text-muted { color: rgba(255, 255, 255, 0.65); }
+  .panel-dark-text-faint { color: rgba(255, 255, 255, 0.45); }
+}
+
+/* Floating ambient blobs — fills swap with theme. */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  will-change: transform;
+}
+.blob-violet { background: var(--blob-violet); }
+.blob-purple { background: var(--blob-purple); }
+.blob-pink   { background: var(--blob-pink); }
+
+/* SVG particle glow — slightly tamer in light mode. */
+.flow-particle {
+  fill: #fff;
+  filter: drop-shadow(0 0 4px #f093fb) drop-shadow(0 0 8px #764ba2);
+}
+
+/* Marquee */
+.marquee {
+  display: flex;
+  gap: 3rem;
+  animation: marquee 40s linear infinite;
+  white-space: nowrap;
+}
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* ─────────────────────────────────────────────
+   LIGHT-THEME OVERRIDES for Tailwind utilities used directly in components.
+   This lets components keep their existing markup (text-white/65, bg-white/[0.04],
+   border-white/10) without per-element `dark:` prefixes. The overrides only
+   take effect when [data-theme="light"] is set on the html element.
+
+   Anything inside .panel-dark / .panel-dark-strong is excluded so the dark
+   panels keep their light-on-dark text in both themes.
+   ───────────────────────────────────────────── */
+
+[data-theme='light'] :where(.text-white):not(.panel-dark *):not(.panel-dark-strong *)        { color: rgb(15 18 35); }
+[data-theme='light'] :where(.text-white\/95):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.95); }
+[data-theme='light'] :where(.text-white\/85):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.85); }
+[data-theme='light'] :where(.text-white\/80):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.85); }
+[data-theme='light'] :where(.text-white\/75):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.80); }
+[data-theme='light'] :where(.text-white\/70):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.78); }
+[data-theme='light'] :where(.text-white\/65):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.72); }
+[data-theme='light'] :where(.text-white\/60):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.68); }
+[data-theme='light'] :where(.text-white\/55):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.62); }
+[data-theme='light'] :where(.text-white\/50):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.58); }
+[data-theme='light'] :where(.text-white\/45):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.55); }
+[data-theme='light'] :where(.text-white\/40):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.50); }
+[data-theme='light'] :where(.text-white\/30):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.40); }
+
+[data-theme='light'] :where(.bg-white\/\[0\.025\]):not(.panel-dark *):not(.panel-dark-strong *) { background-color: rgb(15 18 35 / 0.025); }
+[data-theme='light'] :where(.bg-white\/\[0\.03\]):not(.panel-dark *):not(.panel-dark-strong *)  { background-color: rgb(15 18 35 / 0.030); }
+[data-theme='light'] :where(.bg-white\/\[0\.04\]):not(.panel-dark *):not(.panel-dark-strong *)  { background-color: rgb(15 18 35 / 0.040); }
+[data-theme='light'] :where(.bg-white\/\[0\.05\]):not(.panel-dark *):not(.panel-dark-strong *)  { background-color: rgb(15 18 35 / 0.050); }
+[data-theme='light'] :where(.bg-white\/5):not(.panel-dark *):not(.panel-dark-strong *)         { background-color: rgb(15 18 35 / 0.05); }
+[data-theme='light'] :where(.bg-white\/10):not(.panel-dark *):not(.panel-dark-strong *)        { background-color: rgb(15 18 35 / 0.08); }
+
+[data-theme='light'] :where(.border-white\/5):not(.panel-dark *):not(.panel-dark-strong *)   { border-color: rgb(15 18 35 / 0.07); }
+[data-theme='light'] :where(.border-white\/10):not(.panel-dark *):not(.panel-dark-strong *)  { border-color: rgb(15 18 35 / 0.10); }
+[data-theme='light'] :where(.border-white\/15):not(.panel-dark *):not(.panel-dark-strong *)  { border-color: rgb(15 18 35 / 0.16); }
+
+/* divide-x / divide-y also use white borders in our stat strip */
+[data-theme='light'] :where(.divide-white\/5):not(.panel-dark *) > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 18 35 / 0.07); }
+
+/* Component utilities that we kept hard-dark in templates */
+[data-theme='light'] .bg-alpha-ink\/95   { background-color: color-mix(in srgb, var(--bg) 92%, white); }
+[data-theme='light'] .bg-alpha-deep      { background-color: color-mix(in srgb, var(--bg) 96%, white); }
+[data-theme='light'] .bg-alpha-deep\/80,
+[data-theme='light'] .bg-alpha-deep\/85,
+[data-theme='light'] .bg-alpha-deep\/90  { background-color: color-mix(in srgb, var(--bg) 90%, white); }
+
+/* Accent text/borders calibrated for dark — strengthen for light. */
+[data-theme='light'] :where(.text-rose-300\/80):not(.panel-dark *)   { color: rgb(190 18 60 / 0.85); }
+[data-theme='light'] :where(.text-rose-200\/70):not(.panel-dark *)   { color: rgb(159 18 57 / 0.80); }
+[data-theme='light'] :where(.text-emerald-200\/80):not(.panel-dark *){ color: rgb(4 120 87 / 0.85); }
+
+[data-theme='light'] :where(.border-rose-500\/15):not(.panel-dark *) { border-color: rgb(244 63 94 / 0.30); }
+[data-theme='light'] :where(.border-rose-400\/20):not(.panel-dark *) { border-color: rgb(244 63 94 / 0.30); }
+[data-theme='light'] :where(.border-emerald-300\/15):not(.panel-dark *){ border-color: rgb(16 185 129 / 0.35); }
+
+/* Same idea for bg dots used as status pills (rose-400, emerald-300, amber-300) — they're tiny dots, bump opacity for light. */
+[data-theme='light'] .bg-rose-400    { background-color: rgb(244 63 94); }
+[data-theme='light'] .bg-emerald-300 { background-color: rgb(16 185 129); }

@@ -1,0 +1,245 @@
+---
+const capabilities = [
+  {
+    title: 'Natural language → QL',
+    body: 'Plain-English (or German) questions translate to QL — the declarative JSON query language — via Azure OpenAI GPT-4o.',
+  },
+  {
+    title: 'Grounded by RAG',
+    body: 'A curated knowledge base of entity docs, attribute docs, domain concepts and synonyms. The AI answers from your schema, not hallucination.',
+  },
+  {
+    title: 'Query templates & rules',
+    body: 'Reusable templates and a business-rule library steer the model toward correct, sanctioned answers — every time.',
+  },
+  {
+    title: 'RLHF training pipeline',
+    body: 'Every accepted/rejected answer feeds back. Visual workbench tabs for schema coverage, concepts, templates, rules and training.',
+  },
+];
+---
+
+<section id="ai" class="section">
+  <div class="absolute inset-0 -z-10 bg-grid opacity-25 mask-fade-bottom"></div>
+  <div class="blob blob-pink w-[520px] h-[520px] top-1/4 -left-40 opacity-50"></div>
+
+  <div class="container-wide grid lg:grid-cols-[1fr_1.1fr] gap-14 items-center">
+    {/* Left: copy */}
+    <div class="reveal">
+      <div class="badge mb-6">
+        <span class="font-mono text-[10px]">CB · COGNITIVE BACKEND</span>
+      </div>
+      <h2 class="section-heading">
+        Ask in plain language. <br />
+        <span class="gradient-text">Get audited data.</span>
+      </h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed max-w-lg">
+        The Cognitive Backend turns business questions into validated QL queries — grounded in your schema,
+        gated by your permissions, traceable in your audit log.
+      </p>
+
+      <ul class="mt-10 space-y-5 max-w-lg">
+        {capabilities.map((c) => (
+          <li class="flex gap-3">
+            <span class="mt-1 w-1.5 h-1.5 rounded-full bg-alpha-pink shadow-glow-pink shrink-0"></span>
+            <div>
+              <div class="font-medium text-white">{c.title}</div>
+              <div class="text-sm text-white/60 mt-1 leading-relaxed">{c.body}</div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div class="mt-10 flex items-center gap-3 text-xs text-white/40 font-mono uppercase tracking-wider">
+        <span>Powered by</span>
+        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70">Azure OpenAI · GPT-4o</span>
+        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70">Germany WC</span>
+      </div>
+    </div>
+
+    {/* Right: demo */}
+    <div class="relative reveal">
+      <div class="absolute -inset-8 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[40px]"></div>
+      <div class="panel-dark-strong relative rounded-[24px] overflow-hidden shadow-glow-purple">
+        {/* Terminal header */}
+        <div class="flex items-center justify-between px-5 py-3 border-b border-white/5">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-300/80"></span>
+          </div>
+          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40">cb · workbench</span>
+          <span class="font-mono text-[10px] text-white/40">v3.5</span>
+        </div>
+
+        {/* Prompt */}
+        <div class="px-5 py-5 border-b border-white/5">
+          <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/45 mb-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-alpha-violet shadow-glow-violet"></span>
+            you
+          </div>
+          <div class="text-white/95 text-base leading-relaxed min-h-[3.5rem]">
+            <span data-ai-prompt></span><span class="inline-block w-[2px] h-[1.05em] align-[-2px] bg-alpha-pink animate-caret-blink ml-0.5"></span>
+          </div>
+        </div>
+
+        {/* QL output */}
+        <div class="px-5 py-5 border-b border-white/5">
+          <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-alpha-pink shadow-glow-pink"></span>
+            cognitive backend → ql
+          </div>
+          <pre class="font-mono text-xs leading-relaxed text-white/80 whitespace-pre-wrap min-h-[10.5rem]" data-ai-ql></pre>
+        </div>
+
+        {/* Result */}
+        <div class="px-5 py-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/45">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+              result · 4 rows · 312 ms
+            </div>
+            <span class="text-[10px] text-white/30 font-mono">audit · logged</span>
+          </div>
+          <div data-ai-result class="space-y-1.5 min-h-[10rem]"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  type Demo = {
+    prompt: string;
+    ql: string;
+    result: { label: string; value: string; bar: number }[];
+  };
+
+  const demos: Demo[] = [
+    {
+      prompt: 'Show me total billed premium for Q1 broken down by product line.',
+      ql: `{
+  "select": ["product.line", "sum(billing.amount) as total"],
+  "from":   "BillingItem",
+  "filter": [
+    { "field": "billing.period", "op": "eq",
+      "value": "Q1-2026" }
+  ],
+  "groupBy": ["product.line"],
+  "orderBy": [{ "field": "total", "dir": "desc" }]
+}`,
+      result: [
+        { label: 'Auto',     value: '€ 2,418,950', bar: 100 },
+        { label: 'Home',     value: '€ 1,734,220', bar: 72 },
+        { label: 'Health',   value: '€ 1,052,810', bar: 44 },
+        { label: 'Liability',value: '€   681,400', bar: 28 },
+      ],
+    },
+    {
+      prompt: 'How many active contracts does customer Müller hold today?',
+      ql: `{
+  "select": ["count(*) as active"],
+  "from":   "Contract",
+  "filter": [
+    { "field": "customer.lastName", "op": "eq",
+      "value": "Müller" },
+    { "field": "status", "op": "eq", "value": "ACTIVE" }
+  ]
+}`,
+      result: [
+        { label: 'Müller, Anna · 80331 München', value: '4 contracts', bar: 100 },
+      ],
+    },
+    {
+      prompt: 'List unpaid invoices from the last dunning run, oldest first.',
+      ql: `{
+  "select": ["invoice.id", "customer.name", "amount.due",
+             "dunning.level", "due.date"],
+  "from":   "Invoice",
+  "filter": [
+    { "field": "payment.status", "op": "eq",
+      "value": "UNPAID" },
+    { "field": "dunning.runId", "op": "eq",
+      "value": "@latest" }
+  ],
+  "orderBy": [{ "field": "due.date", "dir": "asc" }]
+}`,
+      result: [
+        { label: 'INV-2026-00831 · Schmidt GmbH · L3', value: '€ 1,240.00', bar: 100 },
+        { label: 'INV-2026-00714 · K. Weber · L2',     value: '€   612.50', bar: 56 },
+        { label: 'INV-2026-00692 · F. Bauer · L2',     value: '€   348.20', bar: 32 },
+        { label: 'INV-2026-00541 · M. Vogel · L1',     value: '€   210.00', bar: 20 },
+      ],
+    },
+  ];
+
+  const promptEl = document.querySelector<HTMLElement>('[data-ai-prompt]');
+  const qlEl = document.querySelector<HTMLElement>('[data-ai-ql]');
+  const resEl = document.querySelector<HTMLElement>('[data-ai-result]');
+  if (promptEl && qlEl && resEl) {
+    let demoIdx = 0;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    async function typeInto(el: HTMLElement, text: string, delay: number) {
+      el.textContent = '';
+      for (let i = 0; i < text.length; i++) {
+        el.textContent += text[i];
+        await sleep(delay);
+      }
+    }
+
+    function paintResult(rows: Demo['result']) {
+      resEl!.innerHTML = '';
+      rows.forEach((r, idx) => {
+        const row = document.createElement('div');
+        row.className = 'opacity-0 translate-y-1 transition-all duration-500 grid grid-cols-[1fr_auto] items-center gap-4';
+        row.innerHTML = `
+          <div class="space-y-1">
+            <div class="text-[13px] text-white/85">${r.label}</div>
+            <div class="h-1 rounded-full bg-white/[0.05] overflow-hidden">
+              <div class="h-full rounded-full" style="width:${r.bar}%; background: linear-gradient(90deg,#667eea,#f093fb)"></div>
+            </div>
+          </div>
+          <div class="font-mono text-xs text-white/85 tabular-nums">${r.value}</div>
+        `;
+        resEl!.appendChild(row);
+        setTimeout(() => {
+          row.classList.remove('opacity-0', 'translate-y-1');
+          row.classList.add('opacity-100', 'translate-y-0');
+        }, 80 + idx * 90);
+      });
+    }
+
+    async function runDemo() {
+      // Reset
+      qlEl!.textContent = '';
+      resEl!.innerHTML = '';
+      const d = demos[demoIdx];
+      // Type prompt
+      await typeInto(promptEl!, d.prompt, 22);
+      await sleep(420);
+      // Type QL
+      await typeInto(qlEl!, d.ql, 6);
+      await sleep(260);
+      // Paint result
+      paintResult(d.result);
+      await sleep(5400);
+      demoIdx = (demoIdx + 1) % demos.length;
+      runDemo();
+    }
+
+    // Only start when user nears the section.
+    const trigger = document.querySelector('#ai');
+    if (trigger) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries[0]?.isIntersecting) {
+          io.disconnect();
+          runDemo();
+        }
+      }, { threshold: 0.15 });
+      io.observe(trigger);
+    } else {
+      runDemo();
+    }
+  }
+</script>

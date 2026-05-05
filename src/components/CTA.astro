@@ -1,0 +1,60 @@
+---
+const secondary = [
+  { label: 'Talk to a solutions architect', href: '#cta' },
+  { label: 'Explore partner documentation', href: '#cta' },
+  { label: 'Compare deployment models',     href: '#architecture' },
+  { label: 'Security & compliance whitepaper', href: '#cta' },
+];
+---
+
+<section id="cta" class="relative py-32 lg:py-40 overflow-hidden">
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-grid opacity-30 mask-fade-radial"></div>
+    <div class="blob blob-violet w-[600px] h-[600px] -top-20 left-1/3 opacity-60"></div>
+    <div class="blob blob-pink w-[500px] h-[500px] bottom-[-160px] right-1/3 opacity-60"></div>
+  </div>
+
+  <div class="container-narrow">
+    <div class="reveal relative rounded-[28px] p-[1.5px] bg-alpha-gradient overflow-hidden">
+      <div class="relative rounded-[26px] bg-alpha-ink/95 px-8 sm:px-14 py-14 sm:py-20 text-center">
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[80%] h-64 bg-alpha-purple/30 blur-3xl rounded-full pointer-events-none"></div>
+
+        <p class="section-eyebrow">See Alpha in action</p>
+        <h2 class="section-heading mt-3 max-w-3xl mx-auto text-balance">
+          One platform for the <span class="gradient-text">whole insurance business.</span>
+        </h2>
+        <p class="mt-5 text-lg text-white/65 max-w-2xl mx-auto leading-relaxed">
+          Request a tailored demo. We'll show you the lifecycle that fits your business — from your first lead to your seven-year audit trail.
+        </p>
+
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <a href="mailto:hello@alpha-platform.de" class="btn-primary text-base">
+            Request a tailored demo
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#architecture" class="btn-secondary text-base">View architecture</a>
+        </div>
+
+        <ul class="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {secondary.map((s) => (
+            <li>
+              <a class="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-1.5" href={s.href}>
+                {s.label}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-12 pt-8 border-t border-white/10 text-xs text-white/45">
+          Hosted exclusively in Microsoft Azure Germany (Frankfurt).
+          ISO 27001 · ISO 27701 · SOC 2 · GDPR · eIDAS · IDD.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

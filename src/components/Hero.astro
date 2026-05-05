@@ -1,0 +1,89 @@
+---
+import SystemFlow from './SystemFlow.astro';
+
+const stats = [
+  { v: '64+', l: 'modules' },
+  { v: '1,131', l: 'entities' },
+  { v: '707', l: 'services' },
+  { v: '1,093', l: 'REST controllers' },
+];
+---
+
+<section id="hero" class="relative pt-36 pb-24 lg:pt-44 lg:pb-32 overflow-hidden">
+  {/* Ambient background */}
+  <div class="absolute inset-0 -z-10 bg-grid mask-fade-radial opacity-60"></div>
+  <div class="blob blob-violet w-[640px] h-[640px] -top-40 -left-40 animate-float-slow"></div>
+  <div class="blob blob-purple w-[520px] h-[520px] top-1/4 right-[-160px] animate-float-slower"></div>
+  <div class="blob blob-pink w-[440px] h-[440px] bottom-[-160px] left-1/3 animate-float-slow"></div>
+
+  <div class="container-wide grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
+    {/* Copy */}
+    <div class="reveal">
+      <div class="inline-flex items-center gap-2 badge badge-dot mb-6">
+        <span class="ml-2">Insurance Management Platform · Hosted in Germany</span>
+      </div>
+
+      <h1 class="text-balance text-[clamp(2.4rem,6vw,5rem)] font-semibold leading-[1.04] tracking-tight">
+        <span class="block">One platform.</span>
+        <span class="block">Every step of</span>
+        <span class="block">the <span class="gradient-text-strong">insurance business.</span></span>
+      </h1>
+
+      <p class="mt-7 max-w-xl text-lg text-white/65 leading-relaxed">
+        Alpha is the modular insurance management platform for brokers, agencies, and distributors —
+        customers, contracts, billing, signatures, documents, commissions and the customer portal in
+        one audit-grade, multi-tenant system.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-3">
+        <a href="#cta" class="btn-primary">
+          Request a tailored demo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#how-it-works" class="btn-secondary">See how it works</a>
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/45">
+        <span class="font-mono uppercase tracking-wider">Compliance</span>
+        {['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR', 'eIDAS', 'IDD'].map((b) => (
+          <span class="text-white/65">{b}</span>
+        ))}
+      </div>
+    </div>
+
+    {/* Visual */}
+    <div class="relative reveal">
+      <div class="absolute -inset-10 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[40px]"></div>
+      <div class="panel-dark-strong relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-300/80"></span>
+          </div>
+          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40">alpha · live system flow</span>
+        </div>
+        <SystemFlow />
+        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-white/45 uppercase tracking-wider">
+          <span>Inputs · 7 channels</span>
+          <span class="hidden sm:inline">Workflow · WF · NS · TE · LG</span>
+          <span>Outputs · audit-trailed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Stats strip */}
+  <div class="container-wide mt-20 lg:mt-28 reveal">
+    <div class="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5 glass rounded-2xl">
+      {stats.map((s) => (
+        <div class="px-6 py-6 text-center">
+          <div class="text-3xl md:text-4xl font-semibold tracking-tight text-white">{s.v}</div>
+          <div class="text-xs uppercase tracking-[0.18em] text-white/45 mt-1.5">{s.l}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,171 @@
+---
+const features = [
+  {
+    title: 'Full customer & contract lifecycle',
+    body: 'Lead → application → active customer → claim → renewal in one 360° view. Customers, contracts, products and partners share a single source of truth.',
+    modules: ['CR', 'CM', 'LM'],
+    icon: 'lifecycle',
+    feature: true,
+  },
+  {
+    title: 'Agency collection, end to end',
+    body: 'SEPA mandates, periodic billing runs, PAIN.008 generation, CAMT-based 6-stage automatic reconciliation, multi-level dunning. Fully automated, fully traceable.',
+    modules: ['BM', 'JB', 'WF'],
+    icon: 'sepa',
+    feature: true,
+  },
+  {
+    title: 'IDD-compliant advisory',
+    body: 'Case Wizard captures advisory documentation, runs validation, integrates eIDAS-AES signatures, and converts validated applications automatically.',
+    modules: ['CW', 'SM'],
+    icon: 'advisory',
+  },
+  {
+    title: 'Configurable workflows',
+    body: 'Define processes, conditions, calculations and rules without writing code. SpEL, Groovy, FreeMarker, QL and HTTP. Reusable and inheritable.',
+    modules: ['WF', 'LG', 'CE', 'CF'],
+    icon: 'workflow',
+  },
+  {
+    title: 'Multi-channel notifications',
+    body: 'Email, SMS, Push, Microsoft Teams, WhatsApp — one notification system, template-driven, with full delivery tracking.',
+    modules: ['NS', 'TE'],
+    icon: 'notify',
+  },
+  {
+    title: 'Templates & PDF generation',
+    body: 'FreeMarker-driven templates produce dynamic, branded PDFs — invoices, advisory records, contracts, dunning letters — with variable linking and test cases.',
+    modules: ['TE', 'DM'],
+    icon: 'pdf',
+  },
+  {
+    title: 'Document management with OCR',
+    body: 'Azure AI Document Intelligence powers automatic OCR, classification and versioning for every uploaded document.',
+    modules: ['DM'],
+    icon: 'doc',
+  },
+  {
+    title: 'eIDAS-AES digital signatures',
+    body: 'Advanced Electronic Signatures across email, SMS, phone or in-person. Integrated providers (InSign and more), every signing event audit-logged.',
+    modules: ['SM'],
+    icon: 'sign',
+  },
+  {
+    title: 'Customer self-service portal',
+    body: 'Separate, mobile-ready portal with passwordless OTP login. Customers see contracts, upload documents, file claims, book appointments — 24/7.',
+    modules: ['EU', 'EX'],
+    icon: 'portal',
+  },
+  {
+    title: 'AI-powered insights',
+    body: 'Ask the system in plain language. The Cognitive Backend translates natural-language questions into QL via Azure OpenAI GPT-4o, grounded in a curated knowledge base.',
+    modules: ['CB'],
+    icon: 'ai',
+    feature: true,
+  },
+  {
+    title: 'Universal integration framework',
+    body: 'REST, SOAP, BiPRO 420/430, GDV files, CSV — connect any partner system through configuration. No partner-specific code in business modules.',
+    modules: ['HC', 'HB', 'HG', 'HA'],
+    icon: 'integrate',
+  },
+  {
+    title: '5-level granular permissions',
+    body: 'Module → Feature → Object Type → Customer → Contract. Pre-computed access indices for performance. Compliance-grade access for the largest organisations.',
+    modules: ['UM'],
+    icon: 'rbac',
+  },
+  {
+    title: 'Field-level audit trail',
+    body: 'Hibernate Envers records every field change automatically — who, what, before, after, when. 7-year retention. Built-in regulatory readiness.',
+    modules: ['envers'],
+    icon: 'audit',
+  },
+  {
+    title: 'True multi-tenancy',
+    body: 'Each tenant gets its own PostgreSQL database. Optionally a fully dedicated compute and network — for maximum data isolation and sovereignty.',
+    modules: ['infra'],
+    icon: 'tenant',
+  },
+  {
+    title: 'Built for compliance',
+    body: 'ISO 27001 · ISO 27701 · SOC 2 · GDPR · eIDAS · IDD — engineered to meet the bar of regulated insurance businesses.',
+    modules: ['compliance'],
+    icon: 'shield',
+  },
+];
+
+const Icon = (name: string) => {
+  const stroke = 'stroke="url(#iconGrad)"';
+  const common = 'width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
+  switch (name) {
+    case 'lifecycle': return `<svg ${common}><path ${stroke} d="M21 12a9 9 0 1 1-3.5-7.1"/><path ${stroke} d="M21 4v5h-5"/></svg>`;
+    case 'sepa':      return `<svg ${common}><rect ${stroke} x="3" y="6" width="18" height="13" rx="2"/><path ${stroke} d="M3 10h18M7 15h4"/></svg>`;
+    case 'advisory':  return `<svg ${common}><path ${stroke} d="M4 4h12l4 4v12H4z"/><path ${stroke} d="M8 10h8M8 14h6M8 18h4"/></svg>`;
+    case 'workflow':  return `<svg ${common}><circle ${stroke} cx="6" cy="6" r="2.5"/><circle ${stroke} cx="18" cy="6" r="2.5"/><circle ${stroke} cx="12" cy="18" r="2.5"/><path ${stroke} d="M8 7l4 9M16 7l-4 9"/></svg>`;
+    case 'notify':    return `<svg ${common}><path ${stroke} d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path ${stroke} d="M10 18a2 2 0 0 0 4 0"/></svg>`;
+    case 'pdf':       return `<svg ${common}><path ${stroke} d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path ${stroke} d="M14 3v6h6"/><path ${stroke} d="M9 14h6M9 18h4"/></svg>`;
+    case 'doc':       return `<svg ${common}><path ${stroke} d="M4 4h12l4 4v12H4z"/><circle ${stroke} cx="12" cy="14" r="3"/></svg>`;
+    case 'sign':      return `<svg ${common}><path ${stroke} d="M3 19c4-1 7-7 11-9 2-1 4 1 3 3-2 4-8 7-9 7"/><path ${stroke} d="M14 6l4 4"/></svg>`;
+    case 'portal':    return `<svg ${common}><rect ${stroke} x="3" y="4" width="18" height="14" rx="2"/><path ${stroke} d="M3 9h18M8 13h2"/></svg>`;
+    case 'ai':        return `<svg ${common}><path ${stroke} d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M5.5 18.5l2-2M16.5 7.5l2-2"/><circle ${stroke} cx="12" cy="12" r="3"/></svg>`;
+    case 'integrate': return `<svg ${common}><path ${stroke} d="M9 7H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h4M15 7h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4M9 12h6"/></svg>`;
+    case 'rbac':      return `<svg ${common}><path ${stroke} d="M12 3l8 4v6c0 5-4 7-8 8-4-1-8-3-8-8V7z"/><path ${stroke} d="M9 12l2 2 4-4"/></svg>`;
+    case 'audit':     return `<svg ${common}><circle ${stroke} cx="11" cy="11" r="6"/><path ${stroke} d="M16 16l5 5"/><path ${stroke} d="M9 11h4M11 9v4"/></svg>`;
+    case 'tenant':    return `<svg ${common}><rect ${stroke} x="3" y="9" width="18" height="11" rx="2"/><path ${stroke} d="M3 13h18M8 16h2M14 16h2"/><path ${stroke} d="M7 9V5a5 5 0 0 1 10 0v4"/></svg>`;
+    case 'shield':    return `<svg ${common}><path ${stroke} d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>`;
+    default:          return `<svg ${common}><circle ${stroke} cx="12" cy="12" r="8"/></svg>`;
+  }
+};
+---
+
+<section id="capabilities" class="section">
+  <div class="absolute inset-0 -z-10 bg-grid opacity-20 mask-fade-bottom"></div>
+
+  <div class="container-wide">
+    <div class="max-w-2xl reveal">
+      <p class="section-eyebrow">Capabilities</p>
+      <h2 class="section-heading mt-3">What Alpha actually <span class="gradient-text">does for you.</span></h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+        Fifteen capabilities, one platform. Each one delivered by composable modules — no add-ons, no plugins, no shadow IT.
+      </p>
+    </div>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#c4b5fd"/>
+          <stop offset="100%" stop-color="#f093fb"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {features.map((f, i) => (
+        <article
+          class={`reveal relative rounded-2xl p-6 transition-all duration-500 ${
+            f.feature
+              ? 'bg-gradient-to-br from-violet-500/10 via-fuchsia-500/5 to-transparent border border-white/10'
+              : 'glass hover:border-white/15'
+          }`}
+          style={`animation-delay:${i * 40}ms`}
+        >
+          <div class="flex items-center gap-3">
+            <span class="grid place-items-center w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10" set:html={Icon(f.icon)}></span>
+            <div class="flex-1 flex flex-wrap gap-1.5">
+              {f.modules.map((m) => (
+                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/55 tracking-wider">{m}</span>
+              ))}
+            </div>
+          </div>
+          <h3 class="mt-5 text-lg font-semibold tracking-tight">{f.title}</h3>
+          <p class="mt-2.5 text-sm text-white/60 leading-relaxed">{f.body}</p>
+
+          {f.feature && (
+            <div class="absolute -bottom-px left-6 right-6 h-px bg-gradient-to-r from-transparent via-fuchsia-400/40 to-transparent"></div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

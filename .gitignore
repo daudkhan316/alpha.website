@@ -1,0 +1,30 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment
+.env
+.env.production
+
+# macOS
+.DS_Store
+
+# editor
+.vscode/
+.idea/
+
+# local QA artefacts
+.playwright-mcp/
+
+# internal product breakdown — do not publish
+alpha-breakdown.md
+alpha-product-breakdown.md

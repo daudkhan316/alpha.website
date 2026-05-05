@@ -1,0 +1,88 @@
+---
+const cases = [
+  {
+    tag: 'Brokerage · 120 agents',
+    title: 'Replacing six fragmented tools',
+    body: 'A mid-sized brokerage was running CRM, contract admin, SEPA, document storage, e-signing and customer portal as separate vendors. Migrated everything to Alpha.',
+    outcomes: ['~40% lower license cost', 'IDD-compliant in every conversation', '70% faster CAMT reconciliation'],
+    accent: 'from-violet-500/20 to-fuchsia-500/10',
+  },
+  {
+    tag: 'Insurer · new agency partner',
+    title: 'New distribution partner live in days',
+    body: 'A new agency arrives with a custom GDV format and bespoke commission rules. EM configures the mapping, IM orchestrates the import, EI resolves conflicts, LG captures the rules.',
+    outcomes: ['Zero partner-specific code', 'Configuration-only onboarding', 'Days, not months'],
+    accent: 'from-indigo-500/20 to-violet-500/10',
+  },
+  {
+    tag: 'End customer · mobile',
+    title: 'Filing a claim in under five minutes',
+    body: 'Policyholder receives damage notification → opens portal on phone → OTP login → uploads photos → files claim ticket → books appointment with their advisor.',
+    outcomes: ['Passwordless OTP login', 'Auto-routed via WF', 'OCR + status updates'],
+    accent: 'from-fuchsia-500/20 to-pink-400/10',
+  },
+  {
+    tag: 'Compliance · audit',
+    title: 'Answering an audit request in seconds',
+    body: '"Who changed customer X\'s IBAN on March 14, 2024?" Hibernate Envers returns the user, timestamp, old value, new value — for any field, for the last 7 years.',
+    outcomes: ['Field-level audit', '7-year retention', 'Instant answers'],
+    accent: 'from-cyan-400/20 to-violet-500/10',
+  },
+  {
+    tag: 'Marketing · retention',
+    title: 'Multi-channel campaigns with propensity',
+    body: '"Customers with car insurance expiring in 60 days, propensity-to-renew > 0.7, opted-in for SMS." CT runs A/B variants. NS sends email + SMS. Every touch logged.',
+    outcomes: ['A/B + propensity', 'Email · SMS · Push', 'Per-customer audit'],
+    accent: 'from-amber-400/20 to-rose-400/10',
+  },
+  {
+    tag: 'Executive · self-serve analytics',
+    title: 'Natural-language reporting',
+    body: 'Executive types into the CB workbench: "Show me total billed premium for Q1 broken down by product line." CB translates to QL, executes against the database, results render instantly.',
+    outcomes: ['No BI request needed', 'Schema-grounded', 'RLHF-trained'],
+    accent: 'from-pink-500/20 to-violet-500/10',
+  },
+];
+---
+
+<section id="use-cases" class="section">
+  <div class="absolute inset-0 -z-10 bg-grid opacity-25 mask-fade-bottom"></div>
+
+  <div class="container-wide">
+    <div class="max-w-2xl reveal">
+      <p class="section-eyebrow">Use cases</p>
+      <h2 class="section-heading mt-3">Real teams. <span class="gradient-text">Real outcomes.</span></h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+        From single brokerage migrations to nationwide insurer rollouts — Alpha consolidates the operating stack and delivers measurable results.
+      </p>
+    </div>
+
+    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {cases.map((c) => (
+        <article class={`reveal relative rounded-2xl p-[1px] bg-gradient-to-br ${c.accent}`}>
+          <div class="relative h-full rounded-2xl bg-alpha-deep/85 backdrop-blur p-6">
+            <div class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45">{c.tag}</div>
+            <h3 class="mt-3 text-xl font-semibold tracking-tight leading-snug">{c.title}</h3>
+            <p class="mt-3 text-sm text-white/60 leading-relaxed">{c.body}</p>
+            <ul class="mt-5 space-y-2">
+              {c.outcomes.map((o) => (
+                <li class="flex items-center gap-2.5 text-sm">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 12.5l5 5L20 6" stroke="url(#iconGrad2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                      <linearGradient id="iconGrad2" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#c4b5fd"/>
+                        <stop offset="100%" stop-color="#f093fb"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <span class="text-white/80">{o}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,129 @@
+---
+const fragmented = [
+  { code: 'CRM',      label: 'Customer database' },
+  { code: 'POL',      label: 'Policy admin' },
+  { code: 'SEPA',     label: 'SEPA collection' },
+  { code: 'DUN',      label: 'Dunning tool' },
+  { code: 'DOCS',     label: 'Document store' },
+  { code: 'eSIGN',    label: 'E-signature' },
+  { code: 'PORTAL',   label: 'Customer portal' },
+];
+
+const consolidated = [
+  ['CR', 'Customer 360'],
+  ['CM', 'Contracts & products'],
+  ['BM', 'SEPA · CAMT · dunning'],
+  ['DM', 'Docs · OCR · versioning'],
+  ['SM', 'eIDAS-AES signatures'],
+  ['EU', 'Customer self-service'],
+  ['CW', 'IDD-compliant advisory'],
+  ['CP', 'Commissions'],
+];
+---
+
+<section id="why" class="section">
+  <div class="absolute inset-0 -z-10 bg-grid opacity-30 mask-fade-bottom"></div>
+
+  <div class="container-wide">
+    <div class="max-w-2xl reveal">
+      <p class="section-eyebrow">From fragmentation to one clean core</p>
+      <h2 class="section-heading mt-3">
+        Six tools, six bills, <span class="gradient-text">six places</span> for the same customer.
+      </h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+        Insurance brokers and agencies operate stacks stitched together from CRM, policy admin, SEPA collection,
+        dunning, document storage, e-sign and portal vendors. The result is media breaks, compliance gaps and
+        rising integration cost. Alpha replaces those stacks with one configuration-driven platform.
+      </p>
+    </div>
+
+    <div class="mt-16 grid lg:grid-cols-[1fr_auto_1fr] gap-8 lg:gap-4 items-stretch">
+      {/* Before */}
+      <div class="reveal">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+          <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-rose-300/80">The fragmented stack</span>
+        </div>
+        <div class="relative rounded-2xl border border-rose-500/15 bg-rose-500/[0.025] p-6 min-h-[320px]">
+          <svg class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
+            <defs>
+              <pattern id="brokenLines" width="36" height="36" patternUnits="userSpaceOnUse">
+                <path d="M0 0 L36 36" stroke="rgba(244,63,94,0.18)" stroke-width="0.5" stroke-dasharray="3 4"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#brokenLines)"/>
+          </svg>
+          <div class="relative grid grid-cols-3 gap-3">
+            {fragmented.map((t, i) => (
+              <div
+                class={`glass rounded-xl px-3 py-3 text-center ${i % 2 === 0 ? 'rotate-[-1.5deg]' : 'rotate-[1.5deg]'}`}
+                style={`transform-origin: center; ${i === 6 ? 'grid-column: 1 / span 3;' : ''}`}
+              >
+                <div class="font-mono text-xs tracking-wider text-white/85">{t.code}</div>
+                <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">{t.label}</div>
+              </div>
+            ))}
+          </div>
+          <div class="mt-6 flex flex-wrap gap-2 text-[11px]">
+            {['media breaks', 'data silos', 'license sprawl', 'integration cost', 'audit gaps'].map((p) => (
+              <span class="px-2 py-1 rounded-md border border-rose-400/20 text-rose-200/70">— {p}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Arrow */}
+      <div class="hidden lg:flex items-center justify-center px-2">
+        <div class="relative w-24 h-24">
+          <div class="absolute inset-0 rounded-full bg-alpha-gradient blur-2xl opacity-50"></div>
+          <div class="absolute inset-0 grid place-items-center">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12h14M13 5l7 7-7 7" stroke="url(#arrG)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="arrG" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#667eea"/>
+                  <stop offset="100%" stop-color="#f093fb"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* After */}
+      <div class="reveal">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+          <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-200/80">Alpha · one clean core</span>
+        </div>
+        <div class="relative rounded-2xl p-[1px] bg-alpha-gradient overflow-hidden">
+          <div class="relative rounded-2xl bg-alpha-ink/95 p-6 min-h-[320px]">
+            <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-alpha-purple/30 blur-3xl"></div>
+            <div class="relative flex items-center gap-3 mb-5">
+              <span class="relative inline-block w-10 h-10 rounded-lg bg-alpha-gradient shadow-glow-violet">
+                <span class="absolute inset-0 grid place-items-center text-white font-bold">α</span>
+              </span>
+              <div>
+                <div class="font-semibold tracking-tight">Alpha Platform</div>
+                <div class="text-xs text-white/45 font-mono">modular monolith · clean core</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              {consolidated.map(([code, label]) => (
+                <div class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/5">
+                  <span class="font-mono text-[10px] font-semibold tracking-wider gradient-text-strong w-7 text-center">{code}</span>
+                  <span class="text-xs text-white/75">{label}</span>
+                </div>
+              ))}
+            </div>
+            <div class="mt-5 flex flex-wrap gap-2 text-[11px]">
+              {['clean core', 'configuration-driven', 'multi-tenant', 'field-level audit', 'azure germany'].map((p) => (
+                <span class="px-2 py-1 rounded-md border border-emerald-300/15 text-emerald-200/80">+ {p}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

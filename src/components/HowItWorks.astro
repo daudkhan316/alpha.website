@@ -1,0 +1,139 @@
+---
+const steps = [
+  {
+    n: '01',
+    title: 'Capture',
+    body: 'Leads, applications and partner data flow in via web forms, agents, REST/SOAP, BiPRO 420/430, GDV files or batch import.',
+    modules: ['LM', 'CR', 'HC', 'HB', 'HG', 'IM'],
+  },
+  {
+    n: '02',
+    title: 'Advise & Apply',
+    body: 'The Case Wizard guides the agent through an IDD-compliant advisory session, captures need analysis, and prepares a signed application.',
+    modules: ['CW', 'TE', 'CR', 'AM'],
+  },
+  {
+    n: '03',
+    title: 'Sign',
+    body: 'The customer signs digitally — eIDAS-AES — via email, SMS, phone or in person, through integrated providers like InSign.',
+    modules: ['SM', 'NS', 'DM'],
+  },
+  {
+    n: '04',
+    title: 'Convert',
+    body: 'A validated application is automatically converted into a contract, customer profile and billing account. No manual rekeying.',
+    modules: ['CW', 'CM', 'CR', 'BM'],
+  },
+  {
+    n: '05',
+    title: 'Bill & Reconcile',
+    body: 'Billing runs collect due payments via SEPA. PAIN.008 files go to the bank, CAMT files come back. Six-stage automatic matching settles balances. Multi-stage dunning if needed.',
+    modules: ['BM', 'WF', 'NS', 'JB'],
+  },
+  {
+    n: '06',
+    title: 'Engage',
+    body: 'Customers self-serve through a separate portal — passwordless OTP login, contracts, documents, claims, appointment booking. Notifications across email, SMS, Push, Teams, WhatsApp.',
+    modules: ['EU', 'EX', 'NS', 'TM', 'AS'],
+  },
+  {
+    n: '07',
+    title: 'Audit & Comply',
+    body: 'Every field change at every step is captured by Hibernate Envers — who, what, before, after, when. 7-year retention, ISO/SOC/GDPR/eIDAS-aligned.',
+    modules: ['envers', 'UM', 'RP'],
+  },
+  {
+    n: '08',
+    title: 'Adapt',
+    body: 'New products, partners, workflows, calculations and notifications are configured — not coded — through the Logic, Workflow, Notification, Template and Mapping modules.',
+    modules: ['LG', 'WF', 'NS', 'TE', 'EM'],
+  },
+];
+---
+
+<section id="how-it-works" class="section">
+  <div class="container-wide">
+    <div class="max-w-2xl reveal">
+      <p class="section-eyebrow">How it works</p>
+      <h2 class="section-heading mt-3">From first lead to <span class="gradient-text">audited contract.</span></h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+        One lifecycle. Eight orchestrated stages. Every transition driven by configurable workflows, every change recorded.
+      </p>
+    </div>
+
+    <div class="relative mt-20" data-timeline>
+      {/* Static line + animated progress */}
+      <div class="absolute left-7 md:left-[7.5rem] top-0 bottom-0 w-px bg-white/10" aria-hidden="true"></div>
+      <div
+        class="absolute left-7 md:left-[7.5rem] top-0 w-px origin-top transition-transform duration-100 ease-linear"
+        style="height: 100%; background: linear-gradient(to bottom, #667eea, #764ba2 40%, #f093fb 100%); transform: scaleY(var(--progress, 0));"
+        data-timeline-progress
+        aria-hidden="true"
+      ></div>
+      {/* Glow puck following scroll */}
+      <div
+        class="absolute left-7 md:left-[7.5rem] -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-alpha-pink shadow-glow-pink transition-all duration-100 ease-linear"
+        style="top: 0; transform: translate(-50%, calc(var(--puck, 0) * 100% - 50%));"
+        data-timeline-puck
+        aria-hidden="true"
+      ></div>
+
+      <ol class="space-y-14">
+        {steps.map((s, i) => (
+          <li class="relative grid md:grid-cols-[10rem_1fr] gap-6 md:gap-12 reveal" data-step={i}>
+            {/* Number column */}
+            <div class="flex md:flex-col items-center md:items-end md:text-right gap-3 md:gap-2">
+              <div class="relative z-10 grid place-items-center w-14 h-14 rounded-2xl border border-white/10 bg-alpha-deep">
+                <span class="font-mono text-xs tracking-wider text-white/55">{s.n}</span>
+              </div>
+              <div class="md:mt-2 hidden md:flex flex-wrap gap-1 justify-end">
+                {s.modules.map((m) => (
+                  <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/65">{m}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Content column */}
+            <div class="md:pt-1 pl-14 md:pl-0 -ml-14 md:ml-0">
+              <h3 class="text-2xl md:text-3xl font-semibold tracking-tight">
+                {s.title}
+              </h3>
+              <p class="mt-3 text-white/65 leading-relaxed max-w-2xl">
+                {s.body}
+              </p>
+              <div class="md:hidden mt-3 flex flex-wrap gap-1">
+                {s.modules.map((m) => (
+                  <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/65">{m}</span>
+                ))}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Drive the timeline progress + puck from section scroll position.
+  const root = document.querySelector<HTMLElement>('[data-timeline]');
+  const progress = document.querySelector<HTMLElement>('[data-timeline-progress]');
+  const puck = document.querySelector<HTMLElement>('[data-timeline-puck]');
+  if (root && progress && puck) {
+    const update = () => {
+      const r = root.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const total = r.height;
+      // Start when section top hits 60% of viewport, end when bottom hits 40%.
+      const start = vh * 0.6;
+      const end = -total + vh * 0.4;
+      const raw = (start - r.top) / (start - end);
+      const clamped = Math.max(0, Math.min(1, raw));
+      progress.style.setProperty('--progress', String(clamped));
+      puck.style.setProperty('--puck', String(clamped));
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+</script>
