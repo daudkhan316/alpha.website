@@ -15,7 +15,9 @@ const dictionaries = { en, de } as const;
 
 export type Locale = keyof typeof dictionaries;
 export const locales: Locale[] = ['en', 'de'];
-export const defaultLocale: Locale = 'en';
+// German is the default — Klaus is a German market product. English is
+// available via the EN/DE toggle in the nav.
+export const defaultLocale: Locale = 'de';
 export const STORAGE_KEY = 'alpha-locale';
 
 export function isLocale(v: string | null): v is Locale {

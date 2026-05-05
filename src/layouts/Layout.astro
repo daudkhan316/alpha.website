@@ -7,15 +7,15 @@ interface Props {
 }
 
 const {
-  title = 'Alpha Platform — Insurance distribution, end to end.',
-  description = 'Alpha is the modular insurance management platform for brokers, agencies, and distributors — customers, contracts, billing, signatures, documents, commissions and the customer portal in one audit-grade, multi-tenant system. Hosted in Microsoft Azure Germany.',
+  title = 'Alpha Platform — Versicherungsverteilung, durchgängig.',
+  description = 'Alpha ist die modulare Plattform für Versicherungsverwaltung für Makler, Agenturen und Vertriebe — Kunden, Verträge, Inkasso, Signaturen, Dokumente, Provisionen und Kundenportal in einem revisionssicheren, mandantenfähigen System. Gehostet bei Microsoft Azure Deutschland.',
 } = Astro.props;
 
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -24,8 +24,9 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     <meta name="color-scheme" content="dark light" />
 
     {/* No-flash theme + locale init: read saved choice or system preference, before paint.
-        Locale defaults to English; the German option is a stub (a partial dictionary
-        + runtime swap) intended for translator review, not production. */}
+        Locale default is German (Klaus is a German-market product). EN is
+        available via the EN/DE toggle in the nav. The DE dictionary is a
+        machine draft — needs native review before launch. */}
     <script is:inline>
       (function () {
         try {
@@ -38,12 +39,12 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         }
         try {
           var savedLocale = localStorage.getItem('alpha-locale');
-          var locale = (savedLocale === 'de' || savedLocale === 'en') ? savedLocale : 'en';
+          var locale = (savedLocale === 'de' || savedLocale === 'en') ? savedLocale : 'de';
           document.documentElement.setAttribute('data-locale', locale);
           document.documentElement.lang = locale;
         } catch (e) {
-          document.documentElement.setAttribute('data-locale', 'en');
-          document.documentElement.lang = 'en';
+          document.documentElement.setAttribute('data-locale', 'de');
+          document.documentElement.lang = 'de';
         }
       })();
     </script>
