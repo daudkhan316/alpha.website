@@ -1,13 +1,14 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import LocaleToggle from './LocaleToggle.astro';
 
 const links = [
-  { href: '#modules', label: 'Modules' },
-  { href: '#how-it-works', label: 'How it works' },
-  { href: '#capabilities', label: 'Capabilities' },
-  { href: '#ai', label: 'AI' },
-  { href: '#use-cases', label: 'Use cases' },
-  { href: '#architecture', label: 'Architecture' },
+  { href: '#modules',       label: 'Modules',      key: 'nav.modules' },
+  { href: '#how-it-works',  label: 'How it works', key: 'nav.howItWorks' },
+  { href: '#capabilities',  label: 'Capabilities', key: 'nav.capabilities' },
+  { href: '#ai',            label: 'AI',           key: 'nav.ai' },
+  { href: '#use-cases',     label: 'Use cases',    key: 'nav.useCases' },
+  { href: '#architecture',  label: 'Architecture', key: 'nav.architecture' },
 ];
 ---
 
@@ -45,20 +46,26 @@ const links = [
             href={l.href}
             class="px-3 py-1.5 rounded-full text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
           >
-            {l.label}
+            <span data-i18n={l.key}>{l.label}</span>
           </a>
         ))}
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
-        <a href="#cta" class="hidden lg:inline-flex text-sm text-white/70 hover:text-white px-3 py-1.5 transition-colors">Documentation</a>
+        <a href="#cta" class="hidden lg:inline-flex text-sm text-white/70 hover:text-white px-3 py-1.5 transition-colors">
+          <span data-i18n="nav.documentation">Documentation</span>
+        </a>
+        <LocaleToggle />
         <ThemeToggle />
-        <a href="#cta" class="hidden sm:inline-flex btn-primary text-sm py-2 px-4">Request demo</a>
+        <a href="#cta" class="hidden sm:inline-flex btn-primary text-sm py-2 px-4">
+          <span data-i18n="nav.requestDemo">Request demo</span>
+        </a>
 
         <button
           type="button"
           data-mobile-toggle
           aria-label="Open menu"
+          data-i18n-aria-label="nav.openMenu"
           aria-controls="mobile-menu"
           aria-expanded="false"
           class="lg:hidden relative inline-grid place-items-center w-9 h-9 rounded-full"
@@ -95,11 +102,12 @@ const links = [
     style="background: var(--bg); border-left: 1px solid var(--border-3);"
   >
     <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color: var(--border-2);">
-      <span class="font-semibold tracking-tight text-sm" style="color: var(--fg);">Menu</span>
+      <span class="font-semibold tracking-tight text-sm" style="color: var(--fg);" data-i18n="nav.menu">Menu</span>
       <button
         type="button"
         data-mobile-close
         aria-label="Close menu"
+        data-i18n-aria-label="nav.closeMenu"
         class="inline-grid place-items-center w-9 h-9 rounded-full"
         style="background: var(--surface-strong); border: 1px solid var(--border-3); color: var(--fg);"
       >
@@ -119,7 +127,7 @@ const links = [
               class="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-base font-medium transition-colors"
               style="color: var(--fg);"
             >
-              <span>{l.label}</span>
+              <span data-i18n={l.key}>{l.label}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true" class="opacity-40">
                 <path d="M9 6l6 6-6 6"/>
               </svg>
@@ -135,7 +143,7 @@ const links = [
           class="block px-4 py-3 rounded-xl text-sm transition-colors"
           style="color: var(--fg); opacity: 0.75;"
         >
-          Documentation →
+          <span data-i18n="nav.documentation">Documentation</span> →
         </a>
       </div>
     </nav>
@@ -146,7 +154,7 @@ const links = [
         data-mobile-link
         class="btn-primary w-full text-base"
       >
-        Request a tailored demo
+        <span data-i18n="hero.cta.demo">Request a tailored demo</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>

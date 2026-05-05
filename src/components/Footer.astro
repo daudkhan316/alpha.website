@@ -88,11 +88,11 @@ const cols = [
 
     <div class="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/40">
-        <span>© {new Date().getFullYear()} Alpha Platform. All rights reserved.</span>
-        <a href="/impressum" class="hover:text-white transition-colors">Impressum</a>
-        <a href="/datenschutz" class="hover:text-white transition-colors">Datenschutz</a>
+        <span data-i18n="footer.copyright">© {new Date().getFullYear()} Alpha Platform. All rights reserved.</span>
+        <a href="/impressum" class="hover:text-white transition-colors" data-i18n="footer.imprint">Impressum</a>
+        <a href="/datenschutz" class="hover:text-white transition-colors" data-i18n="footer.privacy">Datenschutz</a>
       </div>
-      <p class="text-xs text-white/40 font-mono">Region · Azure Germany West Central · Frankfurt</p>
+      <p class="text-xs text-white/40 font-mono" data-i18n="footer.region">Region · Azure Germany West Central · Frankfurt</p>
     </div>
   </div>
 </footer>

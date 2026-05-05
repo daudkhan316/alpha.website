@@ -23,7 +23,9 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     <meta name="theme-color" content="#f6f5ff" media="(prefers-color-scheme: light)" />
     <meta name="color-scheme" content="dark light" />
 
-    {/* No-flash theme init: read saved choice or system preference, before paint. */}
+    {/* No-flash theme + locale init: read saved choice or system preference, before paint.
+        Locale defaults to English; the German option is a stub (a partial dictionary
+        + runtime swap) intended for translator review, not production. */}
     <script is:inline>
       (function () {
         try {
@@ -33,6 +35,15 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
           document.documentElement.setAttribute('data-theme', theme);
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        try {
+          var savedLocale = localStorage.getItem('alpha-locale');
+          var locale = (savedLocale === 'de' || savedLocale === 'en') ? savedLocale : 'en';
+          document.documentElement.setAttribute('data-locale', locale);
+          document.documentElement.lang = locale;
+        } catch (e) {
+          document.documentElement.setAttribute('data-locale', 'en');
+          document.documentElement.lang = 'en';
         }
       })();
     </script>
@@ -68,7 +79,37 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     })} />
   </head>
   <body class="relative min-h-screen overflow-x-hidden">
+    {/* DE stub banner — visible only when the user has switched to German.
+        A blunt heads-up that copy is partially translated. */}
+    <div
+      data-locale-banner
+      role="status"
+      class="hidden fixed top-2 left-1/2 -translate-x-1/2 z-[70] px-4 py-1.5 rounded-full text-[11px] font-medium"
+      style="background: var(--surface-strong); border: 1px solid var(--border-3); color: var(--fg); backdrop-filter: blur(20px);"
+    >
+      <span data-i18n="locale.deBeta">Deutsche Übersetzung in Arbeit · einige Inhalte sind vorerst auf Englisch</span>
+    </div>
+
     <slot />
+
+    <script>
+      // Apply persisted locale on first load (after the DOM is fully ready)
+      // and keep the DE-stub banner in sync with the active locale.
+      import { applyLocale, readSavedLocale } from '../i18n/runtime';
+
+      const initialLocale = readSavedLocale();
+      applyLocale(initialLocale);
+
+      const banner = document.querySelector<HTMLElement>('[data-locale-banner]');
+      const syncBanner = (locale: string) => {
+        if (banner) banner.classList.toggle('hidden', locale !== 'de');
+      };
+      syncBanner(initialLocale);
+      window.addEventListener('alpha:locale-changed', (e: Event) => {
+        const ev = e as CustomEvent<{ locale: string }>;
+        syncBanner(ev.detail.locale);
+      });
+    </script>
 
     <script>
       // Lightweight scroll-reveal — no library, no jank.
@@ -87,7 +128,6 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => observer.observe(el));
       };
       scan();
-      // Re-scan after Astro page transitions if used.
       document.addEventListener('astro:page-load', scan);
     </script>
   </body>
