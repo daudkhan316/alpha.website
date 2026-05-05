@@ -23,9 +23,12 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
   <div class="container-wide">
     <div class="grid lg:grid-cols-[1.05fr_1fr] gap-14 items-end">
       <div class="reveal">
-        <p class="section-eyebrow">Architecture · Trust</p>
-        <h2 class="section-heading mt-3">Engineered for <span class="gradient-text">regulated insurance.</span></h2>
-        <p class="mt-5 text-lg text-white/65 leading-relaxed max-w-2xl">
+        <p class="section-eyebrow" data-i18n="arch.eyebrow">Architecture · Trust</p>
+        <h2 class="section-heading mt-3">
+          <span data-i18n="arch.heading.a">Engineered for</span>
+          <span class="gradient-text" data-i18n="arch.heading.b">regulated insurance.</span>
+        </h2>
+        <p class="mt-5 text-lg text-white/65 leading-relaxed max-w-2xl" data-i18n="arch.body">
           Alpha is a modular monolith — clean module boundaries, layered per module, metadata-driven UI,
           database-per-tenant multi-tenancy with optional dedicated compute, event-driven internally.
           Hosted exclusively in Microsoft Azure Germany.
@@ -42,13 +45,13 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
 
     {/* Pillars */}
     <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-      {pillars.map((p) => (
+      {pillars.map((p, i) => (
         <div class="reveal relative rounded-2xl glass p-6 overflow-hidden">
           <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-alpha-purple/20 blur-2xl"></div>
           <div class="relative">
-            <div class="font-display text-3xl font-semibold tracking-tight gradient-text-strong">{p.kpi}</div>
-            <div class="mt-1 text-xs text-white/50 uppercase tracking-[0.16em]">{p.label}</div>
-            <div class="mt-4 text-sm text-white/65 leading-relaxed">{p.body}</div>
+            <div class="font-display text-3xl font-semibold tracking-tight gradient-text-strong" data-i18n={`arch.pillar.${i}.kpi`}>{p.kpi}</div>
+            <div class="mt-1 text-xs text-white/50 uppercase tracking-[0.16em]" data-i18n={`arch.pillar.${i}.label`}>{p.label}</div>
+            <div class="mt-4 text-sm text-white/65 leading-relaxed" data-i18n={`arch.pillar.${i}.body`}>{p.body}</div>
           </div>
         </div>
       ))}
@@ -59,23 +62,30 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
       {/* Tech stack */}
       <div class="reveal glass-strong rounded-2xl p-6 lg:p-8">
         <div class="flex items-baseline justify-between">
-          <h3 class="text-xl font-semibold tracking-tight">Technology stack</h3>
-          <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">production</span>
+          <h3 class="text-xl font-semibold tracking-tight" data-i18n="arch.stack.title">Technology stack</h3>
+          <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40" data-i18n="arch.stack.production">production</span>
         </div>
         <div class="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-6">
-          {stack.map((s) => (
-            <div>
-              <div class="flex items-center gap-2 mb-3">
-                <span class="w-1.5 h-1.5 rounded-full bg-alpha-pink"></span>
-                <h4 class="text-sm font-mono uppercase tracking-[0.16em] text-white/55">{s.layer}</h4>
+          {stack.map((s) => {
+            const layerKey =
+              s.layer === 'Backend' ? 'arch.stack.backend' :
+              s.layer === 'Frontend' ? 'arch.stack.frontend' :
+              s.layer === 'Infrastructure' ? 'arch.stack.infra' :
+              'arch.stack.aiDocs';
+            return (
+              <div>
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="w-1.5 h-1.5 rounded-full bg-alpha-pink"></span>
+                  <h4 class="text-sm font-mono uppercase tracking-[0.16em] text-white/55" data-i18n={layerKey}>{s.layer}</h4>
+                </div>
+                <ul class="space-y-1.5">
+                  {s.items.map((i) => (
+                    <li class="text-sm text-white/80">— {i}</li>
+                  ))}
+                </ul>
               </div>
-              <ul class="space-y-1.5">
-                {s.items.map((i) => (
-                  <li class="text-sm text-white/80">— {i}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -83,16 +93,16 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
       <div class="reveal relative rounded-2xl p-[1px] bg-gradient-to-br from-violet-500/30 to-fuchsia-500/20">
         <div class="panel-dark-strong rounded-2xl p-6 lg:p-8 h-full flex flex-col">
           <div class="flex items-baseline justify-between">
-            <h3 class="text-xl font-semibold tracking-tight">Two deployment models</h3>
-            <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">isolation</span>
+            <h3 class="text-xl font-semibold tracking-tight" data-i18n="arch.deploy.title">Two deployment models</h3>
+            <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40" data-i18n="arch.deploy.isolation">isolation</span>
           </div>
 
           <div class="mt-6 flex-1 grid grid-rows-2 gap-4">
             {/* Shared compute */}
             <div class="rounded-xl border border-white/10 p-4">
-              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3">Shared compute · DB per tenant</div>
+              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3" data-i18n="arch.deploy.shared">Shared compute · DB per tenant</div>
               <div class="flex items-center gap-2">
-                <div class="flex-1 px-3 py-2.5 rounded-lg bg-alpha-gradient text-white text-xs font-medium text-center">Alpha runtime</div>
+                <div class="flex-1 px-3 py-2.5 rounded-lg bg-alpha-gradient text-white text-xs font-medium text-center" data-i18n="arch.deploy.runtime">Alpha runtime</div>
               </div>
               <div class="mt-2 grid grid-cols-4 gap-1.5">
                 {['T1', 'T2', 'T3', 'T4'].map((t) => (
@@ -103,7 +113,7 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
 
             {/* Dedicated */}
             <div class="rounded-xl border border-white/10 p-4">
-              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3">Dedicated · own runtime + own DB</div>
+              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3" data-i18n="arch.deploy.dedicated">Dedicated · own runtime + own DB</div>
               <div class="grid grid-cols-2 gap-2">
                 {['T-A', 'T-B'].map((t) => (
                   <div class="rounded-md bg-white/[0.03] border border-white/10 p-2">

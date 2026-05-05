@@ -27,33 +27,33 @@ const capabilities = [
     {/* Left: copy */}
     <div class="reveal">
       <div class="badge mb-6">
-        <span class="font-mono text-[10px]">CB · COGNITIVE BACKEND</span>
+        <span class="font-mono text-[10px]" data-i18n="ai.badge">CB · COGNITIVE BACKEND</span>
       </div>
       <h2 class="section-heading">
-        Ask in plain language. <br />
-        <span class="gradient-text">Get audited data.</span>
+        <span data-i18n="ai.heading.a">Ask in plain language.</span> <br />
+        <span class="gradient-text" data-i18n="ai.heading.b">Get audited data.</span>
       </h2>
-      <p class="mt-5 text-lg text-white/65 leading-relaxed max-w-lg">
+      <p class="mt-5 text-lg text-white/65 leading-relaxed max-w-lg" data-i18n="ai.body">
         The Cognitive Backend turns business questions into validated QL queries — grounded in your schema,
         gated by your permissions, traceable in your audit log.
       </p>
 
       <ul class="mt-10 space-y-5 max-w-lg">
-        {capabilities.map((c) => (
+        {capabilities.map((c, i) => (
           <li class="flex gap-3">
             <span class="mt-1 w-1.5 h-1.5 rounded-full bg-alpha-pink shadow-glow-pink shrink-0"></span>
             <div>
-              <div class="font-medium text-white">{c.title}</div>
-              <div class="text-sm text-white/60 mt-1 leading-relaxed">{c.body}</div>
+              <div class="font-medium text-white" data-i18n={`ai.cap.${i}.title`}>{c.title}</div>
+              <div class="text-sm text-white/60 mt-1 leading-relaxed" data-i18n={`ai.cap.${i}.body`}>{c.body}</div>
             </div>
           </li>
         ))}
       </ul>
 
       <div class="mt-10 flex items-center gap-3 text-xs text-white/40 font-mono uppercase tracking-wider">
-        <span>Powered by</span>
-        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70">Azure OpenAI · GPT-4o</span>
-        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70">Germany WC</span>
+        <span data-i18n="ai.poweredBy">Powered by</span>
+        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70" data-i18n="ai.gpt">Azure OpenAI · GPT-4o</span>
+        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70" data-i18n="ai.region">Germany WC</span>
       </div>
     </div>
 
@@ -61,7 +61,7 @@ const capabilities = [
     <div class="relative reveal min-w-0">
       {/* Plain-language gloss for non-technical readers — the JSON below
           is illustrative, but the value lives in the sentence above it. */}
-      <p class="relative text-sm text-white/70 max-w-md mb-5 leading-relaxed">
+      <p class="relative text-sm text-white/70 max-w-md mb-5 leading-relaxed" data-i18n="ai.gloss">
         A business user types a question in plain English or German.
         The platform writes the query, runs it against audited data,
         and returns the answer — respecting the same permissions and
@@ -76,7 +76,7 @@ const capabilities = [
             <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-300/80"></span>
           </div>
-          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40">cb · workbench</span>
+          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40" data-i18n="ai.terminal.title">cb · workbench</span>
           <span class="font-mono text-[10px] text-white/40">v3.5</span>
         </div>
 
@@ -84,7 +84,7 @@ const capabilities = [
         <div class="px-5 py-5 border-b border-white/5">
           <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/45 mb-2">
             <span class="w-1.5 h-1.5 rounded-full bg-alpha-violet shadow-glow-violet"></span>
-            you
+            <span data-i18n="ai.terminal.you">you</span>
           </div>
           <div class="text-white/95 text-sm sm:text-base leading-relaxed min-h-[3.5rem] break-words">
             <span data-ai-prompt></span><span class="inline-block w-[2px] h-[1.05em] align-[-2px] bg-alpha-pink animate-caret-blink ml-0.5"></span>
@@ -95,7 +95,7 @@ const capabilities = [
         <div class="px-5 py-5 border-b border-white/5">
           <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3">
             <span class="w-1.5 h-1.5 rounded-full bg-alpha-pink shadow-glow-pink"></span>
-            cognitive backend → ql
+            <span data-i18n="ai.terminal.cb">cognitive backend → ql</span>
           </div>
           <pre
             class="font-mono text-[10.5px] sm:text-xs leading-relaxed text-white/80 whitespace-pre overflow-x-auto min-h-[10.5rem]"
@@ -108,9 +108,9 @@ const capabilities = [
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/45">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-              result · 4 rows · 312 ms
+              <span data-i18n="ai.terminal.result">result · 4 rows · 312 ms</span>
             </div>
-            <span class="text-[10px] text-white/30 font-mono">audit · logged</span>
+            <span class="text-[10px] text-white/30 font-mono" data-i18n="ai.terminal.audit">audit · logged</span>
           </div>
           <div data-ai-result class="space-y-1.5 min-h-[10rem]"></div>
         </div>
@@ -126,7 +126,7 @@ const capabilities = [
     result: { label: string; value: string; bar: number }[];
   };
 
-  const demos: Demo[] = [
+  const demosEn: Demo[] = [
     {
       prompt: 'Show me total billed premium for Q1 broken down by product line.',
       ql: `{
@@ -184,6 +184,42 @@ const capabilities = [
     },
   ];
 
+  // German prompts + result labels (machine draft — needs translator pass).
+  // The QL JSON itself is in English because QL keys/operators are English in the real product.
+  const demosDe: Demo[] = [
+    {
+      prompt: 'Zeig mir die gesamte gebuchte Prämie für Q1, aufgeschlüsselt nach Produktlinie.',
+      ql: demosEn[0].ql,
+      result: [
+        { label: 'Kfz',         value: '€ 2.418.950', bar: 100 },
+        { label: 'Wohngebäude', value: '€ 1.734.220', bar: 72 },
+        { label: 'Kranken',     value: '€ 1.052.810', bar: 44 },
+        { label: 'Haftpflicht', value: '€   681.400', bar: 28 },
+      ],
+    },
+    {
+      prompt: 'Wie viele aktive Verträge hat Kunde Müller heute?',
+      ql: demosEn[1].ql,
+      result: [
+        { label: 'Müller, Anna · 80331 München', value: '4 Verträge', bar: 100 },
+      ],
+    },
+    {
+      prompt: 'Liste offene Rechnungen aus dem letzten Mahnlauf, älteste zuerst.',
+      ql: demosEn[2].ql,
+      result: [
+        { label: 'INV-2026-00831 · Schmidt GmbH · M3', value: '€ 1.240,00', bar: 100 },
+        { label: 'INV-2026-00714 · K. Weber · M2',     value: '€   612,50', bar: 56 },
+        { label: 'INV-2026-00692 · F. Bauer · M2',     value: '€   348,20', bar: 32 },
+        { label: 'INV-2026-00541 · M. Vogel · M1',     value: '€   210,00', bar: 20 },
+      ],
+    },
+  ];
+
+  const pickDemos = (): Demo[] =>
+    document.documentElement.getAttribute('data-locale') === 'de' ? demosDe : demosEn;
+  let demos = pickDemos();
+
   const promptEl = document.querySelector<HTMLElement>('[data-ai-prompt]');
   const qlEl = document.querySelector<HTMLElement>('[data-ai-ql]');
   const resEl = document.querySelector<HTMLElement>('[data-ai-result]');
@@ -221,8 +257,15 @@ const capabilities = [
       });
     }
 
+    // Re-select demo set when the locale changes mid-cycle.
+    window.addEventListener('alpha:locale-changed', () => {
+      demos = pickDemos();
+      demoIdx = 0;
+    });
+
     async function runDemo() {
-      // Reset
+      // Reset and re-pick the locale-correct demo set on each cycle.
+      demos = pickDemos();
       qlEl!.textContent = '';
       resEl!.innerHTML = '';
       const d = demos[demoIdx];

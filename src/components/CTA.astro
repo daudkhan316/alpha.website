@@ -21,29 +21,30 @@ const secondary = [
       <div class="relative rounded-[26px] bg-alpha-ink/95 px-8 sm:px-14 py-14 sm:py-20 text-center">
         <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[80%] h-64 bg-alpha-purple/30 blur-3xl rounded-full pointer-events-none"></div>
 
-        <p class="section-eyebrow">See Alpha in action</p>
+        <p class="section-eyebrow" data-i18n="cta.eyebrow">See Alpha in action</p>
         <h2 class="section-heading mt-3 max-w-3xl mx-auto text-balance">
-          One platform for the <span class="gradient-text">whole insurance business.</span>
+          <span data-i18n="cta.heading.a">One platform for the</span>
+          <span class="gradient-text" data-i18n="cta.heading.b">whole insurance business.</span>
         </h2>
-        <p class="mt-5 text-lg text-white/65 max-w-2xl mx-auto leading-relaxed">
+        <p class="mt-5 text-lg text-white/65 max-w-2xl mx-auto leading-relaxed" data-i18n="cta.body">
           Request a tailored demo. We'll show you the lifecycle that fits your business — from your first lead to your seven-year audit trail.
         </p>
 
         <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
           <a href="mailto:hello@alpha-platform.de" class="btn-primary text-base">
-            Request a tailored demo
+            <span data-i18n="cta.primary">Request a tailored demo</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
-          <a href="#architecture" class="btn-secondary text-base">View architecture</a>
+          <a href="#architecture" class="btn-secondary text-base" data-i18n="cta.viewArch">View architecture</a>
         </div>
 
         <ul class="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          {secondary.map((s) => (
+          {secondary.map((s, i) => (
             <li>
               <a class="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-1.5" href={s.href}>
-                {s.label}
+                <span data-i18n={`cta.secondary.${i}`}>{s.label}</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
@@ -52,7 +53,7 @@ const secondary = [
           ))}
         </ul>
 
-        <div class="mt-12 pt-8 border-t border-white/10 text-xs text-white/45">
+        <div class="mt-12 pt-8 border-t border-white/10 text-xs text-white/45" data-i18n="cta.reassurance">
           Hosted exclusively in Microsoft Azure Germany (Frankfurt).
           ISO 27001 · ISO 27701 · SOC 2 · GDPR · eIDAS · IDD.
         </div>

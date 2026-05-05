@@ -124,9 +124,12 @@ const Icon = (name: string) => {
 
   <div class="container-wide">
     <div class="max-w-2xl reveal">
-      <p class="section-eyebrow">Capabilities</p>
-      <h2 class="section-heading mt-3">What Alpha actually <span class="gradient-text">does for you.</span></h2>
-      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+      <p class="section-eyebrow" data-i18n="cap.eyebrow">Capabilities</p>
+      <h2 class="section-heading mt-3">
+        <span data-i18n="cap.heading.a">What Alpha actually</span>
+        <span class="gradient-text" data-i18n="cap.heading.b">does for you.</span>
+      </h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed" data-i18n="cap.body">
         Fifteen capabilities, one platform. Each one delivered by composable modules — no add-ons, no plugins, no shadow IT.
       </p>
     </div>
@@ -158,8 +161,8 @@ const Icon = (name: string) => {
               ))}
             </div>
           </div>
-          <h3 class="mt-5 text-lg font-semibold tracking-tight">{f.title}</h3>
-          <p class="mt-2.5 text-sm text-white/60 leading-relaxed">{f.body}</p>
+          <h3 class="mt-5 text-lg font-semibold tracking-tight" data-i18n={`cap.${f.icon}.title`}>{f.title}</h3>
+          <p class="mt-2.5 text-sm text-white/60 leading-relaxed" data-i18n={`cap.${f.icon}.body`}>{f.body}</p>
 
           {f.feature && (
             <div class="absolute -bottom-px left-6 right-6 h-px bg-gradient-to-r from-transparent via-fuchsia-400/40 to-transparent"></div>

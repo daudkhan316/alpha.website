@@ -1,5 +1,13 @@
 ---
 import { moduleGroups } from '../data/modules';
+
+const specialized: { codes: string; key: string; label: string }[] = [
+  { codes: 'HM/HE', key: 'modules.spec.HM_HE', label: 'hub & endpoint adapters' },
+  { codes: 'DC/DL', key: 'modules.spec.DC_DL', label: 'data catalog · data lake' },
+  { codes: 'OM/OS', key: 'modules.spec.OM_OS', label: 'object model · object service' },
+  { codes: 'PD/PM', key: 'modules.spec.PD_PM', label: 'person master data' },
+  { codes: 'YE',    key: 'modules.spec.YE',    label: 'year-end accounting' },
+];
 ---
 
 <section id="modules" class="section">
@@ -8,9 +16,12 @@ import { moduleGroups } from '../data/modules';
 
   <div class="container-wide">
     <div class="max-w-3xl reveal">
-      <p class="section-eyebrow">Architecture · 64+ purpose-built modules</p>
-      <h2 class="section-heading mt-3">A periodic table for <span class="gradient-text">insurance distribution.</span></h2>
-      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+      <p class="section-eyebrow" data-i18n="modules.eyebrow">Architecture · 64+ purpose-built modules</p>
+      <h2 class="section-heading mt-3">
+        <span data-i18n="modules.heading.a">A periodic table for</span>
+        <span class="gradient-text" data-i18n="modules.heading.b">insurance distribution.</span>
+      </h2>
+      <p class="mt-5 text-lg text-white/65 leading-relaxed" data-i18n="modules.body">
         Alpha is a modular monolith. Each business module owns a single domain — customers, contracts, billing.
         Each framework module provides reusable infrastructure — workflow, notifications, documents, integration.
         New partners and products are onboarded through configuration of these modules, not new code.
@@ -23,23 +34,17 @@ import { moduleGroups } from '../data/modules';
           <div class="rounded-2xl bg-alpha-deep/80 backdrop-blur p-5 h-full">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <h3 class="text-lg font-semibold tracking-tight">{g.title}</h3>
-                <p class="text-xs text-white/50 mt-1.5">{g.tagline}</p>
+                <h3 class="text-lg font-semibold tracking-tight" data-i18n={`modules.group.${g.id}.title`}>{g.title}</h3>
+                <p class="text-xs text-white/50 mt-1.5" data-i18n={`modules.group.${g.id}.tagline`}>{g.tagline}</p>
               </div>
               <span class="font-mono text-[10px] px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/55 tracking-wider whitespace-nowrap">
-                {g.modules.length} modules
+                {g.modules.length} <span data-i18n="nav.modules">modules</span>
               </span>
             </div>
 
             <div class="mt-5 grid grid-cols-4 gap-2">
               {g.modules.map((m) => (
-                <div
-                  class="module-tile group/tile"
-                  data-code={m.code}
-                  data-name={m.name}
-                  data-desc={m.desc}
-                  title={`${m.code} — ${m.name}: ${m.desc}`}
-                >
+                <div class="module-tile group/tile" data-code={m.code}>
                   <div class="flex items-start justify-between">
                     <span class="font-mono text-base font-semibold tracking-tight gradient-text-strong leading-none">
                       {m.code}
@@ -50,7 +55,7 @@ import { moduleGroups } from '../data/modules';
                       </svg>
                     </span>
                   </div>
-                  <span class="text-[10px] text-white/55 leading-tight">{m.name}</span>
+                  <span class="text-[10px] text-white/55 leading-tight" data-i18n={`modules.m.${m.code}.name`}>{m.name}</span>
                 </div>
               ))}
             </div>
@@ -60,17 +65,11 @@ import { moduleGroups } from '../data/modules';
     </div>
 
     <div class="mt-10 reveal flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/55">
-      <span class="font-mono uppercase text-xs tracking-[0.18em] text-white/40">+ specialized modules</span>
-      {[
-        ['HM/HE', 'hub & endpoint adapters'],
-        ['DC/DL', 'data catalog · data lake'],
-        ['OM/OS', 'object model · object service'],
-        ['PD/PM', 'person master data'],
-        ['YE',    'year-end accounting'],
-      ].map(([code, label]) => (
+      <span class="font-mono uppercase text-xs tracking-[0.18em] text-white/40" data-i18n="modules.specialized">+ specialized modules</span>
+      {specialized.map((s) => (
         <span class="inline-flex items-center gap-2">
-          <span class="font-mono text-xs gradient-text-strong">{code}</span>
-          <span class="text-white/55 text-xs">{label}</span>
+          <span class="font-mono text-xs gradient-text-strong">{s.codes}</span>
+          <span class="text-white/55 text-xs" data-i18n={s.key}>{s.label}</span>
         </span>
       ))}
     </div>

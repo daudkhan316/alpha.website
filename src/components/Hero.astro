@@ -28,12 +28,15 @@ const stats = [
       </div>
 
       <h1 class="text-balance text-[clamp(2.4rem,6vw,5rem)] font-semibold leading-[1.04] tracking-tight">
-        <span class="block">One platform.</span>
-        <span class="block">Every step of</span>
-        <span class="block">the <span class="gradient-text-strong">insurance business.</span></span>
+        <span class="block" data-i18n="hero.headline.l1">One platform.</span>
+        <span class="block" data-i18n="hero.headline.l2">Every step of</span>
+        <span class="block">
+          <span data-i18n="hero.headline.l3a">the</span>
+          <span class="gradient-text-strong" data-i18n="hero.headline.l3b">insurance business.</span>
+        </span>
       </h1>
 
-      <p class="mt-7 max-w-xl text-lg text-white/65 leading-relaxed">
+      <p class="mt-7 max-w-xl text-lg text-white/65 leading-relaxed" data-i18n="hero.subtext">
         Alpha is the modular insurance management platform for brokers, agencies, and distributors —
         customers, contracts, billing, signatures, documents, commissions and the customer portal in
         one audit-grade, multi-tenant system.
@@ -67,13 +70,13 @@ const stats = [
             <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-300/80"></span>
           </div>
-          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40">alpha · live system flow</span>
+          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40" data-i18n="hero.live">alpha · live system flow</span>
         </div>
         <SystemFlow />
         <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-white/45 uppercase tracking-wider">
-          <span>Inputs · 7 channels</span>
-          <span class="hidden sm:inline">Workflow · WF · NS · TE · LG</span>
-          <span>Outputs · audit-trailed</span>
+          <span data-i18n="hero.inputs">Inputs · 7 channels</span>
+          <span class="hidden sm:inline" data-i18n="hero.workflow">Workflow · WF · NS · TE · LG</span>
+          <span data-i18n="hero.outputs">Outputs · audit-trailed</span>
         </div>
       </div>
     </div>
@@ -82,10 +85,10 @@ const stats = [
   {/* Stats strip */}
   <div class="container-wide mt-20 lg:mt-28 reveal">
     <div class="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5 glass rounded-2xl">
-      {stats.map((s) => (
+      {stats.map((s, i) => (
         <div class="px-6 py-6 text-center">
-          <div class="text-3xl md:text-4xl font-semibold tracking-tight text-white">{s.v}</div>
-          <div class="text-xs uppercase tracking-[0.18em] text-white/45 mt-1.5">{s.l}</div>
+          <div class="text-3xl md:text-4xl font-semibold tracking-tight text-white" data-i18n={`hero.stats.${i}.v`}>{s.v}</div>
+          <div class="text-xs uppercase tracking-[0.18em] text-white/45 mt-1.5" data-i18n={`hero.stats.${i}.l`}>{s.l}</div>
         </div>
       ))}
     </div>

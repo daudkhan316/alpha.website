@@ -1,24 +1,27 @@
 ---
 const fragmented = [
-  { code: 'CRM',      label: 'Customer database' },
-  { code: 'POL',      label: 'Policy admin' },
-  { code: 'SEPA',     label: 'SEPA collection' },
-  { code: 'DUN',      label: 'Dunning tool' },
-  { code: 'DOCS',     label: 'Document store' },
-  { code: 'eSIGN',    label: 'E-signature' },
-  { code: 'PORTAL',   label: 'Customer portal' },
+  { code: 'CRM',    key: 'ps.tool.crm',    label: 'Customer database' },
+  { code: 'POL',    key: 'ps.tool.pol',    label: 'Policy admin' },
+  { code: 'SEPA',   key: 'ps.tool.sepa',   label: 'SEPA collection' },
+  { code: 'DUN',    key: 'ps.tool.dun',    label: 'Dunning tool' },
+  { code: 'DOCS',   key: 'ps.tool.docs',   label: 'Document store' },
+  { code: 'eSIGN',  key: 'ps.tool.esign',  label: 'E-signature' },
+  { code: 'PORTAL', key: 'ps.tool.portal', label: 'Customer portal' },
 ];
 
-const consolidated = [
-  ['CR', 'Customer 360'],
-  ['CM', 'Contracts & products'],
-  ['BM', 'SEPA · CAMT · dunning'],
-  ['DM', 'Docs · OCR · versioning'],
-  ['SM', 'eIDAS-AES signatures'],
-  ['EU', 'Customer self-service'],
-  ['CW', 'IDD-compliant advisory'],
-  ['CP', 'Commissions'],
+const consolidated: { code: string; key: string; label: string }[] = [
+  { code: 'CR', key: 'ps.cons.cr', label: 'Customer 360' },
+  { code: 'CM', key: 'ps.cons.cm', label: 'Contracts & products' },
+  { code: 'BM', key: 'ps.cons.bm', label: 'SEPA · CAMT · dunning' },
+  { code: 'DM', key: 'ps.cons.dm', label: 'Docs · OCR · versioning' },
+  { code: 'SM', key: 'ps.cons.sm', label: 'eIDAS-AES signatures' },
+  { code: 'EU', key: 'ps.cons.eu', label: 'Customer self-service' },
+  { code: 'CW', key: 'ps.cons.cw', label: 'IDD-compliant advisory' },
+  { code: 'CP', key: 'ps.cons.cp', label: 'Commissions' },
 ];
+
+const minusPills = ['media breaks', 'data silos', 'license sprawl', 'integration cost', 'audit gaps'];
+const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field-level audit', 'azure germany'];
 ---
 
 <section id="why" class="section">
@@ -26,11 +29,13 @@ const consolidated = [
 
   <div class="container-wide">
     <div class="max-w-2xl reveal">
-      <p class="section-eyebrow">From fragmentation to one clean core</p>
+      <p class="section-eyebrow" data-i18n="ps.eyebrow">From fragmentation to one clean core</p>
       <h2 class="section-heading mt-3">
-        Six tools, six bills, <span class="gradient-text">six places</span> for the same customer.
+        <span data-i18n="ps.heading.a">Six tools, six bills,</span>
+        <span class="gradient-text" data-i18n="ps.heading.b">six places</span>
+        <span data-i18n="ps.heading.c">for the same customer.</span>
       </h2>
-      <p class="mt-5 text-lg text-white/65 leading-relaxed">
+      <p class="mt-5 text-lg text-white/65 leading-relaxed" data-i18n="ps.body">
         Insurance brokers and agencies operate stacks stitched together from CRM, policy admin, SEPA collection,
         dunning, document storage, e-sign and portal vendors. The result is media breaks, compliance gaps and
         rising integration cost. Alpha replaces those stacks with one configuration-driven platform.
@@ -42,7 +47,7 @@ const consolidated = [
       <div class="reveal">
         <div class="flex items-center gap-2 mb-4">
           <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
-          <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-rose-300/80">The fragmented stack</span>
+          <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-rose-300/80" data-i18n="ps.before.label">The fragmented stack</span>
         </div>
         <div class="relative rounded-2xl border border-rose-500/15 bg-rose-500/[0.025] p-6 min-h-[320px]">
           <svg class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
@@ -60,13 +65,15 @@ const consolidated = [
                 style={`transform-origin: center; ${i === 6 ? 'grid-column: 1 / span 3;' : ''}`}
               >
                 <div class="font-mono text-xs tracking-wider text-white/85">{t.code}</div>
-                <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider">{t.label}</div>
+                <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider" data-i18n={t.key}>{t.label}</div>
               </div>
             ))}
           </div>
           <div class="mt-6 flex flex-wrap gap-2 text-[11px]">
-            {['media breaks', 'data silos', 'license sprawl', 'integration cost', 'audit gaps'].map((p) => (
-              <span class="px-2 py-1 rounded-md border border-rose-400/20 text-rose-200/70">— {p}</span>
+            {minusPills.map((p, i) => (
+              <span class="px-2 py-1 rounded-md border border-rose-400/20 text-rose-200/70">
+                — <span data-i18n={`ps.minus.${i}`}>{p}</span>
+              </span>
             ))}
           </div>
         </div>
@@ -94,7 +101,7 @@ const consolidated = [
       <div class="reveal">
         <div class="flex items-center gap-2 mb-4">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-          <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-200/80">Alpha · one clean core</span>
+          <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-200/80" data-i18n="ps.after.label">Alpha · one clean core</span>
         </div>
         <div class="relative rounded-2xl p-[1px] bg-alpha-gradient overflow-hidden">
           <div class="relative rounded-2xl bg-alpha-ink/95 p-6 min-h-[320px]">
@@ -104,21 +111,23 @@ const consolidated = [
                 <span class="absolute inset-0 grid place-items-center text-white font-bold">α</span>
               </span>
               <div>
-                <div class="font-semibold tracking-tight">Alpha Platform</div>
-                <div class="text-xs text-white/45 font-mono">modular monolith · clean core</div>
+                <div class="font-semibold tracking-tight" data-i18n="ps.after.title">Alpha Platform</div>
+                <div class="text-xs text-white/45 font-mono" data-i18n="ps.after.tagline">modular monolith · clean core</div>
               </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
-              {consolidated.map(([code, label]) => (
+              {consolidated.map((c) => (
                 <div class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/5">
-                  <span class="font-mono text-[10px] font-semibold tracking-wider gradient-text-strong w-7 text-center">{code}</span>
-                  <span class="text-xs text-white/75">{label}</span>
+                  <span class="font-mono text-[10px] font-semibold tracking-wider gradient-text-strong w-7 text-center">{c.code}</span>
+                  <span class="text-xs text-white/75" data-i18n={c.key}>{c.label}</span>
                 </div>
               ))}
             </div>
             <div class="mt-5 flex flex-wrap gap-2 text-[11px]">
-              {['clean core', 'configuration-driven', 'multi-tenant', 'field-level audit', 'azure germany'].map((p) => (
-                <span class="px-2 py-1 rounded-md border border-emerald-300/15 text-emerald-200/80">+ {p}</span>
+              {plusPills.map((p, i) => (
+                <span class="px-2 py-1 rounded-md border border-emerald-300/15 text-emerald-200/80">
+                  + <span data-i18n={`ps.plus.${i}`}>{p}</span>
+                </span>
               ))}
             </div>
           </div>

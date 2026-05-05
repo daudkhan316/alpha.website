@@ -1,32 +1,33 @@
 ---
-// Only entries with real, distinct anchors. The earlier 4-column footer had
-// duplicate links (e.g. four "Solutions" entries all pointing at #use-cases,
-// four "Trust" entries all pointing at #architecture) and dead anchors to
-// /docs / /partner-program that don't exist.
+// Each link carries a stable i18n key in addition to the EN fallback label so
+// the runtime can swap text without re-fetching the page.
 const cols = [
   {
+    titleKey: 'footer.col.platform',
     title: 'Platform',
     links: [
-      { label: 'Modules',           href: '#modules' },
-      { label: 'How it works',      href: '#how-it-works' },
-      { label: 'Capabilities',      href: '#capabilities' },
-      { label: 'Cognitive Backend', href: '#ai' },
+      { key: 'nav.modules',      label: 'Modules',           href: '#modules' },
+      { key: 'nav.howItWorks',   label: 'How it works',      href: '#how-it-works' },
+      { key: 'nav.capabilities', label: 'Capabilities',      href: '#capabilities' },
+      { key: 'modules.m.CB.name', label: 'Cognitive Backend', href: '#ai' },
     ],
   },
   {
+    titleKey: 'footer.col.trust',
     title: 'Trust',
     links: [
-      { label: 'Architecture', href: '#architecture' },
-      { label: 'Use cases',    href: '#use-cases' },
-      { label: 'Impressum',    href: '/impressum' },
-      { label: 'Datenschutz',  href: '/datenschutz' },
+      { key: 'nav.architecture', label: 'Architecture', href: '#architecture' },
+      { key: 'nav.useCases',     label: 'Use cases',    href: '#use-cases' },
+      { key: 'footer.imprint',   label: 'Impressum',    href: '/impressum' },
+      { key: 'footer.privacy',   label: 'Datenschutz',  href: '/datenschutz' },
     ],
   },
   {
+    titleKey: 'footer.col.contact',
     title: 'Contact',
     links: [
-      { label: 'Request demo',    href: '#cta' },
-      { label: 'hello@alpha-platform.de', href: 'mailto:hello@alpha-platform.de' },
+      { key: 'nav.requestDemo', label: 'Request demo',              href: '#cta' },
+      { key: null,              label: 'hello@alpha-platform.de',   href: 'mailto:hello@alpha-platform.de' },
     ],
   },
 ];
@@ -56,7 +57,7 @@ const cols = [
           <span class="w-px h-6 bg-white/15"></span>
           <span class="font-semibold tracking-tight text-base text-white">Alpha Platform</span>
         </a>
-        <p class="text-sm text-white/55 max-w-sm leading-relaxed">
+        <p class="text-sm text-white/55 max-w-sm leading-relaxed" data-i18n="footer.tagline">
           Enterprise insurance distribution platform from Klaus.
           Modular monolith. Configuration-driven. Hosted in Microsoft Azure Germany (Frankfurt).
         </p>
@@ -69,10 +70,14 @@ const cols = [
 
       {cols.map((col) => (
         <div>
-          <h4 class="text-xs uppercase tracking-[0.16em] text-white/40 mb-4">{col.title}</h4>
+          <h4 class="text-xs uppercase tracking-[0.16em] text-white/40 mb-4" data-i18n={col.titleKey}>{col.title}</h4>
           <ul class="space-y-2.5">
             {col.links.map((l) => (
-              <li><a href={l.href} class="text-sm text-white/70 hover:text-white transition-colors">{l.label}</a></li>
+              <li>
+                <a href={l.href} class="text-sm text-white/70 hover:text-white transition-colors">
+                  {l.key ? <span data-i18n={l.key}>{l.label}</span> : l.label}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
