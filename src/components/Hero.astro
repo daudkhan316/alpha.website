@@ -20,14 +20,17 @@ const stats = [
   <div class="blob blob-purple w-[520px] h-[520px] top-1/4 right-[-160px] animate-float-slower"></div>
   <div class="blob blob-pink w-[440px] h-[440px] bottom-[-160px] left-1/3 animate-float-slow"></div>
 
-  <div class="container-wide grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
+  <div class="container-wide grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center min-w-0">
     {/* Copy */}
-    <div class="reveal">
+    <div class="reveal min-w-0">
       <div class="inline-flex items-center gap-2 badge badge-dot mb-6">
         <span class="ml-2" data-i18n="hero.eyebrow">Insurance Management Platform · Hosted in Germany</span>
       </div>
 
-      <h1 class="text-balance text-[clamp(2.4rem,6vw,5rem)] font-semibold leading-[1.04] tracking-tight">
+      <h1
+        class="text-balance text-[clamp(2.4rem,6vw,5rem)] font-semibold leading-[1.04] tracking-tight"
+        style="overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; min-width: 0;"
+      >
         <span class="block" data-i18n="hero.headline.l1">One platform.</span>
         <span class="block" data-i18n="hero.headline.l2">Every step of</span>
         <span class="block">

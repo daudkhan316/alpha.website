@@ -255,13 +255,26 @@
   .section-heading {
     @apply text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05];
     color: var(--fg-strong);
+    /* German compound nouns ("Versicherungsverteilung") can blow past the
+       column width at h2 size; enable hyphenation + safe break. */
+    overflow-wrap: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    min-width: 0;
   }
 
   .module-tile {
     @apply relative flex flex-col justify-between gap-2 rounded-xl p-3 transition-all duration-300 cursor-default;
     min-height: 5.75rem;
+    min-width: 0;          /* let the grid cell shrink so long DE compounds wrap inside */
     background: var(--surface);
     border: 1px solid var(--border-2);
+  }
+  .module-tile :where(span:last-child) {
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
   .module-tile:hover {
     background: var(--surface-elev);
