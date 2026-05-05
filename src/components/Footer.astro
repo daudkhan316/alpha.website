@@ -1,39 +1,32 @@
 ---
+// Only entries with real, distinct anchors. The earlier 4-column footer had
+// duplicate links (e.g. four "Solutions" entries all pointing at #use-cases,
+// four "Trust" entries all pointing at #architecture) and dead anchors to
+// /docs / /partner-program that don't exist.
 const cols = [
   {
     title: 'Platform',
     links: [
-      { label: 'Modules', href: '#modules' },
-      { label: 'How it works', href: '#how-it-works' },
-      { label: 'Capabilities', href: '#capabilities' },
+      { label: 'Modules',           href: '#modules' },
+      { label: 'How it works',      href: '#how-it-works' },
+      { label: 'Capabilities',      href: '#capabilities' },
       { label: 'Cognitive Backend', href: '#ai' },
-    ],
-  },
-  {
-    title: 'Solutions',
-    links: [
-      { label: 'For brokers', href: '#use-cases' },
-      { label: 'For agencies', href: '#use-cases' },
-      { label: 'For insurers', href: '#use-cases' },
-      { label: 'Customer portal', href: '#use-cases' },
     ],
   },
   {
     title: 'Trust',
     links: [
       { label: 'Architecture', href: '#architecture' },
-      { label: 'Security & compliance', href: '#architecture' },
-      { label: 'Deployment models', href: '#architecture' },
-      { label: 'Data residency', href: '#architecture' },
+      { label: 'Use cases',    href: '#use-cases' },
+      { label: 'Impressum',    href: '/impressum' },
+      { label: 'Datenschutz',  href: '/datenschutz' },
     ],
   },
   {
-    title: 'Company',
+    title: 'Contact',
     links: [
-      { label: 'Request demo', href: '#cta' },
-      { label: 'Talk to architect', href: '#cta' },
-      { label: 'Documentation', href: '#cta' },
-      { label: 'Partner program', href: '#cta' },
+      { label: 'Request demo',    href: '#cta' },
+      { label: 'hello@alpha-platform.de', href: 'mailto:hello@alpha-platform.de' },
     ],
   },
 ];
@@ -41,7 +34,7 @@ const cols = [
 
 <footer class="relative pt-24 pb-10 border-t border-white/5">
   <div class="container-wide">
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-10">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-10">
       <div class="col-span-2">
         <a href="/" class="inline-flex items-center gap-3 mb-5" aria-label="Klaus — Alpha Platform home">
           <img

@@ -99,7 +99,7 @@ export const moduleGroups: ModuleGroup[] = [
       { code: 'EU', name: 'End User', desc: 'Customer portal, OTP login.' },
       { code: 'EX', name: 'External Gateway', desc: 'Customer portal API gateway.' },
       { code: 'IG', name: 'Integration Gateway', desc: 'Machine-to-machine auth.' },
-      { code: 'au', name: 'Authentication Core', desc: 'OAuth 2.0 / JWT validation.' },
+      { code: 'auth', name: 'Authentication Core', desc: 'OAuth 2.0 / JWT validation.' },
     ],
   },
   {
