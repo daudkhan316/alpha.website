@@ -807,6 +807,115 @@
   }
 }
 
+/* Atmospheric 3D orbs — shaded spheres scattered down the page for a
+   minor dimensional accent. Distinct from .blob (flat blurred clouds):
+   each orb has a top-left specular highlight, a body gradient with
+   falloff, and an inner rim shadow opposite the highlight, plus a
+   soft cast glow below — so the eye reads them as discrete spheres
+   rather than fog. Quiet on purpose; restraint is the point.
+
+   Layer:  position:absolute, inset:0, z-index:-10 — sits above the
+   body's painted background but behind every content layer. Body
+   height grows with content, so orbs placed at top:NNvh land at
+   absolute scroll positions and pass under the user as they scroll.
+   The existing per-section .blob atmosphere is unaffected. */
+.atmosphere-3d {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  overflow: clip;
+}
+
+.orb-3d {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  /* Reduced from 4px → 2px so the highlight and rim remain crisp
+     enough to read as "sphere" rather than "soft cloud". The
+     existing .blob class still owns the cloud language; orbs are
+     deliberately sharper to hold the 3D illusion. */
+  filter: blur(2px);
+  background:
+    /* Sharper specular: smaller hot spot, brighter peak. */
+    radial-gradient(circle at 30% 22%,
+      var(--orb-highlight, rgba(255, 255, 255, 0.70)) 0%,
+      transparent 24%),
+    /* Body with slightly compressed falloff so the edge holds. */
+    radial-gradient(circle at 50% 52%,
+      var(--orb-body, rgba(118, 75, 162, 0.72)) 0%,
+      var(--orb-body-edge, rgba(118, 75, 162, 0.04)) 66%,
+      transparent 96%);
+  box-shadow:
+    /* Deeper rim shadow opposite the highlight — the single most
+       important cue that this is a sphere lit from upper-left. */
+    inset -12px -16px 34px -4px var(--orb-rim, rgba(18, 12, 50, 0.58)),
+    /* Sliver of ambient bounce on the highlight side. */
+    inset   7px  10px 22px -10px rgba(255, 255, 255, 0.14),
+    /* Cast glow under — pulled tighter so it reads as "floating
+       above the page" rather than diffuse atmosphere. */
+    0 36px 64px -22px var(--orb-cast, rgba(118, 75, 162, 0.55));
+  animation: orb-drift 18s ease-in-out infinite;
+  will-change: transform;
+}
+.orb-3d:nth-child(2n) { animation-duration: 24s; animation-delay: -6s; }
+.orb-3d:nth-child(3n) { animation-duration: 30s; animation-delay: -12s; }
+
+@keyframes orb-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(8px, -14px, 0); }
+}
+
+/* Dark-theme palette — saturated body, deep rim, soft glow. */
+.orb-3d.orb-violet {
+  --orb-highlight: rgba(225, 230, 255, 0.72);
+  --orb-body:      rgba(102, 126, 234, 0.78);
+  --orb-body-edge: rgba(102, 126, 234, 0.05);
+  --orb-rim:       rgba(14, 10, 50, 0.62);
+  --orb-cast:      rgba(102, 126, 234, 0.42);
+}
+.orb-3d.orb-purple {
+  --orb-highlight: rgba(236, 212, 255, 0.72);
+  --orb-body:      rgba(118, 75, 162, 0.78);
+  --orb-body-edge: rgba(118, 75, 162, 0.05);
+  --orb-rim:       rgba(24, 8, 46, 0.62);
+  --orb-cast:      rgba(118, 75, 162, 0.44);
+}
+.orb-3d.orb-pink {
+  --orb-highlight: rgba(255, 228, 250, 0.72);
+  --orb-body:      rgba(240, 147, 251, 0.70);
+  --orb-body-edge: rgba(240, 147, 251, 0.05);
+  --orb-rim:       rgba(54, 14, 56, 0.50);
+  --orb-cast:      rgba(240, 147, 251, 0.40);
+}
+
+/* Light-theme palette — bright canvas. Body is still muted vs. dark
+   to avoid punching through the page, but pushed up enough to read
+   clearly. The highlight goes near-white (the canvas already supplies
+   ambient brightness) and the rim is darker than the canvas so the
+   sphere shape holds. */
+[data-theme='light'] .orb-3d.orb-violet {
+  --orb-highlight: rgba(255, 255, 255, 0.85);
+  --orb-body:      rgba(102, 126, 234, 0.46);
+  --orb-body-edge: rgba(102, 126, 234, 0.04);
+  --orb-rim:       rgba(28, 22, 80, 0.32);
+  --orb-cast:      rgba(102, 126, 234, 0.28);
+}
+[data-theme='light'] .orb-3d.orb-purple {
+  --orb-highlight: rgba(255, 255, 255, 0.85);
+  --orb-body:      rgba(118, 75, 162, 0.42);
+  --orb-body-edge: rgba(118, 75, 162, 0.04);
+  --orb-rim:       rgba(34, 16, 64, 0.32);
+  --orb-cast:      rgba(118, 75, 162, 0.28);
+}
+[data-theme='light'] .orb-3d.orb-pink {
+  --orb-highlight: rgba(255, 255, 255, 0.85);
+  --orb-body:      rgba(240, 147, 251, 0.40);
+  --orb-body-edge: rgba(240, 147, 251, 0.04);
+  --orb-rim:       rgba(60, 22, 70, 0.26);
+  --orb-cast:      rgba(240, 147, 251, 0.26);
+}
+
 /* Floating ambient blobs — fills swap with theme.
    --pY is written from the global scroll listener so blobs drift with
    scroll on top of their idle float keyframes. The individual `translate`
@@ -1109,6 +1218,7 @@
    Functional motion (reveal entrance, hover) stays but is shortened. */
 @media (prefers-reduced-motion: reduce) {
   .blob,
+  .orb-3d,
   .flow-particle,
   .flow-scan,
   .flow-node-pulse,
