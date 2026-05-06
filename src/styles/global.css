@@ -1068,7 +1068,11 @@
 .flow-scan {
   stroke-dasharray: 4 236;   /* tiny dash, big gap → looks like a single dot drifting */
   animation: flow-scan 6s linear infinite;
+  /* Default to paused — only run while the scroll-energy runtime in
+     SystemFlow.astro has marked the container .is-flowing. */
+  animation-play-state: paused;
 }
+[data-flow].is-flowing .flow-scan { animation-play-state: running; }
 
 /* SystemFlow: input/output node "arrival pulse".
    The pulse is timed to overlap with when a particle reaches the node.
@@ -1082,7 +1086,12 @@
   transform-origin: center;
   transform-box: fill-box;
   animation: node-pulse 2.8s linear infinite;
+  /* Same pause-by-default as .flow-scan — node pulses only run while
+     the diagram is actively flowing (user is scrolling). At rest the
+     node rectangles sit static. */
+  animation-play-state: paused;
 }
+[data-flow].is-flowing .flow-node-pulse { animation-play-state: running; }
 
 /* Respect users who prefer reduced motion — kill long-running ambient loops.
    Functional motion (reveal entrance, hover) stays but is shortened. */
