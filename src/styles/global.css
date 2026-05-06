@@ -792,6 +792,26 @@
 .blob-purple { background: var(--blob-purple); }
 .blob-pink   { background: var(--blob-pink); }
 
+/* AISection thinking dots — short pulse cycle painted after the QL
+   types out and before the result rows stream in. Three dots offset
+   by 120ms each give the classic "computing" rhythm without needing
+   any text or i18n. The animation runs continuously while the dots
+   are on screen (only ~600ms in practice), so the cost is bounded. */
+.ai-think-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(240, 147, 251, 0.65);
+  animation: ai-think-pulse 1s var(--ease-soft) infinite;
+}
+.ai-think-dot:nth-child(2) { animation-delay: 120ms; }
+.ai-think-dot:nth-child(3) { animation-delay: 240ms; }
+@keyframes ai-think-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.35); }
+}
+
 /* HowItWorks — bind step state to puck position.
    The script in HowItWorks.astro adds .is-active to whichever step the
    puck is currently nearest. CSS does the rest: the number circle ticks
@@ -1029,6 +1049,9 @@
   .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; transition: none !important; }
   .ps-arrow { stroke-dashoffset: 0 !important; transition: none !important; }
   .ps-after.is-visible .ps-alpha-mark { animation: none !important; }
+  /* AISection thinking dots: keep them visible (they're informational)
+     but pin them to a static dim state instead of pulsing. */
+  .ai-think-dot { animation: none !important; opacity: 0.6 !important; transform: none !important; }
   /* HowItWorks: the puck and progress still update (they're indicators,
      not decorative motion), but skip the active-step tick + tag
      reveal. Tags pinned visible so reduced-motion users see all module

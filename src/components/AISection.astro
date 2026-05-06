@@ -253,12 +253,39 @@ const capabilities = [
     let demoIdx = 0;
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-    async function typeInto(el: HTMLElement, text: string, delay: number) {
-      el.textContent = '';
-      for (let i = 0; i < text.length; i++) {
-        el.textContent += text[i];
-        await sleep(delay);
-      }
+    // rAF-paced typewriter. The previous setTimeout-per-char loop kept
+    // queuing callbacks while the tab was backgrounded — when the tab
+    // returned, all the pending sleeps resolved in quick succession and
+    // the typewriter dumped multiple characters per frame. rAF callbacks
+    // don't fire while the tab is hidden, so there's no buildup. The
+    // catch-up cap (`if t - lastT > 200`) handles the small staleness
+    // when rAF first resumes after un-hide: snap forward instead of
+    // burning through accumulated delay budget.
+    function typeInto(el: HTMLElement, text: string, delay: number): Promise<void> {
+      return new Promise((resolve) => {
+        el.textContent = '';
+        let i = 0;
+        let lastT = 0;
+        const tick = (t: number) => {
+          if (!lastT) lastT = t;
+          if (t - lastT > 200) lastT = t - delay;
+          while (t - lastT >= delay && i < text.length) {
+            el.textContent += text[i];
+            i++;
+            lastT += delay;
+          }
+          if (i < text.length) {
+            requestAnimationFrame(tick);
+          } else {
+            resolve();
+          }
+        };
+        requestAnimationFrame(tick);
+      });
+    }
+
+    function showThinking() {
+      resEl!.innerHTML = '<div class="flex items-center gap-1.5 py-2"><span class="ai-think-dot"></span><span class="ai-think-dot"></span><span class="ai-think-dot"></span></div>';
     }
 
     function paintResult(rows: Demo['result']) {
@@ -300,8 +327,14 @@ const capabilities = [
       await sleep(420);
       // Type QL
       await typeInto(qlEl!, d.ql, 6);
-      await sleep(260);
-      // Paint result
+      // Show thinking dots before results stream in — gives the demo a
+      // "system is computing" beat instead of jumping QL → answer in
+      // one frame. 600ms is long enough to read but short enough to not
+      // feel laggy on the third or fourth loop.
+      await sleep(140);
+      showThinking();
+      await sleep(600);
+      // Paint result (clears the thinking dots)
       paintResult(d.result);
       await sleep(5400);
       demoIdx = (demoIdx + 1) % demos.length;
