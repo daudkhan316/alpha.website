@@ -19,11 +19,20 @@ const capabilities = [
 ];
 ---
 
-<section id="ai" class="section">
+{/* Override .section's `overflow-x: clip` — clip creates a clipping
+    containing block that breaks `position: sticky` on descendants in
+    Chromium. Body already has `overflow-x: hidden` at the page level,
+    so dropping the section-level clip can't push horizontal scroll. */}
+<section id="ai" class="section !overflow-x-visible">
   <div class="absolute inset-0 -z-10 bg-grid opacity-25 mask-fade-bottom"></div>
   <div class="blob blob-pink w-[520px] h-[520px] top-1/4 -left-40 opacity-50"></div>
 
-  <div class="container-wide grid lg:grid-cols-[1fr_1.1fr] gap-14 items-center min-w-0">
+  {/* `lg:items-start` instead of items-center so the sticky right panel
+      has room to stick (a centered grid item has no extra height inside
+      the row to stick within). The grid row's height is set by the
+      taller column — the spaced-out capability list below — and the
+      sticky inside the right column scrolls within that. */}
+  <div class="container-wide grid lg:grid-cols-[1fr_1.1fr] gap-14 lg:items-start min-w-0">
     {/* Left: copy */}
     <div class="reveal">
       <div class="badge mb-6">
@@ -38,9 +47,21 @@ const capabilities = [
         gated by your permissions, traceable in your audit log.
       </p>
 
-      <ul class="mt-10 space-y-5 max-w-lg">
+      {/* Capability list. On lg+ each capability is spaced ~28vh apart so
+          one at a time fills the central viewport band, while the right-
+          side terminal panel stays sticky throughout. As the user
+          scrolls, the IntersectionObserver in Layout.astro marks
+          whichever step crosses the central band as `.is-focused` — that
+          one brightens, the others dim. Apple's product pages use this
+          pattern: scroll = navigate features, visual stays anchored.
+
+          On mobile (no lg), the spacing collapses back to the original
+          tight rhythm (space-y-5) and the sticky behavior turns off via
+          the lg: prefix on the wrapper below — so phone visitors don't
+          have to scroll through dead space to read four bullets. */}
+      <ul class="mt-10 space-y-5 lg:space-y-[28vh] max-w-lg" data-cap-list>
         {capabilities.map((c, i) => (
-          <li class="flex gap-3">
+          <li class="ai-cap-step flex gap-3" data-cap-step={i}>
             <span class="mt-1 w-1.5 h-1.5 rounded-full bg-alpha-pink shadow-glow-pink shrink-0"></span>
             <div>
               <div class="font-medium text-white" data-i18n={`ai.cap.${i}.title`}>{c.title}</div>
@@ -50,15 +71,20 @@ const capabilities = [
         ))}
       </ul>
 
-      <div class="mt-10 flex items-center gap-3 text-xs text-white/40 font-mono uppercase tracking-wider">
+      <div class="mt-10 lg:mt-[20vh] flex items-center gap-3 text-xs text-white/40 font-mono uppercase tracking-wider">
         <span data-i18n="ai.poweredBy">Powered by</span>
         <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70" data-i18n="ai.gpt">Azure OpenAI · GPT-4o</span>
         <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/70" data-i18n="ai.region">Germany WC</span>
       </div>
     </div>
 
-    {/* Right: demo */}
-    <div class="relative reveal min-w-0">
+    {/* Right: demo. The inner wrapper goes sticky on lg+ — `top-28`
+        clears the fixed nav. The terminal stays parked centered-ish in
+        the viewport for the whole length of the spaced-out left column
+        below, so the demo keeps "running" while the user reads each
+        capability in turn. On smaller viewports the sticky drops off
+        and the panel sits in normal flow under the text, as before. */}
+    <div class="relative reveal min-w-0 lg:sticky lg:top-28 lg:self-start">
       {/* Plain-language gloss for non-technical readers — the JSON below
           is illustrative, but the value lives in the sentence above it. */}
       <p class="relative text-sm text-white/70 max-w-md mb-5 leading-relaxed" data-i18n="ai.gloss">

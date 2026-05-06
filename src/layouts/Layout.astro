@@ -79,7 +79,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     })} />
   </head>
-  <body class="relative min-h-screen overflow-x-hidden">
+  <body class="relative min-h-screen overflow-x-clip">
     {/* DE stub banner — visible only when the user has switched to German.
         A blunt heads-up that copy is partially translated. */}
     <div
@@ -381,6 +381,36 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       };
       wireCounts();
       document.addEventListener('astro:page-load', wireCounts);
+
+      // AI capability focus stepper. The AI section's left column lays
+      // out four capabilities ~28vh apart on lg+, while the right-side
+      // terminal panel stays sticky. As the user scrolls, whichever
+      // capability is currently in the central viewport band gets
+      // .is-focused — that one brightens, the others dim. Apple's
+      // product pages do this exact pattern: scroll = navigate
+      // features, visual stays anchored.
+      //
+      // rootMargin shrinks the observation root to a 30%-tall band in
+      // the vertical middle of the viewport. With 28vh between steps,
+      // exactly one capability sits in that band at a time, so the
+      // observer cleanly hands focus from one to the next as the user
+      // scrolls. We don't unobserve — the observer keeps running so
+      // focus tracks scroll position both forward and backward.
+      const focusObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const list = entry.target.closest('[data-cap-list]');
+            if (!list) continue;
+            list.querySelectorAll('[data-cap-step]').forEach((el) => el.classList.remove('is-focused'));
+            entry.target.classList.add('is-focused');
+          }
+        }
+      }, { threshold: 0, rootMargin: '-35% 0px -35% 0px' });
+      const wireCapSteps = () => {
+        document.querySelectorAll('[data-cap-step]').forEach((el) => focusObserver.observe(el));
+      };
+      wireCapSteps();
+      document.addEventListener('astro:page-load', wireCapSteps);
 
       // Section-seam activation. The .section-seam hairlines between page
       // sections (in index.astro) get marked .is-active the first time
