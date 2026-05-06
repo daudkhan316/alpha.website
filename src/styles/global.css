@@ -256,6 +256,27 @@
       0 0 32px -4px rgba(240, 147, 251, 0.45);
   }
   .btn-primary:active { transform: translateY(0); transition-duration: var(--t-press); }
+
+  /* CTA magnetic button — when [data-magnet] is set, the runtime in
+     CTA.astro writes --mag-x / --mag-y on pointermove inside an 80px
+     halo. Hover and active states compose with the magnet offset
+     instead of replacing it. While .is-pulling is set (cursor in halo),
+     the transform transition is killed so the button tracks the cursor
+     without lag; on halo exit the class is removed and the base
+     .btn-primary transition handles the snapback at --t-micro. */
+  .btn-primary[data-magnet] {
+    transform: translate(var(--mag-x, 0px), var(--mag-y, 0px));
+  }
+  .btn-primary[data-magnet]:hover {
+    transform: translate(var(--mag-x, 0px), calc(var(--mag-y, 0px) - 1px));
+  }
+  .btn-primary[data-magnet]:active {
+    transform: translate(var(--mag-x, 0px), 0px);
+  }
+  .btn-primary[data-magnet].is-pulling {
+    transition: box-shadow var(--t-micro) var(--ease-soft),
+                background-position var(--t-medium) var(--ease-soft);
+  }
   /* Children with .btn-arrow micro-translate on hover for "this goes somewhere" cue. */
   .btn-primary .btn-arrow,
   .btn-secondary .btn-arrow {
