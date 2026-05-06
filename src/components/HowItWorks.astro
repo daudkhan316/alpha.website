@@ -85,8 +85,11 @@ const steps = [
         {steps.map((s, i) => (
           <li class="relative grid md:grid-cols-[10rem_1fr] gap-6 md:gap-12 reveal" data-step={i}>
             {/* Number column — `.step-num` so the script below can scale +
-                glow it when this step is the puck's active lane. */}
-            <div class="flex md:flex-col items-center md:items-end md:text-right gap-3 md:gap-2">
+                glow it when this step is the puck's active lane. The
+                `.step-num-col` wrapper class also lets hovering this
+                column reveal that step's module tags (independent of
+                the puck-driven active state) — see global.css. */}
+            <div class="step-num-col flex md:flex-col items-center md:items-end md:text-right gap-3 md:gap-2">
               <div class="step-num relative z-10 grid place-items-center w-14 h-14 rounded-2xl border border-white/10 bg-alpha-deep">
                 <span class="step-num-text font-mono text-xs tracking-wider text-white/55">{s.n}</span>
               </div>

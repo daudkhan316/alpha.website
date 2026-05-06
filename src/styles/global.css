@@ -893,7 +893,8 @@
   transition: opacity var(--t-medium) var(--ease-soft),
               transform var(--t-medium) var(--ease-soft);
 }
-[data-step].is-active .step-tag {
+[data-step].is-active .step-tag,
+.step-num-col:hover .step-tag {
   opacity: 1;
   transform: translateX(0);
   transition-delay: calc(var(--tag-i, 0) * 50ms);
@@ -915,15 +916,22 @@
       gives one short scale + glow pulse to read as "ignition". */
 .ps-tile {
   opacity: 0;
-  transform: rotate(var(--enter-r, 0deg)) translateY(14px);
+  transform: rotate(var(--rest-r, 0deg)) translateY(-40px);
   transform-origin: center;
-  transition: opacity var(--t-medium) var(--ease-soft),
-              transform var(--t-medium) var(--ease-spring);
-  transition-delay: var(--tile-delay, 0ms);
+}
+@keyframes ps-tile-brick-fall {
+  0%   { transform: rotate(var(--rest-r, 0deg)) translateY(-40px); opacity: 0; }
+  40%  { opacity: 1; }
+  85%  { transform: rotate(var(--rest-r, 0deg)) translateY(3px); opacity: 1; }
+  100% { transform: rotate(var(--rest-r, 0deg)) translateY(0); opacity: 1; }
 }
 .reveal.is-visible .ps-tile {
-  opacity: 1;
-  transform: rotate(var(--rest-r, 0deg)) translateY(0);
+  /* ease-in-cubic for gravity acceleration; the 85% keyframe gives
+     the brick a 3px thud past landing before settling. forwards keeps
+     the final state pinned so opacity/transform don't snap back to
+     the rule above's defaults. */
+  animation: ps-tile-brick-fall 500ms cubic-bezier(0.5, 0.05, 0.7, 0.2) forwards;
+  animation-delay: var(--tile-delay, 0ms);
 }
 
 .ps-arrow {
@@ -1101,8 +1109,8 @@
   .flow-line { stroke-dashoffset: 0 !important; transition: none !important; }
   /* ProblemSolution: collapse the choreography to a single fade — keep
      the structural information (resting tile rotation, arrow visible)
-     but skip the wobble, draw, and ignite. */
-  .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; transition: none !important; }
+     but skip the brick fall, arrow draw, and ignite. */
+  .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; animation: none !important; }
   .ps-arrow { stroke-dashoffset: 0 !important; transition: none !important; }
   .ps-after.is-visible .ps-alpha-mark { animation: none !important; }
   /* Architecture tier pulses are decorative — kill them. KPI count-up
