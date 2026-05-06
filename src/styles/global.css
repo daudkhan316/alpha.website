@@ -805,6 +805,26 @@
 }
 .reveal.is-visible .uc-check { stroke-dashoffset: 0; }
 
+/* Architecture deployment-tier pulse — fires once when the deployment
+   diagram .reveals. Shared T1..T4 all pulse on the same beat (one
+   runtime, all tenants ride along); dedicated T-A and T-B pulse with
+   a gap between them (own runtime, own DB). One-shot only — the
+   motion is the model, not ambient atmosphere. */
+@keyframes arch-tier-pulse {
+  0%   { box-shadow: none;                                            border-color: rgba(255, 255, 255, 0.10); }
+  50%  { box-shadow: 0 0 18px -4px rgba(240, 147, 251, 0.55);          border-color: rgba(240, 147, 251, 0.45); }
+  100% { box-shadow: none;                                            border-color: rgba(255, 255, 255, 0.10); }
+}
+.reveal.is-visible .arch-tier-shared {
+  animation: arch-tier-pulse var(--t-long) var(--ease-soft) 800ms 1;
+}
+.reveal.is-visible .arch-tier-d-0 {
+  animation: arch-tier-pulse var(--t-long) var(--ease-soft) 1700ms 1;
+}
+.reveal.is-visible .arch-tier-d-1 {
+  animation: arch-tier-pulse var(--t-long) var(--ease-soft) 2200ms 1;
+}
+
 /* AISection thinking dots — short pulse cycle painted after the QL
    types out and before the result rows stream in. Three dots offset
    by 120ms each give the classic "computing" rhythm without needing
@@ -1062,6 +1082,12 @@
   .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; transition: none !important; }
   .ps-arrow { stroke-dashoffset: 0 !important; transition: none !important; }
   .ps-after.is-visible .ps-alpha-mark { animation: none !important; }
+  /* Architecture tier pulses are decorative — kill them. KPI count-up
+     handled separately in Layout.astro's animateCount (already snaps
+     to final value when reduceMotion is true). */
+  .reveal.is-visible .arch-tier-shared,
+  .reveal.is-visible .arch-tier-d-0,
+  .reveal.is-visible .arch-tier-d-1 { animation: none !important; }
   /* UseCases checkmarks: keep them visible (they're informational —
      "what you get from this use case"). Skip the stroke draw. */
   .uc-check { stroke-dashoffset: 0 !important; transition: none !important; }
