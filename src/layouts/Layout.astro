@@ -368,6 +368,32 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       wireCounts();
       document.addEventListener('astro:page-load', wireCounts);
 
+      // Section-seam activation. The .section-seam hairlines between page
+      // sections (in index.astro) get marked .is-active the first time
+      // they enter the viewport — that fades in a brighter overlay
+      // gradient + runs a one-shot sweeping-dot animation across the
+      // seam, giving each section transition a small "stitch" moment
+      // instead of a hard cut. Reusing the existing reveal observer would
+      // be tempting, but its `rootMargin` is tuned for content blocks
+      // (40px shy of bottom). Seams want to fire a touch earlier — once
+      // the user is clearly approaching the boundary, not once it has
+      // fully entered the viewport.
+      const seamObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-active');
+            // Once activated, never re-trigger — re-running the sweep
+            // every time the user scrolls back up would feel busy.
+            seamObserver.unobserve(entry.target);
+          }
+        }
+      }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+      const wireSeams = () => {
+        document.querySelectorAll('.section-seam:not(.is-active)').forEach((el) => seamObserver.observe(el));
+      };
+      wireSeams();
+      document.addEventListener('astro:page-load', wireSeams);
+
       // Scroll-velocity-driven flow energy.
       // Writes a 0..1 `--flow-energy` to every [data-flow] container based
       // on how fast the user is currently scrolling, with exponential decay

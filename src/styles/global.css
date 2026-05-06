@@ -601,16 +601,67 @@
   :root[data-theme='light'] .show-on-dark  { display: none !important; }
 
   /* Soft seam between sections — barely-there gradient hairline that
-     suggests one continuous canvas instead of stacked boxes. */
+     suggests one continuous canvas instead of stacked boxes.
+     Three layers, each a separate visual job:
+       (a) base gradient on the element       — ambient at rest
+       (b) ::after brighter overlay           — fades in once in view
+       (c) ::before sweeping dot              — runs once on first entry
+     Pre-baked opacities into the gradient stops so the element itself
+     can be opacity:1, leaving the ::before pseudo's opacity free for
+     its own animation (otherwise the dot would be dimmed by parent
+     opacity composition). */
   .section-seam {
+    position: relative;
     height: 1px;
     background: linear-gradient(90deg,
       transparent 0%,
-      rgba(102, 126, 234, 0.22) 30%,
-      rgba(240, 147, 251, 0.28) 50%,
-      rgba(102, 126, 234, 0.22) 70%,
+      rgba(102, 126, 234, 0.12) 30%,
+      rgba(240, 147, 251, 0.16) 50%,
+      rgba(102, 126, 234, 0.12) 70%,
       transparent 100%);
-    opacity: 0.55;
+    /* `overflow: visible` is the default but make it explicit — the
+       dot pseudo-element below extends 7px above/below the 1px seam. */
+    overflow: visible;
+  }
+  .section-seam::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(102, 126, 234, 0.30) 30%,
+      rgba(240, 147, 251, 0.42) 50%,
+      rgba(102, 126, 234, 0.30) 70%,
+      transparent 100%);
+    opacity: 0;
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .section-seam.is-active::after { opacity: 1; }
+  .section-seam::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(240, 147, 251, 0.95) 0%,
+      rgba(118, 75, 162, 0.4) 50%,
+      transparent 75%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .section-seam.is-active::before {
+    animation: seam-sweep 1400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes seam-sweep {
+    0%   { left: 0;    opacity: 0; }
+    15%  { left: 0;    opacity: 1; }
+    85%  { left: 100%; opacity: 1; }
+    100% { left: 100%; opacity: 0; }
   }
 }
 
@@ -766,6 +817,10 @@
      also bails on reduced-motion, but pinning here protects against
      stale --flow-energy values left over from a prior preference state. */
   [data-flow] { --flow-energy: 0 !important; }
+  /* Section seam: keep the brighter overlay (it's static once visible)
+     but kill the sweeping dot. The dot is decorative; the brightening
+     still does the structural job of cueing a transition. */
+  .section-seam.is-active::before { animation: none !important; opacity: 0 !important; }
   :root .reveal { transition-duration: 0.3s; }
   .reveal.is-visible .pulse-once { animation: none !important; }
   .reveal.is-visible .gradient-text-sweep { animation: none !important; }
