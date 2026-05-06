@@ -792,6 +792,19 @@
 .blob-purple { background: var(--blob-purple); }
 .blob-pink   { background: var(--blob-pink); }
 
+/* UseCases checkmark draw — each outcome's check strokes itself in
+   once the card is .is-visible. Delay = inherited --reveal-delay (per
+   card from [data-stagger]) + 400ms baseline (after the card's own
+   fade) + 80ms per outcome. Reads as "you get this, then this, then
+   this" rather than a static checklist. */
+.uc-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-medium) var(--ease-soft);
+  transition-delay: calc(var(--reveal-delay, 0ms) + 400ms + var(--check-i, 0) * 80ms);
+}
+.reveal.is-visible .uc-check { stroke-dashoffset: 0; }
+
 /* AISection thinking dots — short pulse cycle painted after the QL
    types out and before the result rows stream in. Three dots offset
    by 120ms each give the classic "computing" rhythm without needing
@@ -1049,6 +1062,9 @@
   .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; transition: none !important; }
   .ps-arrow { stroke-dashoffset: 0 !important; transition: none !important; }
   .ps-after.is-visible .ps-alpha-mark { animation: none !important; }
+  /* UseCases checkmarks: keep them visible (they're informational —
+     "what you get from this use case"). Skip the stroke draw. */
+  .uc-check { stroke-dashoffset: 0 !important; transition: none !important; }
   /* AISection thinking dots: keep them visible (they're informational)
      but pin them to a static dim state instead of pulsing. */
   .ai-think-dot { animation: none !important; opacity: 0.6 !important; transform: none !important; }

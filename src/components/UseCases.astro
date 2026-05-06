@@ -62,16 +62,21 @@ const cases = [
 
     <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-5" data-stagger data-stagger-step="70">
       {cases.map((c, i) => (
-        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${c.accent} transition-transform duration-500 hover:-translate-y-0.5`}>
+        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${c.accent} transition-transform duration-[var(--t-short)] ease-[var(--ease-soft)] hover:-translate-y-0.5`}>
           <div class="spotlight relative h-full rounded-2xl bg-alpha-deep/85 backdrop-blur p-6">
             <div class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45" data-i18n={`use.c.${i}.tag`}>{c.tag}</div>
             <h3 class="mt-3 text-xl font-semibold tracking-tight leading-snug" data-i18n={`use.c.${i}.title`}>{c.title}</h3>
             <p class="mt-3 text-sm text-white/60 leading-relaxed" data-i18n={`use.c.${i}.body`}>{c.body}</p>
+            {/* `--check-i` per outcome combines with the inherited
+                `--reveal-delay` (set by [data-stagger] on each card) so
+                checkmark strokes draw in left-to-right per-card AND
+                staggered across cards. CSS in global.css resolves the
+                final delay via calc. */}
             <ul class="mt-5 space-y-2">
               {c.outcomes.map((o, j) => (
-                <li class="flex items-center gap-2.5 text-sm">
+                <li class="flex items-center gap-2.5 text-sm" style={`--check-i:${j}`}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M4 12.5l5 5L20 6" stroke="url(#iconGrad2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="uc-check" d="M4 12.5l5 5L20 6" pathLength="1" stroke="url(#iconGrad2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <defs>
                       <linearGradient id="iconGrad2" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0%" stop-color="#c4b5fd"/>
