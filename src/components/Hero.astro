@@ -27,8 +27,12 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
   <div class="blob blob-pink   w-[440px] h-[440px] bottom-[-160px] left-1/3 animate-float-slow" data-parallax="0.22"></div>
 
   <div class="container-wide grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center min-w-0">
-    {/* Copy */}
-    <div class="min-w-0">
+    {/* Copy — `data-hero-scrub="text"` opts this column into the GSAP
+        ScrollTrigger scene at the bottom of the file. Foreground layer:
+        lifts faster than the panel as the user scrolls, opening parallax
+        depth between the headline and the system-flow visual. Reveals on
+        children still play normally — nested transforms compose. */}
+    <div class="min-w-0" data-hero-scrub="text">
       <div class="reveal inline-flex items-center gap-2 badge badge-dot mb-6">
         <span class="ml-2" data-i18n="hero.eyebrow">Insurance Management Platform · Hosted in Germany</span>
       </div>
@@ -77,13 +81,15 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
       </div>
     </div>
 
-    {/* Visual — pointer-tilt the system panel for a subtle 3D lift.
-        Reveal and tilt have to live on different elements: both animate
-        `transform`, and the reveal's would override tilt's at end-state.
-        Outer wrapper owns the entrance; the panel itself owns the
-        cursor-following 3D rotation. The soft glow stays untilted —
-        keeps the bloom anchored while the panel moves. */}
-    <div class="relative reveal" data-reveal="scale" style="--reveal-delay: 200ms;">
+    {/* Visual — three nested transforms, deliberately on three different
+        elements so they don't fight for the `transform` property:
+          1. data-hero-scrub="panel"  → scroll-driven camera settle (GSAP)
+          2. .reveal[data-reveal=scale] → one-shot entrance on first paint
+          3. .tilt                     → cursor-following 3D rotation
+        The soft glow sits inside (1)/(2) but outside (3) so the bloom stays
+        anchored while only the panel itself rotates with the cursor. */}
+    <div class="relative" data-hero-scrub="panel">
+      <div class="reveal" data-reveal="scale" style="--reveal-delay: 200ms;">
       <div class="absolute -inset-10 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[40px]"></div>
       <div class="panel-dark-strong tilt relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
         <div class="flex items-center justify-between mb-5">
@@ -100,6 +106,7 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
           <span class="hidden sm:inline" data-i18n="hero.workflow">Workflow · WF · NS · TE · LG</span>
           <span data-i18n="hero.outputs">Outputs · audit-trailed</span>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -127,3 +134,78 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
     </div>
   </div>
 </section>
+
+<script>
+  // Hero scroll-scrubbed scene. The page-wide IntersectionObserver covers
+  // entrance reveals; this adds the camera-style depth that separates a
+  // static hero from an Apple-style product page — as the user scrolls,
+  // the system-flow panel settles back/up like a dolly move and the
+  // headline/CTAs lift slightly faster, opening parallax depth between
+  // the foreground copy and the background visual.
+  //
+  // Why GSAP ScrollTrigger and not the existing data-parallax runtime:
+  // data-parallax centers each element around viewport center, which is
+  // wrong for a hero that lives at the top of the page. We need a scrub
+  // pinned to the hero's own bounding box (top→bottom-leaves-viewport).
+  //
+  // Why three different elements own the panel transform stack:
+  //   .panel-stage (this scrub) / .reveal (entrance) / .tilt (cursor 3D)
+  // CSS transforms cascade through the DOM, so each effect can own its
+  // own element without the others snapping at end-state.
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const wireHeroScene = () => {
+    const hero = document.querySelector<HTMLElement>('#hero');
+    if (!hero) return;
+    const panel = hero.querySelector<HTMLElement>('[data-hero-scrub="panel"]');
+    const text  = hero.querySelector<HTMLElement>('[data-hero-scrub="text"]');
+    if (!panel || !text) return;
+
+    // gsap.matchMedia handles cleanup on resize / preference change.
+    // - lg+ only: at smaller widths the layout stacks single-column, so
+    //   the depth-parallax conceit (text in front of panel) doesn't apply
+    //   and a -110px lift on the headline would just look broken.
+    // - reduced-motion: bail entirely; the page already has a static
+    //   fallback courtesy of the IntersectionObserver reveals.
+    const mm = gsap.matchMedia();
+    mm.add(
+      '(min-width: 1024px) and (prefers-reduced-motion: no-preference)',
+      () => {
+        const trigger = {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom top',
+          // 0.6s catch-up smooths over scroll-wheel jitter without feeling
+          // laggy. 'true' (instant) feels twitchy; > 1 feels like syrup.
+          scrub: 0.6,
+        } as const;
+
+        // Background plate (system-flow panel): subtle camera dolly.
+        // Magnitudes are intentionally small — Apple's product pages
+        // move panels ~50–80px and ~3–5% scale across a viewport,
+        // never more. Anything bigger reads as "trying too hard".
+        gsap.fromTo(
+          panel,
+          { y: 0, scale: 1, rotateX: 0 },
+          { y: -60, scale: 1.04, rotateX: -3, ease: 'none', scrollTrigger: trigger }
+        );
+
+        // Foreground plate (headline + CTA + compliance): lifts faster
+        // than the panel. Differential = perceived depth. -110 vs -60
+        // gives ~50px of separation across one viewport — visible but
+        // not enough to clip text against the section edge.
+        gsap.fromTo(
+          text,
+          { y: 0 },
+          { y: -110, ease: 'none', scrollTrigger: trigger }
+        );
+      }
+    );
+  };
+
+  wireHeroScene();
+  document.addEventListener('astro:page-load', wireHeroScene);
+</script>
