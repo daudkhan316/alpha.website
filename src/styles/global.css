@@ -344,6 +344,34 @@
       0 0 0 1px rgba(240, 147, 251, 0.06) inset;
   }
 
+  /* Per-tile entrance fade. The parent .reveal already fades the whole
+     card in; this overlays a per-tile cascade so the grid reads as
+     individual cells "lighting up" — sells the periodic-table metaphor.
+     Stagger uses --tile-i set inline (0..n) plus a 200ms baseline so
+     tiles start lighting after the card is roughly halfway through its
+     own fade. The transition string matches the base .module-tile rule
+     verbatim except for the appended opacity transition with stagger
+     delay — so hover transitions on transform/background/border/shadow
+     are unchanged. Property-specific delays keep the stagger from
+     leaking into hover state changes. */
+  .reveal .module-tile {
+    opacity: 0;
+    transition: transform var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                box-shadow var(--t-short) var(--ease-soft),
+                opacity var(--t-medium) var(--ease-soft) calc(200ms + var(--tile-i, 0) * 25ms);
+  }
+  .reveal.is-visible .module-tile { opacity: 1; }
+
+  /* Row-proximity brighten — applied by the JS in Modules.astro when a
+     sibling tile in the same 4-col row is hovered. Faint enough to read
+     as ambient ("nearby attention"), not as a competing hover state. */
+  .module-tile.is-near {
+    background: color-mix(in srgb, var(--surface-elev) 70%, rgba(240, 147, 251, 0.10));
+    border-color: rgba(240, 147, 251, 0.18);
+  }
+
   /* Reveal-on-scroll. Default = subtle fade + lift.
      Variants via [data-reveal] keep entrances from feeling identical
      across the page — Apple pages use a small, considered set of motions,
@@ -968,6 +996,13 @@
   .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; transition: none !important; }
   .ps-arrow { stroke-dashoffset: 0 !important; transition: none !important; }
   .ps-after.is-visible .ps-alpha-mark { animation: none !important; }
+  /* Modules: skip the per-tile cascade — tiles appear with the parent
+     card fade. Proximity glow runtime in Modules.astro also bails on
+     reduced-motion so .is-near is never applied. */
+  .reveal .module-tile { opacity: 1 !important; transition: transform var(--t-short) var(--ease-soft),
+                                                            background var(--t-short) var(--ease-soft),
+                                                            border-color var(--t-short) var(--ease-soft),
+                                                            box-shadow var(--t-short) var(--ease-soft); }
   /* Scroll-velocity-driven flow energy: pin to 0 so neither the particle
      glow nor the core energy ring fluctuates. The runtime in Layout.astro
      also bails on reduced-motion, but pinning here protects against

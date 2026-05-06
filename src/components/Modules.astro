@@ -42,9 +42,16 @@ const specialized: { codes: string; key: string; label: string }[] = [
               </span>
             </div>
 
-            <div class="mt-5 grid grid-cols-4 gap-2">
-              {g.modules.map((m) => (
-                <div class="module-tile group/tile" data-code={m.code}>
+            {/* `data-modules-grid` opts this 4-col tile grid into the
+                proximity-glow runtime at the bottom of this file: hovering
+                one tile faintly brightens its row neighbors (3 sibling
+                tiles in the same row), reinforcing the "periodic table"
+                metaphor where rows have meaning. --tile-i carries the
+                per-tile stagger index for the entrance fade — see
+                .reveal .module-tile in global.css. */}
+            <div class="mt-5 grid grid-cols-4 gap-2" data-modules-grid>
+              {g.modules.map((m, i) => (
+                <div class="module-tile group/tile" data-code={m.code} style={`--tile-i:${i}`}>
                   <div class="flex items-start justify-between">
                     <span class="font-mono text-base font-semibold tracking-tight gradient-text-strong leading-none">
                       {m.code}
@@ -75,3 +82,47 @@ const specialized: { codes: string; key: string; label: string }[] = [
     </div>
   </div>
 </section>
+
+<script>
+  // Row-proximity glow. When the pointer enters a .module-tile, the
+  // other tiles in its row get .is-near (faint brighten via global.css).
+  // The grid is a fixed 4-column layout, so a row is `floor(i/4)*4` …
+  // `+4`. We delegate one pointerover per [data-modules-grid] container
+  // and dedupe consecutive events on the same tile so the same brighten
+  // doesn't get reapplied on every micro-pixel of pointer movement.
+  //
+  // Reduced-motion users skip this entirely — the static gradient borders
+  // and resting tile state already tell the structural story.
+  const wireProximity = () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+    document.querySelectorAll<HTMLElement>('[data-modules-grid]').forEach((grid) => {
+      if (grid.dataset.proximityWired === '1') return;
+      grid.dataset.proximityWired = '1';
+      const tiles = Array.from(grid.querySelectorAll<HTMLElement>('.module-tile'));
+      const cols = 4;
+      let last: HTMLElement | null = null;
+      const clear = () => {
+        if (last) {
+          tiles.forEach((t) => t.classList.remove('is-near'));
+          last = null;
+        }
+      };
+      grid.addEventListener('pointerover', (e) => {
+        const target = e.target instanceof Element ? e.target.closest<HTMLElement>('.module-tile') : null;
+        if (!target || target === last) return;
+        last = target;
+        const idx = tiles.indexOf(target);
+        if (idx < 0) return;
+        const rowStart = Math.floor(idx / cols) * cols;
+        const rowEnd = rowStart + cols;
+        tiles.forEach((t, i) => {
+          t.classList.toggle('is-near', i >= rowStart && i < rowEnd && i !== idx);
+        });
+      });
+      grid.addEventListener('pointerleave', clear);
+    });
+  };
+  wireProximity();
+  document.addEventListener('astro:page-load', wireProximity);
+</script>
