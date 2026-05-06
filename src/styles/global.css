@@ -764,6 +764,22 @@
 .blob-purple { background: var(--blob-purple); }
 .blob-pink   { background: var(--blob-pink); }
 
+/* SystemFlow connection lines: draw in after the panel reveals so the
+   diagram visibly "boots up" instead of appearing pre-painted.
+   `pathLength="1"` on each <path> in defs (SystemFlow.astro) lets us use
+   a single unitless dasharray of 1 regardless of curve length, so this
+   rule applies uniformly across all 10 lines. The per-line --line-delay
+   bakes a ~700ms baseline (matches panel reveal-delay 200ms + reveal
+   duration 600ms, with a small breath afterwards) plus a 60ms stagger
+   so the system reads as input-side first, then output-side. */
+.flow-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-long) var(--ease-soft);
+  transition-delay: var(--line-delay, 700ms);
+}
+.reveal.is-visible .flow-line { stroke-dashoffset: 0; }
+
 /* SVG particle glow — slightly tamer in light mode.
    The drop-shadow radii read --flow-energy (0…1, written by the scroll-
    velocity runtime onto [data-flow] containers): at rest the glow is
@@ -895,6 +911,9 @@
   .marquee {
     animation: none !important;
   }
+  /* Connection lines must remain visible — they're informational, not
+     decorative. Skip the draw-in transition entirely. */
+  .flow-line { stroke-dashoffset: 0 !important; transition: none !important; }
   /* Scroll-velocity-driven flow energy: pin to 0 so neither the particle
      glow nor the core energy ring fluctuates. The runtime in Layout.astro
      also bails on reduced-motion, but pinning here protects against
