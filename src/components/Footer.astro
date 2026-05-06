@@ -70,7 +70,7 @@ const cols = [
 
       {cols.map((col) => (
         <div>
-          <h4 class="text-xs uppercase tracking-[0.16em] text-white/40 mb-4" data-i18n={col.titleKey}>{col.title}</h4>
+          <h4 class="text-xs uppercase tracking-[0.16em] text-white/55 mb-4" data-i18n={col.titleKey}>{col.title}</h4>
           <ul class="space-y-2.5">
             {col.links.map((l) => (
               <li>
@@ -85,12 +85,12 @@ const cols = [
     </div>
 
     <div class="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/40">
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/55">
         <span data-i18n="footer.copyright">© {new Date().getFullYear()} Alpha Platform. All rights reserved.</span>
         <a href="/impressum" class="hover:text-white transition-colors" data-i18n="footer.imprint">Impressum</a>
         <a href="/datenschutz" class="hover:text-white transition-colors" data-i18n="footer.privacy">Datenschutz</a>
       </div>
-      <p class="text-xs text-white/40 font-mono" data-i18n="footer.region">Region · Azure Germany West Central · Frankfurt</p>
+      <p class="text-xs text-white/55 font-mono" data-i18n="footer.region">Region · Azure Germany West Central · Frankfurt</p>
     </div>
   </div>
 </footer>

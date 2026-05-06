@@ -57,7 +57,10 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="en_US" />
+    {/* Default canonical locale is German (matches <html lang="de"> and the
+        DE-first product/market). EN is offered via the in-page toggle. */}
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:locale:alternate" content="en_US" />
     <meta property="og:url" content={canonical} />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -80,6 +83,11 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     })} />
   </head>
   <body class="relative min-h-screen overflow-x-clip">
+    {/* Keyboard skip link — first focusable element on the page so a Tab
+        from page load lands here, letting keyboard users jump past the
+        nav (8+ links + toggles) into main content. Hidden visually until
+        focused; rendered via .skip-link in global.css. */}
+    <a href="#main" class="skip-link" data-i18n="a11y.skipToContent">Skip to content</a>
     {/* DE stub banner — visible only when the user has switched to German.
         A blunt heads-up that copy is partially translated. */}
     <div

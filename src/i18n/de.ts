@@ -34,6 +34,8 @@ export const de: Partial<typeof en> = {
   'locale.switch':     'Sprache wechseln',
   'locale.deBeta':     'Deutsche Übersetzung ist ein Maschinenentwurf — Prüfung ausstehend',
 
+  'a11y.skipToContent': 'Zum Inhalt springen',
+
   // ─── Hero ────────────────────────────────────────────────────
   'hero.eyebrow':      'Plattform für Versicherungs­verwaltung · Gehostet in Deutschland',
   // Soft hyphen (­) inside the long compound lets the browser break

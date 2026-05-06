@@ -20,6 +20,8 @@ export const en = {
   'locale.switch':     'Switch language',
   'locale.deBeta':     'German translation is a machine draft — review pending',
 
+  'a11y.skipToContent': 'Skip to content',
+
   // ─── Hero ────────────────────────────────────────────────────
   'hero.eyebrow':      'Insurance Management Platform · Hosted in Germany',
   'hero.headline.l1':  'One platform.',

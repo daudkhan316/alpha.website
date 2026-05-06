@@ -51,17 +51,10 @@ const specialized: { codes: string; key: string; label: string }[] = [
                 .reveal .module-tile in global.css. */}
             <div class="mt-5 grid grid-cols-4 gap-2" data-modules-grid>
               {g.modules.map((m, i) => (
-                <div class="module-tile group/tile" data-code={m.code} style={`--tile-i:${i}`}>
-                  <div class="flex items-start justify-between">
-                    <span class="font-mono text-base font-semibold tracking-tight gradient-text-strong leading-none">
-                      {m.code}
-                    </span>
-                    <span class="opacity-0 group-hover/tile:opacity-100 transition-opacity">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                    </span>
-                  </div>
+                <div class="module-tile" data-code={m.code} style={`--tile-i:${i}`}>
+                  <span class="font-mono text-base font-semibold tracking-tight gradient-text-strong leading-none">
+                    {m.code}
+                  </span>
                   <span class="text-[10px] text-white/55 leading-tight" data-i18n={`modules.m.${m.code}.name`}>{m.name}</span>
                 </div>
               ))}
@@ -72,7 +65,7 @@ const specialized: { codes: string; key: string; label: string }[] = [
     </div>
 
     <div class="mt-10 reveal flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/55">
-      <span class="font-mono uppercase text-xs tracking-[0.18em] text-white/40" data-i18n="modules.specialized">+ specialized modules</span>
+      <span class="font-mono uppercase text-xs tracking-[0.18em] text-white/55" data-i18n="modules.specialized">+ specialized modules</span>
       {specialized.map((s) => (
         <span class="inline-flex items-center gap-2">
           <span class="font-mono text-xs gradient-text-strong">{s.codes}</span>

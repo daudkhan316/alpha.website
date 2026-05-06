@@ -24,6 +24,7 @@ pnpm-debug.log*
 
 # local QA artefacts
 .playwright-mcp/
+verify-*.png
 
 # internal product breakdown — do not publish
 alpha-breakdown.md
