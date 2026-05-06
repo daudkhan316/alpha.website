@@ -367,6 +367,64 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       };
       wireCounts();
       document.addEventListener('astro:page-load', wireCounts);
+
+      // Scroll-velocity-driven flow energy.
+      // Writes a 0..1 `--flow-energy` to every [data-flow] container based
+      // on how fast the user is currently scrolling, with exponential decay
+      // back to 0 at rest. CSS in global.css picks this up to brighten the
+      // SystemFlow particles + a core energy ring — the diagram visibly
+      // reacts to attention rather than looping on a fixed cadence.
+      //
+      // One global rAF loop. Scroll handler is passive and only does
+      // arithmetic; the rAF idles itself out (`frame = 0`) once both
+      // target and energy decay below a threshold, so an idle page costs
+      // zero per-frame work.
+      if (!reduceMotion) {
+        let flowLastY = window.scrollY;
+        let flowLastT = performance.now();
+        let flowTarget = 0;
+        let flowEnergy = 0;
+        let flowFrame = 0;
+
+        const flowEls = () => document.querySelectorAll<HTMLElement>('[data-flow]');
+
+        const flowTick = () => {
+          flowFrame = 0;
+          // Exponential decay: ~0.5s half-life. Scrolling pumps target
+          // up; this brings it back to rest while the user pauses.
+          flowTarget *= 0.94;
+          // Smooth chase. Decoupling target from energy means quick
+          // scroll bursts don't snap the visual — it eases up and down.
+          flowEnergy += (flowTarget - flowEnergy) * 0.18;
+
+          const v = flowEnergy.toFixed(3);
+          flowEls().forEach((el) => el.style.setProperty('--flow-energy', v));
+
+          if (flowEnergy > 0.002 || flowTarget > 0.002) {
+            flowFrame = requestAnimationFrame(flowTick);
+          } else {
+            // Park at exactly 0 so the CSS calc()s settle to baseline.
+            flowEls().forEach((el) => el.style.setProperty('--flow-energy', '0'));
+          }
+        };
+
+        window.addEventListener('scroll', () => {
+          const now = performance.now();
+          const y = window.scrollY;
+          const dy = Math.abs(y - flowLastY);
+          const dt = Math.max(1, now - flowLastT);
+          // Velocity in px/ms. A typical scroll-wheel tick is ~50px in
+          // ~16ms ≈ 3.1 px/ms; a fast trackpad flick can reach ~12 px/ms.
+          // Divisor 5 maps a wheel tick to ~0.6 of a "burst", and a flick
+          // saturates to 1.0. Cap each event's contribution so a single
+          // flick can't slam target to 1.0 in one frame — feels less twitchy.
+          const burst = Math.min(0.45, dy / dt / 5);
+          flowTarget = Math.min(1, flowTarget + burst);
+          flowLastY = y;
+          flowLastT = now;
+          if (!flowFrame) flowFrame = requestAnimationFrame(flowTick);
+        }, { passive: true });
+      }
     </script>
   </body>
 </html>

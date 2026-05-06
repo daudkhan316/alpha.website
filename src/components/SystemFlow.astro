@@ -22,7 +22,13 @@ const inputY = (i: number) => 70 + i * 65;
 const outputY = (i: number) => 70 + i * 65;
 ---
 
-<div class="relative w-full">
+<div class="relative w-full" data-flow>
+  {/* `data-flow` opts this container into the scroll-velocity-driven
+      energy runtime in Layout.astro. A `--flow-energy` var (0…1) is
+      written here on each scroll-rAF; particles + the core ring below
+      read it to brighten while the user is scrolling and decay back to
+      baseline ~1s after they stop. The diagram feels like it responds
+      to attention rather than running on a fixed loop. */}
   <svg
     viewBox="0 0 800 460"
     class="w-full h-auto"
@@ -129,6 +135,15 @@ const outputY = (i: number) => 70 + i * 65;
         <animate attributeName="r" values="64;88;64" dur="4s" begin="2s" repeatCount="indefinite"/>
         <animate attributeName="opacity" values="0.5;0;0.5" dur="4s" begin="2s" repeatCount="indefinite"/>
       </circle>
+      {/* Scroll-energy ring — opacity & scale driven by [data-flow]'s
+          --flow-energy var. Independent of the SMIL ambient pulses
+          above; rises during scroll, decays back to invisible at rest.
+          Sits between the static stroke ring and the SMIL-pulsing rings
+          so its glow reads as an *intensification* of the core, not a
+          fourth competing animation. */}
+      <circle cx="400" cy="230" r="74" fill="none"
+              stroke="rgba(240,147,251,0.65)" stroke-width="1.4"
+              class="flow-core-energy"/>
       <text x="400" y="222" text-anchor="middle" font-family="Inter, sans-serif"
             font-size="11" fill="rgba(255,255,255,0.55)" letter-spacing="0.18em">ALPHA CORE</text>
       <text x="400" y="252" text-anchor="middle" font-family="Inter, sans-serif"
