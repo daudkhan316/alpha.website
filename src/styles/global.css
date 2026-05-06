@@ -948,16 +948,18 @@
 }
 
 /* SystemFlow connection lines: draw in after the panel reveals so the
-   diagram visibly "boots up" instead of appearing pre-painted.
-   `pathLength="1"` on each <path> in defs (SystemFlow.astro) lets us use
-   a single unitless dasharray of 1 regardless of curve length, so this
-   rule applies uniformly across all 10 lines. The per-line --line-delay
-   bakes a ~700ms baseline (matches panel reveal-delay 200ms + reveal
-   duration 600ms, with a small breath afterwards) plus a 60ms stagger
-   so the system reads as input-side first, then output-side. */
+   diagram visibly "boots up" instead of appearing pre-painted. The
+   actual stroke-dasharray + stroke-dashoffset values are also set as
+   SVG presentation attributes inline (see SystemFlow.astro) so the
+   lines are invisible from first paint, without a flash. This CSS
+   only owns the transition behavior. The dasharray value (500) is
+   larger than the longest path in this SVG (~330u), so a single dash
+   covers the whole path; sliding dashoffset from 500 to 0 reveals it.
+   --line-delay bakes a ~700ms baseline (matches panel reveal-delay
+   200ms + reveal duration 600ms, with a small breath afterwards) plus
+   a 60ms per-line stagger so the system reads as input-side first,
+   then output-side. */
 .flow-line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
   transition: stroke-dashoffset var(--t-long) var(--ease-soft);
   transition-delay: var(--line-delay, 700ms);
 }

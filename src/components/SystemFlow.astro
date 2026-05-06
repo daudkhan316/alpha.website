@@ -55,16 +55,10 @@ const outputY = (i: number) => 70 + i * 65;
       <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="4" />
       </filter>
-      {/* pathLength="1" normalizes stroke-dasharray math across all paths
-          regardless of actual curve length, so the .flow-line draw-in CSS
-          (global.css) can use a single unitless dasharray of 1 instead of
-          measuring each path with JS. Doesn't affect <animateMotion>; mpath
-          uses geometric length, not pathLength. */}
       {inputs.map((_, i) => (
         <path
           id={`pIn${i}`}
           d={`M 130 ${inputY(i)} C 250 ${inputY(i)}, 300 230, 380 230`}
-          pathLength="1"
           fill="none"
         />
       ))}
@@ -72,7 +66,6 @@ const outputY = (i: number) => 70 + i * 65;
         <path
           id={`pOut${i}`}
           d={`M 420 230 C 500 230, 550 ${outputY(i)}, 670 ${outputY(i)}`}
-          pathLength="1"
           fill="none"
         />
       ))}
@@ -88,11 +81,21 @@ const outputY = (i: number) => 70 + i * 65;
         the parent .reveal becomes visible — see global.css. --line-delay
         bakes the baseline (~700ms, after the panel's own scale-in finishes)
         plus a per-line 60ms stagger so the diagram materializes left-to-right
-        through inputs and out through outputs. */}
+        through inputs and out through outputs.
+
+        stroke-dasharray + stroke-dashoffset are also written as SVG
+        presentation attributes (not just CSS) so the lines are invisible
+        from the very first paint — without this, there's a brief frame
+        where the lines render at default (no dash, fully visible) before
+        CSS applies and hides them, which reads as a flash. The CSS rule
+        in global.css then drives the transition to dashoffset 0. The
+        value (500) is comfortably larger than the longest path here
+        (~330 units), so a single dash covers the whole path. */}
     {inputs.map((_, i) => (
       <>
         <use href={`#pIn${i}`} stroke="url(#lineGrad)" stroke-width="1.4" fill="none"
-             class="flow-line" style={`--line-delay:${700 + i * 60}ms`} />
+             class="flow-line" stroke-dasharray="500" stroke-dashoffset="500"
+             style={`--line-delay:${700 + i * 60}ms`} />
         <use href={`#pIn${i}`} stroke="rgba(240,147,251,0.55)" stroke-width="1.2" fill="none"
              class="flow-scan" style={`animation-delay:${i * 0.45}s`} />
       </>
@@ -100,7 +103,8 @@ const outputY = (i: number) => 70 + i * 65;
     {outputs.map((_, i) => (
       <>
         <use href={`#pOut${i}`} stroke="url(#lineGrad)" stroke-width="1.4" fill="none"
-             class="flow-line" style={`--line-delay:${700 + (5 + i) * 60}ms`} />
+             class="flow-line" stroke-dasharray="500" stroke-dashoffset="500"
+             style={`--line-delay:${700 + (5 + i) * 60}ms`} />
         <use href={`#pOut${i}`} stroke="rgba(102,126,234,0.55)" stroke-width="1.2" fill="none"
              class="flow-scan" style={`animation-delay:${0.6 + i * 0.45}s`} />
       </>
