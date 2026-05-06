@@ -73,10 +73,10 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
         <a href="#how-it-works" class="btn-secondary" data-i18n="hero.cta.seeHow">See how it works</a>
       </div>
 
-      <div class="reveal mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-white/45" style="--reveal-delay: 560ms;">
+      <div class="reveal mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-white/60" style="--reveal-delay: 560ms;">
         <span class="font-mono uppercase tracking-wider mr-1" data-i18n="hero.compliance">Compliance</span>
         {['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR', 'eIDAS', 'IDD'].map((b) => (
-          <span class="px-2 py-1 rounded-md bg-white/[0.03] border border-white/10 text-white/70 transition-colors hover:text-white hover:border-white/20">{b}</span>
+          <span class="px-2 py-1 rounded-md bg-white/[0.03] border border-white/10 text-white/70">{b}</span>
         ))}
       </div>
     </div>
@@ -91,17 +91,17 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
     <div class="relative" data-hero-scrub="panel">
       <div class="reveal" data-reveal="scale" style="--reveal-delay: 200ms;">
       <div class="absolute -inset-10 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[40px]"></div>
-      <div class="panel-dark-strong tilt relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
+      <div class="glass-strong tilt relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-amber-300/80"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-300/80"></span>
           </div>
-          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/40" data-i18n="hero.live">alpha · live system flow</span>
+          <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/55" data-i18n="hero.live">alpha · live system flow</span>
         </div>
         <SystemFlow />
-        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-white/45 uppercase tracking-wider">
+        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-white/60 uppercase tracking-wider">
           <span data-i18n="hero.inputs">Inputs · 7 channels</span>
           <span class="hidden sm:inline" data-i18n="hero.workflow">Workflow · WF · NS · TE · LG</span>
           <span data-i18n="hero.outputs">Outputs · audit-trailed</span>
@@ -127,7 +127,7 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
               data-count-duration="1100"
             >{s.v}</span>
           </div>
-          <div class="text-xs uppercase tracking-[0.18em] text-white/45 mt-1.5" data-i18n={`hero.stats.${i}.l`}>{s.l}</div>
+          <div class="text-xs uppercase tracking-[0.18em] text-white/60 mt-1.5" data-i18n={`hero.stats.${i}.l`}>{s.l}</div>
         </div>
       ))}
     </div>

@@ -15,8 +15,6 @@
      Theme tokens
      Dark is the default (no attribute or [data-theme="dark"]).
      Light theme flips the canvas; gradient hues stay vibrant in both.
-     "Panel" surfaces (system flow, AI terminal, deployment diagram)
-     are intentionally dark-always — semantic dark UI inside a light page.
      ───────────────────────────────────────────── */
   :root {
     --alpha-violet: #667eea;
@@ -146,6 +144,37 @@
     color: var(--selection-fg);
   }
 
+  /* Keyboard-focus ring. Unset for pointer focus (the button's own
+     hover/press states already give visual feedback there); a clear
+     pink ring shows up only when the focus came from keyboard. Modern
+     browsers honor border-radius on outline, so this works on the
+     rounded-full nav controls without extra masking. The 2px offset
+     clears the gradient halo on .btn-primary. */
+  :where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--alpha-pink);
+    outline-offset: 2px;
+  }
+  /* Skip-to-content link — visible only when focused. First focusable
+     element on the page so keyboard users can jump past the nav. */
+  .skip-link {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    padding: 0.625rem 1rem;
+    border-radius: 9999px;
+    background: var(--surface-strong);
+    border: 1px solid var(--border-4);
+    color: var(--fg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transform: translateY(-150%);
+    transition: transform var(--t-short) var(--ease-soft);
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -194,19 +223,6 @@
     border: 1px solid var(--border-3);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-  }
-
-  /* "Panel-dark" — a dark UI surface that stays dark in both themes.
-     Used for system-flow, AI terminal, deployment models — semantic dark UI. */
-  .panel-dark {
-    background: rgba(8, 6, 26, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    color: rgba(255, 255, 255, 0.92);
-  }
-  .panel-dark-strong {
-    background: rgba(13, 10, 43, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.92);
   }
 
   /* ──────────────────────────────────────────────────────────────────
@@ -717,12 +733,6 @@
     text-wrap: balance;
   }
 
-  /* Panel-dark scoped utility classes for stuff that lives inside .panel-dark
-     and needs to stay light-on-dark regardless of the page theme. */
-  .panel-dark-text { color: rgba(255, 255, 255, 0.92); }
-  .panel-dark-text-muted { color: rgba(255, 255, 255, 0.65); }
-  .panel-dark-text-faint { color: rgba(255, 255, 255, 0.45); }
-
   /* Theme-conditional visibility: pair two assets, show the one that fits. */
   :root[data-theme='dark']  .show-on-light { display: none !important; }
   :root[data-theme='light'] .show-on-dark  { display: none !important; }
@@ -804,7 +814,11 @@
 .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
+  /* Was blur(120px). Six+ blobs at 120px is the most expensive paint on
+     the page — visible jank on mid-tier mobile during scroll. 80px keeps
+     the same ambient-cloud look (the eye doesn't read 40px of falloff
+     past ~80) at materially lower per-frame cost. */
+  filter: blur(80px);
   pointer-events: none;
   will-change: transform, translate;
   translate: 0 calc(var(--pY, 0px));
@@ -832,9 +846,9 @@
    a gap between them (own runtime, own DB). One-shot only — the
    motion is the model, not ambient atmosphere. */
 @keyframes arch-tier-pulse {
-  0%   { box-shadow: none;                                            border-color: rgba(255, 255, 255, 0.10); }
+  0%   { box-shadow: none;                                            border-color: var(--border-3); }
   50%  { box-shadow: 0 0 18px -4px rgba(240, 147, 251, 0.55);          border-color: rgba(240, 147, 251, 0.45); }
-  100% { box-shadow: none;                                            border-color: rgba(255, 255, 255, 0.10); }
+  100% { box-shadow: none;                                            border-color: var(--border-3); }
 }
 .reveal.is-visible .arch-tier-shared {
   animation: arch-tier-pulse var(--t-long) var(--ease-soft) 800ms 1;
@@ -885,7 +899,7 @@
   box-shadow: 0 0 24px -4px rgba(240, 147, 251, 0.45);
 }
 .step-num-text { transition: color var(--t-short) var(--ease-soft); }
-[data-step].is-active .step-num-text { color: rgba(255, 255, 255, 0.95); }
+[data-step].is-active .step-num-text { color: var(--fg-strong); }
 
 .step-tag {
   opacity: 0;
@@ -981,7 +995,7 @@
    on a fixed cadence. fallback `var(--flow-energy, 0)` keeps the static
    case correct for browsers that don't run the runtime. */
 .flow-particle {
-  fill: #fff;
+  fill: var(--fg-strong);
   filter:
     drop-shadow(0 0 calc(4px + 6px * var(--flow-energy, 0)) #f093fb)
     drop-shadow(0 0 calc(8px + 8px * var(--flow-energy, 0)) #764ba2);
@@ -1015,38 +1029,35 @@
    This lets components keep their existing markup (text-white/65, bg-white/[0.04],
    border-white/10) without per-element `dark:` prefixes. The overrides only
    take effect when [data-theme="light"] is set on the html element.
-
-   Anything inside .panel-dark / .panel-dark-strong is excluded so the dark
-   panels keep their light-on-dark text in both themes.
    ───────────────────────────────────────────── */
 
-[data-theme='light'] :where(.text-white):not(.panel-dark *):not(.panel-dark-strong *)        { color: rgb(15 18 35); }
-[data-theme='light'] :where(.text-white\/95):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.95); }
-[data-theme='light'] :where(.text-white\/85):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.85); }
-[data-theme='light'] :where(.text-white\/80):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.85); }
-[data-theme='light'] :where(.text-white\/75):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.80); }
-[data-theme='light'] :where(.text-white\/70):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.78); }
-[data-theme='light'] :where(.text-white\/65):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.72); }
-[data-theme='light'] :where(.text-white\/60):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.68); }
-[data-theme='light'] :where(.text-white\/55):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.62); }
-[data-theme='light'] :where(.text-white\/50):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.58); }
-[data-theme='light'] :where(.text-white\/45):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.55); }
-[data-theme='light'] :where(.text-white\/40):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.50); }
-[data-theme='light'] :where(.text-white\/30):not(.panel-dark *):not(.panel-dark-strong *)    { color: rgb(15 18 35 / 0.40); }
+[data-theme='light'] :where(.text-white)        { color: rgb(15 18 35); }
+[data-theme='light'] :where(.text-white\/95)    { color: rgb(15 18 35 / 0.95); }
+[data-theme='light'] :where(.text-white\/85)    { color: rgb(15 18 35 / 0.85); }
+[data-theme='light'] :where(.text-white\/80)    { color: rgb(15 18 35 / 0.85); }
+[data-theme='light'] :where(.text-white\/75)    { color: rgb(15 18 35 / 0.80); }
+[data-theme='light'] :where(.text-white\/70)    { color: rgb(15 18 35 / 0.78); }
+[data-theme='light'] :where(.text-white\/65)    { color: rgb(15 18 35 / 0.72); }
+[data-theme='light'] :where(.text-white\/60)    { color: rgb(15 18 35 / 0.68); }
+[data-theme='light'] :where(.text-white\/55)    { color: rgb(15 18 35 / 0.62); }
+[data-theme='light'] :where(.text-white\/50)    { color: rgb(15 18 35 / 0.58); }
+[data-theme='light'] :where(.text-white\/45)    { color: rgb(15 18 35 / 0.55); }
+[data-theme='light'] :where(.text-white\/40)    { color: rgb(15 18 35 / 0.50); }
+[data-theme='light'] :where(.text-white\/30)    { color: rgb(15 18 35 / 0.40); }
 
-[data-theme='light'] :where(.bg-white\/\[0\.025\]):not(.panel-dark *):not(.panel-dark-strong *) { background-color: rgb(15 18 35 / 0.025); }
-[data-theme='light'] :where(.bg-white\/\[0\.03\]):not(.panel-dark *):not(.panel-dark-strong *)  { background-color: rgb(15 18 35 / 0.030); }
-[data-theme='light'] :where(.bg-white\/\[0\.04\]):not(.panel-dark *):not(.panel-dark-strong *)  { background-color: rgb(15 18 35 / 0.040); }
-[data-theme='light'] :where(.bg-white\/\[0\.05\]):not(.panel-dark *):not(.panel-dark-strong *)  { background-color: rgb(15 18 35 / 0.050); }
-[data-theme='light'] :where(.bg-white\/5):not(.panel-dark *):not(.panel-dark-strong *)         { background-color: rgb(15 18 35 / 0.05); }
-[data-theme='light'] :where(.bg-white\/10):not(.panel-dark *):not(.panel-dark-strong *)        { background-color: rgb(15 18 35 / 0.08); }
+[data-theme='light'] :where(.bg-white\/\[0\.025\]) { background-color: rgb(15 18 35 / 0.025); }
+[data-theme='light'] :where(.bg-white\/\[0\.03\])  { background-color: rgb(15 18 35 / 0.030); }
+[data-theme='light'] :where(.bg-white\/\[0\.04\])  { background-color: rgb(15 18 35 / 0.040); }
+[data-theme='light'] :where(.bg-white\/\[0\.05\])  { background-color: rgb(15 18 35 / 0.050); }
+[data-theme='light'] :where(.bg-white\/5)         { background-color: rgb(15 18 35 / 0.05); }
+[data-theme='light'] :where(.bg-white\/10)        { background-color: rgb(15 18 35 / 0.08); }
 
-[data-theme='light'] :where(.border-white\/5):not(.panel-dark *):not(.panel-dark-strong *)   { border-color: rgb(15 18 35 / 0.07); }
-[data-theme='light'] :where(.border-white\/10):not(.panel-dark *):not(.panel-dark-strong *)  { border-color: rgb(15 18 35 / 0.10); }
-[data-theme='light'] :where(.border-white\/15):not(.panel-dark *):not(.panel-dark-strong *)  { border-color: rgb(15 18 35 / 0.16); }
+[data-theme='light'] :where(.border-white\/5)   { border-color: rgb(15 18 35 / 0.07); }
+[data-theme='light'] :where(.border-white\/10)  { border-color: rgb(15 18 35 / 0.10); }
+[data-theme='light'] :where(.border-white\/15)  { border-color: rgb(15 18 35 / 0.16); }
 
 /* divide-x / divide-y also use white borders in our stat strip */
-[data-theme='light'] :where(.divide-white\/5):not(.panel-dark *) > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 18 35 / 0.07); }
+[data-theme='light'] :where(.divide-white\/5) > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 18 35 / 0.07); }
 
 /* Component utilities that we kept hard-dark in templates */
 [data-theme='light'] .bg-alpha-ink\/95   { background-color: color-mix(in srgb, var(--bg) 92%, white); }
@@ -1056,13 +1067,13 @@
 [data-theme='light'] .bg-alpha-deep\/90  { background-color: color-mix(in srgb, var(--bg) 90%, white); }
 
 /* Accent text/borders calibrated for dark — strengthen for light. */
-[data-theme='light'] :where(.text-rose-300\/80):not(.panel-dark *)   { color: rgb(190 18 60 / 0.85); }
-[data-theme='light'] :where(.text-rose-200\/70):not(.panel-dark *)   { color: rgb(159 18 57 / 0.80); }
-[data-theme='light'] :where(.text-emerald-200\/80):not(.panel-dark *){ color: rgb(4 120 87 / 0.85); }
+[data-theme='light'] :where(.text-rose-300\/80)   { color: rgb(190 18 60 / 0.85); }
+[data-theme='light'] :where(.text-rose-200\/70)   { color: rgb(159 18 57 / 0.80); }
+[data-theme='light'] :where(.text-emerald-200\/80){ color: rgb(4 120 87 / 0.85); }
 
-[data-theme='light'] :where(.border-rose-500\/15):not(.panel-dark *) { border-color: rgb(244 63 94 / 0.30); }
-[data-theme='light'] :where(.border-rose-400\/20):not(.panel-dark *) { border-color: rgb(244 63 94 / 0.30); }
-[data-theme='light'] :where(.border-emerald-300\/15):not(.panel-dark *){ border-color: rgb(16 185 129 / 0.35); }
+[data-theme='light'] :where(.border-rose-500\/15) { border-color: rgb(244 63 94 / 0.30); }
+[data-theme='light'] :where(.border-rose-400\/20) { border-color: rgb(244 63 94 / 0.30); }
+[data-theme='light'] :where(.border-emerald-300\/15){ border-color: rgb(16 185 129 / 0.35); }
 
 /* Same idea for bg dots used as status pills (rose-400, emerald-300, amber-300) — they're tiny dots, bump opacity for light. */
 [data-theme='light'] .bg-rose-400    { background-color: rgb(244 63 94); }

@@ -71,7 +71,7 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
       <div class="reveal glass-strong rounded-2xl p-6 lg:p-8">
         <div class="flex items-baseline justify-between">
           <h3 class="text-xl font-semibold tracking-tight" data-i18n="arch.stack.title">Technology stack</h3>
-          <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40" data-i18n="arch.stack.production">production</span>
+          <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55" data-i18n="arch.stack.production">production</span>
         </div>
         <div class="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-6">
           {stack.map((s) => {
@@ -98,11 +98,11 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
       </div>
 
       {/* Multi-tenancy diagram */}
-      <div class="reveal relative rounded-2xl p-[1px] bg-gradient-to-br from-violet-500/30 to-fuchsia-500/20">
-        <div class="panel-dark-strong rounded-2xl p-6 lg:p-8 h-full flex flex-col">
+      <div class="reveal glass-strong rounded-2xl h-full">
+        <div class="rounded-2xl p-6 lg:p-8 h-full flex flex-col">
           <div class="flex items-baseline justify-between">
             <h3 class="text-xl font-semibold tracking-tight" data-i18n="arch.deploy.title">Two deployment models</h3>
-            <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40" data-i18n="arch.deploy.isolation">isolation</span>
+            <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55" data-i18n="arch.deploy.isolation">isolation</span>
           </div>
 
           {/* One-shot tier pulse choreography: when this card .reveals,
@@ -115,7 +115,7 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
           <div class="mt-6 flex-1 grid grid-rows-2 gap-4">
             {/* Shared compute */}
             <div class="rounded-xl border border-white/10 p-4">
-              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3" data-i18n="arch.deploy.shared">Shared compute · DB per tenant</div>
+              <div class="text-[11px] font-mono uppercase tracking-wider text-white/60 mb-3" data-i18n="arch.deploy.shared">Shared compute · DB per tenant</div>
               <div class="flex items-center gap-2">
                 <div class="flex-1 px-3 py-2.5 rounded-lg bg-alpha-gradient text-white text-xs font-medium text-center" data-i18n="arch.deploy.runtime">Alpha runtime</div>
               </div>
@@ -128,7 +128,7 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
 
             {/* Dedicated */}
             <div class="rounded-xl border border-white/10 p-4">
-              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3" data-i18n="arch.deploy.dedicated">Dedicated · own runtime + own DB</div>
+              <div class="text-[11px] font-mono uppercase tracking-wider text-white/60 mb-3" data-i18n="arch.deploy.dedicated">Dedicated · own runtime + own DB</div>
               <div class="grid grid-cols-2 gap-2">
                 {['T-A', 'T-B'].map((t, k) => (
                   <div class={`arch-tier-dedicated arch-tier-d-${k} rounded-md bg-white/[0.03] border border-white/10 p-2`}>
