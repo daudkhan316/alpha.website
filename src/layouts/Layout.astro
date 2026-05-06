@@ -151,7 +151,13 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         }
       };
       document.addEventListener('pointermove', (e) => {
-        const target = (e.target as Element | null)?.closest('.spotlight');
+        // `e.target` on document-level pointer events isn't always an
+        // Element — pointer events fired against the Document or Window
+        // (rare but real, e.g. via dispatchEvent or some extensions)
+        // give a target that has no `.closest()`. The optional chain
+        // here would only short-circuit on null/undefined, not on
+        // existing-but-non-Element targets, so check the type explicitly.
+        const target = e.target instanceof Element ? e.target.closest('.spotlight') : null;
         if (!target) return;
         const rect = target.getBoundingClientRect();
         pendingTarget = target;
@@ -279,7 +285,10 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         }
       };
       document.addEventListener('pointermove', (e) => {
-        const target = (e.target as Element | null)?.closest('.tilt, .tilt-strong') as HTMLElement | null;
+        // Same Element-vs-Document gotcha as the spotlight handler above.
+        const target = e.target instanceof Element
+          ? (e.target.closest('.tilt, .tilt-strong') as HTMLElement | null)
+          : null;
         if (!target) return;
         const r = target.getBoundingClientRect();
         pendingTilt = target;
@@ -288,7 +297,12 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         if (!tiltFrame) tiltFrame = requestAnimationFrame(flushTilt);
       }, { passive: true });
       document.addEventListener('pointerleave', (e) => {
-        const target = (e.target as Element | null)?.closest('.tilt, .tilt-strong') as HTMLElement | null;
+        // pointerleave fired in the capture phase against the document
+        // does have e.target === document — exactly the case that throws
+        // on the optional chain pattern. Element check guards both.
+        const target = e.target instanceof Element
+          ? (e.target.closest('.tilt, .tilt-strong') as HTMLElement | null)
+          : null;
         if (target) {
           target.style.setProperty('--tx', '0');
           target.style.setProperty('--ty', '0');
