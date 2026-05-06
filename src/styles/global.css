@@ -644,6 +644,1207 @@
     border-color: rgba(240, 147, 251, 0.30);
     transform: translateY(-1px);
   }
+
+  /* ──────────────────────────────────────────────────────────────────
+     Capabilities section — bento grid + filter chips + animated
+     visuals on featured cards. The flat 3-col grid was static; this
+     replaces it with an asymmetric bento where 3 featured cards are
+     2 cols × 2 rows and have animated mini-visuals (lifecycle flow,
+     SEPA reconciliation, AI prompt-to-QL). All cards get pointer
+     tilt + a one-shot diagonal sheen on hover. No orbital motion.
+     ────────────────────────────────────────────────────────────── */
+
+  /* A soft aurora behind the section header — purely decorative, sits
+     above the grid pattern but below content. Two blurred stops, no
+     animation, just adds depth so the bento doesn't float on a flat plate. */
+  .cap-aurora {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.55;
+    background:
+      radial-gradient(40% 30% at 15% 20%, rgba(102, 126, 234, 0.18), transparent 60%),
+      radial-gradient(35% 25% at 85% 30%, rgba(240, 147, 251, 0.15), transparent 60%);
+    mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+  }
+  :root[data-theme='light'] .cap-aurora { opacity: 0.4; }
+
+  /* Stat strip above the bento. Three big numbers separated by dots,
+     each a count-up on reveal. Uses the existing data-count infra
+     wired in Layout.astro. */
+  .cap-stats {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .cap-stat { display: inline-flex; align-items: baseline; gap: 0.4rem; }
+  .cap-stat-num {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 1.05rem;
+    background: linear-gradient(135deg, var(--gtext-soft-from), var(--gtext-soft-to));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-stat-label { font-size: 0.78rem; color: var(--fg); opacity: 0.65; }
+  .cap-stat-sep   { color: var(--fg); opacity: 0.3; }
+
+  /* Filter chips. Active chip gets a subtle gradient fill; inactive
+     chips read as quiet but still hoverable. Single transition on
+     all of background, border, color, transform. */
+  .cap-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .cap-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    color: var(--fg);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                color var(--t-short) var(--ease-soft),
+                transform var(--t-micro) var(--ease-soft);
+  }
+  .cap-filter:hover {
+    border-color: var(--border-4);
+    transform: translateY(-1px);
+  }
+  .cap-filter.is-active {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.22), rgba(240, 147, 251, 0.18));
+    border-color: rgba(240, 147, 251, 0.45);
+    color: var(--fg-strong);
+  }
+  .cap-filter-count {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.68rem;
+    padding: 0.12rem 0.4rem;
+    border-radius: 999px;
+    background: var(--surface-strong);
+    border: 1px solid var(--border-2);
+    color: var(--fg);
+    opacity: 0.65;
+    line-height: 1;
+  }
+  .cap-filter.is-active .cap-filter-count {
+    background: rgba(240, 147, 251, 0.18);
+    border-color: rgba(240, 147, 251, 0.40);
+    opacity: 1;
+  }
+
+  /* Bento grid. On mobile it's a single column; tablet two columns;
+     desktop six columns with featured cards spanning 2×2. The dense
+     auto-flow + per-feature `feature-right` start lets the featured
+     cards alternate left/right to break visual rhythm. */
+  .cap-bento {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  @media (min-width: 768px) {
+    .cap-bento {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.1rem;
+    }
+    .cap-card.is-feature { grid-column: span 2; grid-row: span 2; }
+  }
+  @media (min-width: 1024px) {
+    .cap-bento {
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-flow: dense;
+      gap: 1.25rem;
+    }
+    .cap-card { grid-column: span 2; }
+    .cap-card.is-feature { grid-column: span 2; grid-row: span 2; }
+    .cap-card.is-feature.feature-right { grid-column: 5 / span 2; }
+  }
+
+  /* The card itself. Glass surface, subtle gradient border at rest,
+     brighter on hover. The .tilt class handles cursor-driven 3D from
+     the global rAF listener in Layout.astro; we add a translateZ(0)
+     on the inner content via .cap-card-head etc. so children sit
+     above the sheen + spotlight without overlap glitches. */
+  .cap-card {
+    position: relative;
+    isolation: isolate;
+    border-radius: 1.1rem;
+    padding: 1.15rem 1.25rem 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    transition: opacity var(--t-medium) var(--ease-soft),
+                transform var(--t-medium) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                box-shadow var(--t-short) var(--ease-soft);
+  }
+  .cap-card:hover {
+    border-color: rgba(240, 147, 251, 0.30);
+    box-shadow: 0 18px 60px -32px rgba(102, 126, 234, 0.45),
+                0 8px 24px -18px rgba(240, 147, 251, 0.30);
+  }
+  .cap-card.is-feature {
+    background:
+      linear-gradient(135deg, rgba(102, 126, 234, 0.10), rgba(240, 147, 251, 0.05) 60%, transparent 100%),
+      var(--surface);
+    border-color: var(--border-3);
+    padding: 1.25rem 1.35rem 1.4rem;
+  }
+  .cap-card.is-feature::after {
+    /* Bottom hairline accent — keeps the feature cards visually anchored. */
+    content: '';
+    position: absolute;
+    left: 1.35rem;
+    right: 1.35rem;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(240, 147, 251, 0.45), transparent);
+  }
+
+  /* Diagonal sheen — a one-shot top-left → bottom-right highlight that
+     sweeps once per hover entry. Linear, not orbital. Lives behind
+     content (z-index: 0) and is masked into the rounded corners. */
+  .cap-sheen {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(115deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.07) 48%,
+      rgba(240, 147, 251, 0.10) 50%,
+      rgba(255, 255, 255, 0.07) 52%,
+      transparent 70%);
+    background-size: 250% 250%;
+    background-position: 120% 120%;
+    opacity: 0;
+    transition: opacity var(--t-short) var(--ease-soft),
+                background-position 900ms var(--ease-soft);
+  }
+  .cap-card:hover .cap-sheen {
+    opacity: 1;
+    background-position: -20% -20%;
+  }
+  /* Lift content above the sheen layer. Skip the absolutely-positioned
+     decoration helpers (.cap-card-strip / -bottom-sweep / -metric /
+     -corner) so they keep their `position: absolute` and don't drop
+     into the column-flex flow as full-width rows. */
+  .cap-card > *:not(.cap-sheen):not(.cap-card-strip):not(.cap-card-bottom-sweep):not(.cap-card-metric):not(.cap-card-corner) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Card head: icon + module pills — same layout as before. */
+  .cap-card-head { display: flex; align-items: center; gap: 0.75rem; }
+  .cap-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    background: linear-gradient(135deg, var(--fg-strong), var(--fg-strong));
+    -webkit-background-clip: text;
+            background-clip: text;
+    transition: background var(--t-short) var(--ease-soft);
+  }
+  .cap-card:hover .cap-card-title {
+    background: linear-gradient(135deg, var(--gtext-soft-from), var(--gtext-soft-to));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+  .cap-card.is-feature .cap-card-title { font-size: 1.18rem; }
+  .cap-card-body {
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--fg);
+    opacity: 0.65;
+  }
+
+  /* Tiny arrow that slides in from the left on hover — gives the card
+     a "more inside" cue without adding click affordance everywhere. */
+  .cap-card-corner {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    color: var(--fg);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+  }
+  .cap-card:hover .cap-card-corner {
+    opacity: 0.8;
+    transform: translateX(0);
+  }
+
+  /* Filter hide/show. Cards collapse to height 0 with opacity fade, then
+     are removed from layout via `display: none` after the transition.
+     Using max-height isn't perfect for grid items, but display:none
+     with a transitionend would interrupt the fade — so we accept an
+     instant collapse on filter and rely on the fade-in for incoming. */
+  .cap-card.is-hidden {
+    display: none;
+  }
+
+  /* ── Featured-card visuals ──
+     Each visual sits at the top of the card and animates passively
+     (looping, low-energy). They're scoped to .cap-viz-* so they don't
+     leak into other sections. */
+
+  .cap-viz {
+    position: relative;
+    border-radius: 0.75rem;
+    padding: 0.9rem 1rem;
+    background:
+      linear-gradient(180deg, rgba(8, 6, 26, 0.55), rgba(8, 6, 26, 0.20)),
+      rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-2);
+    overflow: hidden;
+  }
+  :root[data-theme='light'] .cap-viz {
+    background:
+      linear-gradient(180deg, rgba(15, 18, 35, 0.06), rgba(15, 18, 35, 0.02)),
+      rgba(255, 255, 255, 0.5);
+  }
+
+  /* Lifecycle: 5 nodes on a horizontal line, with a traveling pulse
+     that runs left→right on a 4s loop. The line is a static gradient;
+     the pulse is a small radial-gradient blob translated via @keyframes. */
+  .cap-viz-lifecycle {
+    height: 92px;
+  }
+  .cap-viz-lifecycle .cap-viz-line {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg,
+      rgba(102, 126, 234, 0.10),
+      rgba(102, 126, 234, 0.45) 25%,
+      rgba(240, 147, 251, 0.55) 50%,
+      rgba(102, 126, 234, 0.45) 75%,
+      rgba(102, 126, 234, 0.10));
+    border-radius: 1px;
+  }
+  .cap-viz-lifecycle .cap-viz-pulse {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(240, 147, 251, 0.7) 30%, transparent 70%);
+    box-shadow: 0 0 16px 4px rgba(240, 147, 251, 0.45);
+    animation: cap-pulse-travel 4s linear infinite;
+  }
+  @keyframes cap-pulse-travel {
+    0%   { left: 1rem;                opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { left: calc(100% - 1rem);   opacity: 0; }
+  }
+  .cap-viz-lifecycle .cap-viz-stages {
+    position: absolute;
+    inset: 0;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cap-viz-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+    transform: translateY(0);
+  }
+  .cap-viz-dot {
+    width: 10px; height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(240, 147, 251, 0.55);
+    box-shadow: 0 0 0 3px rgba(8, 6, 26, 0.85);
+    animation: cap-dot-light 4s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.8s);
+  }
+  @keyframes cap-dot-light {
+    0%, 60%, 100% { transform: scale(1); box-shadow: 0 0 0 3px rgba(8, 6, 26, 0.85); }
+    10%, 25%      { transform: scale(1.25); box-shadow: 0 0 0 3px rgba(8, 6, 26, 0.85), 0 0 14px 3px rgba(240, 147, 251, 0.55); }
+  }
+  .cap-viz-label {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.62rem;
+    color: var(--fg);
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 0.35rem;
+  }
+
+  /* SEPA: 4 horizontal rows that fill in sequence. Each .cap-viz-bar-fill
+     animates a width 0%→100% with a stagger from --i. The tick at the
+     end fades in just as its row finishes filling. Loops indefinitely
+     so the visual breathes without the user needing to interact. */
+  .cap-viz-sepa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 1rem;
+  }
+  .cap-viz-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 16px;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .cap-viz-row-label {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.62rem;
+    color: var(--fg);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .cap-viz-bar {
+    position: relative;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+  .cap-viz-bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.85), rgba(240, 147, 251, 0.85));
+    animation: cap-bar-fill 5s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.45s);
+  }
+  @keyframes cap-bar-fill {
+    0%   { width: 0%; opacity: 0.6; }
+    20%  { width: 100%; opacity: 1; }
+    80%  { width: 100%; opacity: 1; }
+    95%  { width: 100%; opacity: 0.4; }
+    100% { width: 0%; opacity: 0; }
+  }
+  .cap-viz-tick {
+    font-size: 0.78rem;
+    color: rgba(102, 126, 234, 0.95);
+    opacity: 0;
+    animation: cap-tick-show 5s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.45s);
+    text-align: center;
+    line-height: 1;
+  }
+  @keyframes cap-tick-show {
+    0%, 18%   { opacity: 0; transform: scale(0.6); }
+    25%, 80%  { opacity: 1; transform: scale(1); }
+    95%, 100% { opacity: 0; transform: scale(0.6); }
+  }
+
+  /* AI: a mini three-row terminal — prompt, QL, result. The prompt
+     uses a width-clipped reveal to mimic typing; the QL chip and
+     result line fade in after. Whole sequence is a 6s loop. */
+  .cap-viz-ai {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    padding: 0.9rem 1rem;
+  }
+  .cap-viz-prompt {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--fg);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .cap-viz-prompt-prefix {
+    color: rgba(240, 147, 251, 0.85);
+    font-weight: 700;
+  }
+  .cap-viz-prompt-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 0;
+    animation: cap-ai-type 6s steps(40, end) infinite;
+  }
+  @keyframes cap-ai-type {
+    0%, 5%    { max-width: 0; }
+    35%, 100% { max-width: 100%; }
+  }
+  .cap-viz-caret {
+    display: inline-block;
+    width: 6px;
+    height: 12px;
+    background: rgba(240, 147, 251, 0.85);
+    animation: cap-ai-caret 1s steps(2, end) infinite;
+  }
+  @keyframes cap-ai-caret {
+    0%, 49%  { opacity: 1; }
+    50%, 100%{ opacity: 0; }
+  }
+  .cap-viz-arrow {
+    color: var(--fg);
+    opacity: 0.45;
+    font-size: 0.7rem;
+    line-height: 1;
+    animation: cap-ai-step 6s ease-in-out infinite;
+  }
+  .cap-viz-ql {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.7rem;
+    color: var(--fg);
+    opacity: 0;
+    animation: cap-ai-show 6s ease-in-out infinite;
+    animation-delay: 0.2s;
+  }
+  .cap-viz-ql code {
+    font-family: inherit;
+    font-size: 0.68rem;
+    color: var(--fg);
+    opacity: 0.85;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+  .cap-viz-ql-tag {
+    font-size: 0.6rem;
+    padding: 0.12rem 0.4rem;
+    border-radius: 4px;
+    background: rgba(102, 126, 234, 0.20);
+    border: 1px solid rgba(102, 126, 234, 0.45);
+    color: rgba(196, 181, 253, 1);
+    letter-spacing: 0.1em;
+  }
+  .cap-viz-result {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.68rem;
+    color: var(--fg);
+    opacity: 0;
+    animation: cap-ai-show 6s ease-in-out infinite;
+    animation-delay: 0.4s;
+  }
+  .cap-viz-result-dot {
+    width: 7px; height: 7px;
+    border-radius: 999px;
+    background: #34d399;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+  }
+  @keyframes cap-ai-show {
+    0%, 38%   { opacity: 0; transform: translateY(2px); }
+    50%, 90%  { opacity: 0.85; transform: translateY(0); }
+    100%      { opacity: 0; transform: translateY(2px); }
+  }
+  @keyframes cap-ai-step {
+    0%, 38%   { opacity: 0; }
+    44%, 90%  { opacity: 0.45; }
+    100%      { opacity: 0; }
+  }
+
+  /* Reduced motion: kill all looping visuals — they hold a static
+     "complete" state instead of animating. Pulse/sheen disabled. */
+  @media (prefers-reduced-motion: reduce) {
+    .cap-viz-pulse,
+    .cap-viz-dot,
+    .cap-viz-bar-fill,
+    .cap-viz-tick,
+    .cap-viz-prompt-text,
+    .cap-viz-caret,
+    .cap-viz-arrow,
+    .cap-viz-ql,
+    .cap-viz-result,
+    .cap-sheen { animation: none !important; }
+    .cap-viz-bar-fill   { width: 100%; opacity: 1; }
+    .cap-viz-tick       { opacity: 1; transform: none; }
+    .cap-viz-prompt-text{ max-width: 100%; }
+    .cap-viz-caret      { opacity: 0; }
+    .cap-viz-ql,
+    .cap-viz-result     { opacity: 0.85; transform: none; }
+    .cap-viz-arrow      { opacity: 0.45; }
+  }
+
+  /* ── Per-card interactive layers ──
+     Adds always-on motion so the cards feel alive at rest, plus
+     richer hover state. None of these create overlapping or orbital
+     elements — everything stays inside the card bounds. */
+
+  /* Left edge accent bar — color-coded by category, with a soft
+     vertical "breathing" gradient that shifts continuously. The bar
+     is 3px wide at rest and brightens + widens slightly on hover.
+     This gives every card an at-a-glance category cue and a baseline
+     pulse so the grid reads as alive. */
+  .cap-card-strip {
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    left: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    pointer-events: none;
+    background-size: 100% 200%;
+    background-position: 0 0;
+    animation: cap-strip-breathe 5s ease-in-out infinite;
+    transition: width var(--t-short) var(--ease-soft),
+                opacity var(--t-short) var(--ease-soft);
+    opacity: 0.55;
+  }
+  .cap-card:hover .cap-card-strip {
+    width: 4px;
+    opacity: 1;
+  }
+  @keyframes cap-strip-breathe {
+    0%, 100% { background-position: 0 0; }
+    50%      { background-position: 0 100%; }
+  }
+  .cap-card[data-cap-cat="ops"] .cap-card-strip {
+    background-image: linear-gradient(180deg,
+      rgba(102, 126, 234, 0.20),
+      rgba(102, 126, 234, 0.95) 35%,
+      rgba(196, 181, 253, 0.95) 65%,
+      rgba(102, 126, 234, 0.20));
+  }
+  .cap-card[data-cap-cat="customer"] .cap-card-strip {
+    background-image: linear-gradient(180deg,
+      rgba(240, 147, 251, 0.20),
+      rgba(240, 147, 251, 0.95) 35%,
+      rgba(255, 200, 240, 0.95) 65%,
+      rgba(240, 147, 251, 0.20));
+  }
+  .cap-card[data-cap-cat="intel"] .cap-card-strip {
+    background-image: linear-gradient(180deg,
+      rgba(56, 189, 248, 0.20),
+      rgba(56, 189, 248, 0.95) 35%,
+      rgba(167, 243, 208, 0.95) 65%,
+      rgba(56, 189, 248, 0.20));
+  }
+  .cap-card[data-cap-cat="trust"] .cap-card-strip {
+    background-image: linear-gradient(180deg,
+      rgba(52, 211, 153, 0.20),
+      rgba(52, 211, 153, 0.95) 35%,
+      rgba(134, 239, 172, 0.95) 65%,
+      rgba(52, 211, 153, 0.20));
+  }
+
+  /* Bottom edge sweep — a 1px gradient bar that slowly travels
+     left↔right inside the bottom edge. Each card has a different
+     `--phase` (set inline in markup) so the grid doesn't pulse in
+     unison. On hover the sweep speeds up and brightens. */
+  .cap-card-bottom-sweep {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(102, 126, 234, 0.55) 45%,
+      rgba(240, 147, 251, 0.65) 50%,
+      rgba(102, 126, 234, 0.55) 55%,
+      transparent 70%,
+      transparent 100%);
+    background-size: 250% 100%;
+    background-position: 0% 0;
+    opacity: 0.45;
+    animation: cap-sweep-bottom 7s linear infinite;
+    animation-delay: var(--phase, 0s);
+    transition: opacity var(--t-short) var(--ease-soft);
+  }
+  .cap-card.is-feature .cap-card-bottom-sweep { display: none; }
+  .cap-card:hover .cap-card-bottom-sweep {
+    opacity: 1;
+    animation-duration: 3s;
+  }
+  @keyframes cap-sweep-bottom {
+    0%   { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* Top-right metric badge — a small monospace tag that names a
+     defining feature (ISO 27001, OCR, 7-yr, …). At rest it sits
+     quiet; on hover it pops via brighter background + a subtle
+     scale + a thin gradient outline. */
+  .cap-card-metric {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    z-index: 2;
+    font-size: 0.58rem;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+    border-radius: 999px;
+    color: var(--fg);
+    opacity: 0.6;
+    background: var(--surface-strong);
+    border: 1px solid var(--border-2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity var(--t-short) var(--ease-soft),
+                color var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+  }
+  .cap-card.is-feature .cap-card-metric {
+    font-size: 0.62rem;
+    padding: 0.35rem 0.6rem;
+  }
+  .cap-card:hover .cap-card-metric {
+    opacity: 1;
+    transform: translateY(-1px) scale(1.04);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.22), rgba(240, 147, 251, 0.18));
+    border-color: rgba(240, 147, 251, 0.50);
+    color: var(--fg-strong);
+  }
+
+  /* The card head needs to make room for the metric badge floating
+     in the top-right. Reserve right padding so the icon row never
+     collides with the badge. */
+  .cap-card-head { padding-right: 4.75rem; }
+  .cap-card.is-feature .cap-card-head { padding-right: 5.25rem; }
+
+  /* Module pill cascade. Each pill animates a brightness + lift
+     bump on hover, with a per-pill stagger driven by --m. The pills
+     light up one after another like a sequence of LEDs. */
+  .cap-module-pill {
+    transition: background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                color var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+    transition-delay: 0ms;
+  }
+  .cap-card:hover .cap-module-pill {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.18), rgba(240, 147, 251, 0.14));
+    border-color: rgba(240, 147, 251, 0.45);
+    color: var(--fg-strong);
+    transform: translateY(-1px);
+    transition-delay: calc(var(--m, 0) * 70ms);
+  }
+
+  /* Icon plate gets a brief overshoot scale on card hover. Pairs
+     with the existing icon-plate-spring entrance animation so the
+     micro-bounce reads as continuation, not a new motion language. */
+  .cap-icon-plate {
+    transition: transform var(--t-short) var(--ease-spring),
+                border-color var(--t-short) var(--ease-soft),
+                box-shadow var(--t-short) var(--ease-soft);
+    will-change: transform;
+  }
+  .cap-card:hover .cap-icon-plate {
+    transform: translateY(-2px) scale(1.08) rotate(-2deg);
+    border-color: rgba(240, 147, 251, 0.45);
+    box-shadow: 0 8px 24px -10px rgba(240, 147, 251, 0.50),
+                inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  }
+
+  /* Press feedback — a tiny scale-down on click so the cards feel
+     like UI, not screenshots. */
+  .cap-card:active {
+    transform: translateZ(0) scale(0.992);
+    transition: transform var(--t-press) var(--ease-soft);
+  }
+
+  /* Reduced motion: kill the always-on strip + bottom sweep. The
+     interactive hover state still works, just without ambient loops. */
+  @media (prefers-reduced-motion: reduce) {
+    .cap-card-strip,
+    .cap-card-bottom-sweep { animation: none !important; }
+    .cap-card-bottom-sweep { background-position: 50% 0; }
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     Modules section — "Live Module Board".
+     Two-column on lg+: a sticky spotlight panel on the left that
+     auto-cycles through every module (and snaps to whichever tile the
+     user hovers/focuses), and a stacked-rows grid of grouped element
+     tiles on the right. Each group has a domain header, a hairline
+     "rail" with a traveling pulse, and a row of mono-coded tiles.
+     No orbit, no overlap — strictly horizontal rows, vertical stacks.
+     ────────────────────────────────────────────────────────────── */
+  .mod-board {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .mod-board {
+      grid-template-columns: minmax(280px, 340px) 1fr;
+      gap: 2.25rem;
+      align-items: start;
+    }
+  }
+
+  .mod-spotlight {
+    position: relative;
+    isolation: isolate;
+    border-radius: 1.4rem;
+    padding: 1.6rem 1.55rem 1.4rem;
+    background:
+      linear-gradient(160deg, rgba(102, 126, 234, 0.10), rgba(240, 147, 251, 0.05) 55%, transparent 100%),
+      var(--surface);
+    border: 1px solid var(--border-3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    overflow: hidden;
+  }
+  @media (min-width: 1024px) {
+    .mod-spotlight { position: sticky; top: 6.5rem; }
+  }
+  .mod-spot-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+    mask-image: radial-gradient(80% 60% at 50% 35%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(80% 60% at 50% 35%, black 30%, transparent 80%);
+    opacity: 0.55;
+  }
+  :root[data-theme='light'] .mod-spot-grid {
+    background-image:
+      linear-gradient(rgba(15, 18, 35, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 18, 35, 0.06) 1px, transparent 1px);
+  }
+  .mod-spot-glow {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    width: 280px;
+    height: 280px;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(240, 147, 251, 0.22) 0%, rgba(118, 75, 162, 0.12) 35%, transparent 70%);
+    filter: blur(30px);
+    animation: mod-spot-glow-drift 12s ease-in-out infinite alternate;
+  }
+  @keyframes mod-spot-glow-drift {
+    0%   { transform: translate(-55%, -50%); opacity: 0.85; }
+    100% { transform: translate(-45%, -55%); opacity: 1; }
+  }
+  .mod-spotlight > *:not(.mod-spot-grid):not(.mod-spot-glow) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mod-spot-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .mod-spot-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--fg);
+    opacity: 0.55;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  }
+  .mod-spot-dot {
+    width: 7px; height: 7px; border-radius: 999px;
+    background: #34d399;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+    animation: mod-spot-dot-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes mod-spot-dot-pulse {
+    0%, 100% { opacity: 0.65; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.25); box-shadow: 0 0 14px rgba(52, 211, 153, 0.95); }
+  }
+  .mod-spot-domain {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    background: linear-gradient(135deg, var(--gtext-soft-from), var(--gtext-soft-to));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    font-weight: 600;
+    transition: opacity var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+    text-align: right;
+  }
+  .mod-spot-domain.is-swapping {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+
+  .mod-spot-code-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 7rem;
+    margin: 0.65rem 0 0.75rem;
+  }
+  .mod-spot-code {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 5.5rem;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--gtext-from), var(--gtext-mid) 50%, var(--gtext-to));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 28px rgba(240, 147, 251, 0.3));
+    transition: opacity var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft),
+                filter var(--t-short) var(--ease-soft);
+  }
+  .mod-spot-code.is-swapping {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+    filter: blur(6px) drop-shadow(0 0 28px rgba(240, 147, 251, 0.3));
+  }
+
+  .mod-spot-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--fg-strong);
+    transition: opacity var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+  }
+  .mod-spot-name.is-swapping { opacity: 0.15; transform: translateY(4px); }
+
+  .mod-spot-desc {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--fg);
+    opacity: 0.7;
+    /* fixed min-height keeps the panel from jumping as descriptions of
+       different lengths cycle through */
+    min-height: 4.2em;
+    transition: opacity var(--t-short) var(--ease-soft);
+  }
+  .mod-spot-desc.is-swapping { opacity: 0.1; }
+
+  .mod-spot-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 1.2rem;
+  }
+  .mod-spot-bar {
+    position: relative;
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+  :root[data-theme='light'] .mod-spot-bar { background: rgba(15, 18, 35, 0.07); }
+  .mod-spot-bar-fill {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 14%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--gtext-from), var(--gtext-mid) 50%, var(--gtext-to));
+    box-shadow: 0 0 12px rgba(240, 147, 251, 0.35);
+    transition: width var(--t-medium) var(--ease-soft);
+  }
+  .mod-spot-counter {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.7rem;
+    color: var(--fg);
+    opacity: 0.55;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  .mod-spot-counter-sep { opacity: 0.5; padding: 0 0.1em; }
+  .mod-spot-hint {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.66rem;
+    color: var(--fg);
+    opacity: 0.4;
+    margin-top: 0.95rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* Right side: stacked group rows. */
+  .mod-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .mod-group {
+    position: relative;
+    transition: opacity var(--t-medium) var(--ease-soft),
+                filter var(--t-medium) var(--ease-soft),
+                transform var(--t-medium) var(--ease-soft);
+  }
+  .mod-group.is-dim {
+    opacity: 0.28;
+    filter: saturate(0.45);
+    transform: scale(0.995);
+  }
+  .mod-group-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 0.6rem;
+    row-gap: 0.15rem;
+  }
+  .mod-group-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--fg-strong);
+  }
+  .mod-group-count {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.62rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: var(--surface-strong);
+    border: 1px solid var(--border-2);
+    color: var(--fg);
+    opacity: 0.6;
+    line-height: 1.2;
+  }
+  .mod-group-tagline {
+    flex-basis: 100%;
+    font-size: 0.78rem;
+    color: var(--fg);
+    opacity: 0.5;
+    margin: 0;
+  }
+  /* The group rail — a hairline gradient with a traveling pulse staggered
+     per group via --rd. Each group's pulse runs at a different phase, so
+     the rails never sweep in unison. */
+  .mod-group-rail {
+    position: relative;
+    height: 1px;
+    margin: 0.65rem 0 0.85rem;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(102, 126, 234, 0.18) 12%,
+      rgba(240, 147, 251, 0.32) 50%,
+      rgba(102, 126, 234, 0.18) 88%,
+      transparent 100%);
+    overflow: visible;
+  }
+  .mod-group-rail-pulse {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(240, 147, 251, 0.95) 0%,
+      rgba(118, 75, 162, 0.5) 50%,
+      transparent 75%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    animation: mod-rail-sweep 8s linear infinite;
+    animation-delay: var(--rd, 0s);
+  }
+  @keyframes mod-rail-sweep {
+    0%   { left: 0;    opacity: 0; }
+    6%   { opacity: 1; }
+    94%  { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  .mod-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+  @media (min-width: 480px) { .mod-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 768px) { .mod-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (min-width: 1024px){ .mod-tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6rem; } }
+  @media (min-width: 1280px){ .mod-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+  .mod-tile {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.35rem;
+    padding: 0.7rem 0.7rem 0.6rem;
+    border-radius: 0.7rem;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    min-width: 0;
+    min-height: 5.4rem;
+    overflow: hidden;
+    /* Wave entrance — group's reveal-delay + per-tile cascade */
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    animation: mod-tile-rise var(--t-medium) var(--ease-soft) forwards;
+    animation-delay: calc(var(--reveal-delay, 0ms) + var(--mi, 0) * 35ms + 80ms);
+    transition: background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft),
+                box-shadow var(--t-short) var(--ease-soft),
+                filter var(--t-short) var(--ease-soft);
+  }
+  @keyframes mod-tile-rise {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .mod-tile:hover,
+  .mod-tile:focus-visible,
+  .mod-tile.is-active {
+    outline: none;
+    background: var(--surface-elev);
+    border-color: rgba(240, 147, 251, 0.45);
+    transform: translateY(-2px);
+    box-shadow:
+      0 14px 32px -16px rgba(118, 75, 162, 0.65),
+      0 0 0 1px rgba(240, 147, 251, 0.14) inset;
+  }
+  .mod-tile.is-active {
+    border-color: rgba(240, 147, 251, 0.65);
+    box-shadow:
+      0 16px 40px -18px rgba(118, 75, 162, 0.75),
+      0 0 0 1px rgba(240, 147, 251, 0.35) inset,
+      0 0 24px -6px rgba(240, 147, 251, 0.45);
+  }
+
+  .mod-tile-code {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--gtext-from), var(--gtext-mid) 50%, var(--gtext-to));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    transition: filter var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+  }
+  .mod-tile:hover .mod-tile-code,
+  .mod-tile:focus-visible .mod-tile-code,
+  .mod-tile.is-active .mod-tile-code {
+    filter: drop-shadow(0 0 10px rgba(240, 147, 251, 0.6));
+    transform: translateY(-1px);
+  }
+  .mod-tile-name {
+    font-size: 0.68rem;
+    line-height: 1.3;
+    color: var(--fg);
+    opacity: 0.7;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  .mod-tile-shine {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(110deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.10) 49%,
+      rgba(240, 147, 251, 0.10) 51%,
+      transparent 65%);
+    background-size: 250% 250%;
+    background-position: 120% 120%;
+    opacity: 0;
+    transition: opacity var(--t-short) var(--ease-soft),
+                background-position 800ms var(--ease-soft);
+  }
+  .mod-tile:hover .mod-tile-shine,
+  .mod-tile.is-active .mod-tile-shine {
+    opacity: 1;
+    background-position: -20% -20%;
+  }
+  .mod-tile > *:not(.mod-tile-shine) { position: relative; z-index: 1; }
+
+  .mod-tile-corner {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    color: var(--fg);
+    opacity: 0;
+    transform: translate(-2px, 2px);
+    transition: opacity var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
+  }
+  .mod-tile:hover .mod-tile-corner,
+  .mod-tile:focus-visible .mod-tile-corner,
+  .mod-tile.is-active .mod-tile-corner {
+    opacity: 0.85;
+    transform: translate(0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mod-tile {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+    .mod-spot-dot,
+    .mod-group-rail-pulse,
+    .mod-spot-glow {
+      animation: none !important;
+    }
+    .mod-spot-code,
+    .mod-spot-name,
+    .mod-spot-desc,
+    .mod-spot-domain {
+      transition: none;
+    }
+  }
 }
 
 @layer utilities {

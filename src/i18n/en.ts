@@ -92,6 +92,13 @@ export const en = {
   'modules.count':        '{n} modules',
   'modules.specialized':  '+ specialized modules',
 
+  'modules.stat.modules':  'modules',
+  'modules.stat.domains':  'domains',
+  'modules.stat.codebase': 'codebase',
+  'modules.filters.all':   'All',
+  'modules.spotlight.live':'Live module',
+  'modules.spotlight.hint':'Hover any tile · auto-cycles',
+
   'modules.group.customer.title':       'Customer & Sales',
   'modules.group.customer.tagline':     'Lifecycle, lead, contract, agent, segment.',
   'modules.group.operations.title':     'Operations',
@@ -267,6 +274,30 @@ export const en = {
   'cap.shield.title':     'Built for compliance',
   'cap.shield.body':      'ISO 27001 · ISO 27701 · SOC 2 · GDPR · eIDAS · IDD — engineered to meet the bar of regulated insurance businesses.',
 
+  'cap.stat.caps':        'capabilities',
+  'cap.stat.plugins':     'plugins',
+  'cap.stat.platform':    'platform',
+
+  'cap.f.all':            'All',
+  'cap.f.ops':            'Operations',
+  'cap.f.customer':       'Customer',
+  'cap.f.intel':          'Intelligence',
+  'cap.f.trust':          'Compliance',
+
+  'cap.viz.life.0':       'Lead',
+  'cap.viz.life.1':       'Apply',
+  'cap.viz.life.2':       'Active',
+  'cap.viz.life.3':       'Claim',
+  'cap.viz.life.4':       'Renew',
+
+  'cap.viz.sepa.0':       'Mandate',
+  'cap.viz.sepa.1':       'PAIN.008',
+  'cap.viz.sepa.2':       'CAMT',
+  'cap.viz.sepa.3':       'Reconciled',
+
+  'cap.viz.ai.prompt':    'show billed premium for Q1, by product',
+  'cap.viz.ai.result':    '4 rows · 312 ms · audit logged',
+
   // ─── AI section ─────────────────────────────────────────────
   'ai.badge':             'CB · COGNITIVE BACKEND',
   'ai.heading.a':         'Ask in plain language.',
@@ -366,11 +397,16 @@ export const en = {
   'arch.stack.infra':     'Infrastructure',
   'arch.stack.aiDocs':    'AI & Documents',
 
+  'arch.tech.eyebrow':         'live system map',
+  'arch.tech.blurb.schema':    'A live schematic of how layers exchange traffic — pulses travel between connected components.',
+  'arch.tech.hint.schema':     'Each rail is one architectural layer · pulses indicate inter-layer traffic',
+
   'arch.deploy.title':    'Two deployment models',
   'arch.deploy.isolation':'isolation',
   'arch.deploy.shared':   'Shared compute · DB per tenant',
   'arch.deploy.runtime':  'Alpha runtime',
   'arch.deploy.dedicated':'Dedicated · own runtime + own DB',
+  'arch.deploy.blurb':    'Watch a request flow through both topologies — same product, two isolation levels.',
 
   // ─── CTA ────────────────────────────────────────────────────
   'cta.eyebrow':          'See Alpha in action',

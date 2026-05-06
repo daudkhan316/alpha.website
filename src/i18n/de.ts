@@ -108,6 +108,13 @@ export const de: Partial<typeof en> = {
   'modules.count':        '{n} Module',
   'modules.specialized':  '+ spezialisierte Module',
 
+  'modules.stat.modules':  'Module',
+  'modules.stat.domains':  'Domänen',
+  'modules.stat.codebase': 'Codebasis',
+  'modules.filters.all':   'Alle',
+  'modules.spotlight.live':'Live-Modul',
+  'modules.spotlight.hint':'Auf eine Kachel hovern · Auto-Rotation',
+
   'modules.group.customer.title':       'Kunde & Vertrieb',
   'modules.group.customer.tagline':     'Lebenszyklus, Lead, Vertrag, Vermittler, Segment.',
   'modules.group.operations.title':     'Betrieb',
@@ -285,6 +292,30 @@ export const de: Partial<typeof en> = {
   'cap.shield.title':     'Compliance by Design',
   'cap.shield.body':      'ISO 27001 · ISO 27701 · SOC 2 · DSGVO · eIDAS · IDD — entwickelt für regulierte Versicherungsgeschäfte.',
 
+  'cap.stat.caps':        'Funktionen',
+  'cap.stat.plugins':     'Plug-ins',
+  'cap.stat.platform':    'Plattform',
+
+  'cap.f.all':            'Alle',
+  'cap.f.ops':            'Betrieb',
+  'cap.f.customer':       'Kunde',
+  'cap.f.intel':          'Intelligenz',
+  'cap.f.trust':          'Compliance',
+
+  'cap.viz.life.0':       'Lead',
+  'cap.viz.life.1':       'Antrag',
+  'cap.viz.life.2':       'Aktiv',
+  'cap.viz.life.3':       'Schaden',
+  'cap.viz.life.4':       'Verläng.',
+
+  'cap.viz.sepa.0':       'Mandat',
+  'cap.viz.sepa.1':       'PAIN.008',
+  'cap.viz.sepa.2':       'CAMT',
+  'cap.viz.sepa.3':       'Abgestimmt',
+
+  'cap.viz.ai.prompt':    'gezahlte Prämie Q1 nach Produkt zeigen',
+  'cap.viz.ai.result':    '4 Zeilen · 312 ms · auditiert',
+
   // ─── AI section ─────────────────────────────────────────────
   'ai.badge':             'CB · COGNITIVE BACKEND',
   'ai.heading.a':         'Fragen Sie in natürlicher Sprache.',
@@ -384,11 +415,16 @@ export const de: Partial<typeof en> = {
   'arch.stack.infra':     'Infrastruktur',
   'arch.stack.aiDocs':    'KI & Dokumente',
 
+  'arch.tech.eyebrow':         'lebende Systemkarte',
+  'arch.tech.blurb.schema':    'Eine lebende Schemadarstellung des Datenverkehrs zwischen den Schichten — Impulse wandern zwischen verbundenen Komponenten.',
+  'arch.tech.hint.schema':     'Jede Schiene ist eine Architekturschicht · Impulse zeigen Datenverkehr zwischen Schichten',
+
   'arch.deploy.title':    'Zwei Bereitstellungsmodelle',
   'arch.deploy.isolation':'Isolation',
   'arch.deploy.shared':   'Geteiltes Compute · DB pro Mandant',
   'arch.deploy.runtime':  'Alpha-Runtime',
   'arch.deploy.dedicated':'Dediziert · eigene Runtime + eigene DB',
+  'arch.deploy.blurb':    'Sehen Sie zu, wie eine Anfrage durch beide Topologien fließt — dasselbe Produkt, zwei Isolationsstufen.',
 
   // ─── CTA ────────────────────────────────────────────────────
   'cta.eyebrow':          'Alpha live erleben',

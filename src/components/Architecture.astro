@@ -1,9 +1,46 @@
 ---
-const stack = [
-  { layer: 'Backend',     items: ['Java 21', 'Spring Boot 3.5', 'Hibernate 6 + Envers', 'Spring Batch', 'PostgreSQL 16', 'Flyway · 300+ migrations'] },
-  { layer: 'Frontend',    items: ['Angular 20.3 + PrimeNG', 'Customer portal · Angular 17.2', 'AI portal · Next.js 16 + React 19', 'Node.js gateway'] },
-  { layer: 'Infrastructure', items: ['Microsoft Azure', 'Container Apps · 4 CPU / 8 GB', 'Container Registry', 'Service Bus · Key Vault', 'Region · Germany West Central'] },
-  { layer: 'AI & Documents', items: ['Azure OpenAI · GPT-4o', 'Azure AI Document Intelligence', 'RAG over entity & attribute docs', 'Apache PDFBox · openhtmltopdf'] },
+type StackLayer = {
+  id: string;
+  layer: string;
+  layerKey: string;
+  accent: string;
+  glyph: string;
+  items: string[];
+};
+
+const stack: StackLayer[] = [
+  {
+    id: 'frontend',
+    layer: 'Frontend',
+    layerKey: 'arch.stack.frontend',
+    accent: '#f093fb',
+    glyph: 'M3 5h18v3H3zm0 5h18v3H3zm0 5h18v3H3z',
+    items: ['Angular 20.3 + PrimeNG', 'Customer portal · Angular 17.2', 'AI portal · Next.js 16 + React 19', 'Node.js gateway'],
+  },
+  {
+    id: 'backend',
+    layer: 'Backend',
+    layerKey: 'arch.stack.backend',
+    accent: '#a78bfa',
+    glyph: 'M4 6c0-1.1 3.6-2 8-2s8 .9 8 2v3c0 1.1-3.6 2-8 2s-8-.9-8-2V6zm0 6c0-1.1 3.6-2 8-2s8 .9 8 2v3c0 1.1-3.6 2-8 2s-8-.9-8-2v-3zm0 6c0-1.1 3.6-2 8-2s8 .9 8 2v3c0 1.1-3.6 2-8 2s-8-.9-8-2v-3z',
+    items: ['Java 21', 'Spring Boot 3.5', 'Hibernate 6 + Envers', 'Spring Batch', 'PostgreSQL 16', 'Flyway · 300+ migrations'],
+  },
+  {
+    id: 'ai',
+    layer: 'AI & Documents',
+    layerKey: 'arch.stack.aiDocs',
+    accent: '#7dd3fc',
+    glyph: 'M12 2l2.5 5.5L20 10l-5.5 2.5L12 18l-2.5-5.5L4 10l5.5-2.5z',
+    items: ['Azure OpenAI · GPT-4o', 'Azure AI Document Intelligence', 'RAG over entity & attribute docs', 'Apache PDFBox · openhtmltopdf'],
+  },
+  {
+    id: 'infra',
+    layer: 'Infrastructure',
+    layerKey: 'arch.stack.infra',
+    accent: '#667eea',
+    glyph: 'M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z',
+    items: ['Microsoft Azure', 'Container Apps · 4 CPU / 8 GB', 'Container Registry', 'Service Bus · Key Vault', 'Region · Germany West Central'],
+  },
 ];
 
 const pillars = [
@@ -16,14 +53,21 @@ const pillars = [
 const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS · AES', 'IDD'];
 ---
 
-<section id="architecture" class="section">
+<section id="architecture" class="section arch-section">
   <div class="absolute inset-0 -z-10 bg-grid opacity-25 mask-fade-bottom"></div>
   <div class="blob blob-purple w-[480px] h-[480px] -bottom-20 right-[-160px] opacity-50" data-parallax="0.18"></div>
+  <div class="blob blob-violet w-[420px] h-[420px] -top-32 left-[-120px] opacity-40" data-parallax="0.12"></div>
 
   <div class="container-wide">
-    <div class="grid lg:grid-cols-[1.05fr_1fr] gap-14 items-end">
-      <div class="reveal">
-        <p class="section-eyebrow" data-i18n="arch.eyebrow">Architecture · Trust</p>
+    {/* ─── HERO START · live header + animated trust panel ───────── */}
+    <div class="arch-hero">
+      <div class="arch-hero-text reveal">
+        <p class="arch-eyebrow">
+          <span class="arch-live-dot" aria-hidden="true"></span>
+          <span data-i18n="arch.eyebrow">Architecture · Trust</span>
+          <span class="arch-eyebrow-spacer" aria-hidden="true"></span>
+          <span class="arch-eyebrow-id">DE-W-C · 99.99%</span>
+        </p>
         <h2 class="section-heading mt-3">
           <span data-i18n="arch.heading.a">Engineered for</span>
           <span class="gradient-text" data-i18n="arch.heading.b">regulated insurance.</span>
@@ -33,21 +77,99 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
           database-per-tenant multi-tenancy with optional dedicated compute, event-driven internally.
           Hosted exclusively in Microsoft Azure Germany.
         </p>
+
+        <div class="arch-meta-strip" aria-hidden="true">
+          <div class="arch-meta-strip-track">
+            <span>EU data residency</span><span>·</span>
+            <span>Field-level audit</span><span>·</span>
+            <span>Per-tenant DB</span><span>·</span>
+            <span>VNet isolation</span><span>·</span>
+            <span>Frankfurt</span><span>·</span>
+            <span>EU data residency</span><span>·</span>
+            <span>Field-level audit</span><span>·</span>
+            <span>Per-tenant DB</span><span>·</span>
+            <span>VNet isolation</span><span>·</span>
+            <span>Frankfurt</span><span>·</span>
+          </div>
+        </div>
       </div>
-      <div class="reveal flex flex-wrap gap-2 lg:justify-end">
-        {compliance.map((c) => (
-          <span class="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-white/80 font-medium">
-            {c}
+
+      <aside class="arch-trust reveal" data-reveal="scale">
+        <div class="arch-trust-head">
+          <span class="arch-trust-eyebrow">compliance</span>
+          <span class="arch-trust-live">
+            <span class="arch-trust-live-dot" aria-hidden="true"></span>
+            live
           </span>
-        ))}
-      </div>
+        </div>
+        <ul class="arch-trust-list">
+          {compliance.map((c, i) => (
+            <li class="arch-trust-item" style={`--i:${i};`}>
+              <span class="arch-trust-name">{c}</span>
+              <span class="arch-trust-bar" aria-hidden="true">
+                <span class="arch-trust-bar-fill"></span>
+              </span>
+              <svg class="arch-trust-check" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <path d="M5 12l4 4 10-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </li>
+          ))}
+        </ul>
+        <div class="arch-trust-foot">
+          <span>Audited continuously</span>
+          <span class="arch-trust-foot-region">Azure DE-W-C</span>
+        </div>
+      </aside>
     </div>
 
-    {/* Pillars */}
+    {/* ─── PILLARS · each card carries its own running mini-animation ─── */}
     <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger data-stagger-step="60">
       {pillars.map((p, i) => (
-        <div class="reveal spotlight relative rounded-2xl glass p-6 overflow-hidden transition-transform duration-[var(--t-short)] ease-[var(--ease-soft)] hover:-translate-y-0.5">
-          <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-alpha-purple/20 blur-2xl"></div>
+        <div class="reveal arch-pillar spotlight" data-pillar={i}>
+          <div class="arch-pillar-glow"></div>
+
+          {/* Per-pillar mini-graphic */}
+          <div class="arch-pillar-art" aria-hidden="true">
+            {i === 0 && (
+              <div class="art-timeline">
+                {Array.from({length: 7}).map((_, k) => (
+                  <span class="art-timeline-bar" style={`--k:${k};`}></span>
+                ))}
+                <span class="art-timeline-cursor"></span>
+              </div>
+            )}
+            {i === 1 && (
+              <div class="art-tenants">
+                {Array.from({length: 4}).map((_, k) => (
+                  <span class="art-tenant-row" style={`--k:${k};`}>
+                    <span class="art-tenant-pill"></span>
+                    <span class="art-tenant-line"></span>
+                    <span class="art-tenant-db"></span>
+                  </span>
+                ))}
+              </div>
+            )}
+            {i === 2 && (
+              <div class="art-radar">
+                <span class="art-radar-ring art-radar-r1"></span>
+                <span class="art-radar-ring art-radar-r2"></span>
+                <span class="art-radar-ring art-radar-r3"></span>
+                <span class="art-radar-dot"></span>
+                <span class="art-radar-sweep"></span>
+              </div>
+            )}
+            {i === 3 && (
+              <div class="art-cascade">
+                {['Module','Feature','Object','Customer','Contract'].map((label, k) => (
+                  <span class="art-cascade-step" style={`--k:${k};`}>
+                    <span class="art-cascade-dot"></span>
+                    <span class="art-cascade-label">{label}</span>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div class="relative">
             <div class="font-display text-3xl font-semibold tracking-tight gradient-text-strong" data-i18n={`arch.pillar.${i}.kpi`}>{p.kpi}</div>
             <div class="mt-1 text-xs text-white/50 uppercase tracking-[0.16em]" data-i18n={`arch.pillar.${i}.label`}>{p.label}</div>
@@ -57,75 +179,1361 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
       ))}
     </div>
 
-    {/* Stack & multi-tenancy diagram */}
-    <div class="mt-16 grid lg:grid-cols-[1.2fr_1fr] gap-8 items-stretch">
-      {/* Tech stack */}
-      <div class="reveal glass-strong rounded-2xl p-6 lg:p-8">
-        <div class="flex items-baseline justify-between">
-          <h3 class="text-xl font-semibold tracking-tight" data-i18n="arch.stack.title">Technology stack</h3>
-          <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40" data-i18n="arch.stack.production">production</span>
-        </div>
-        <div class="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-6">
-          {stack.map((s) => {
-            const layerKey =
-              s.layer === 'Backend' ? 'arch.stack.backend' :
-              s.layer === 'Frontend' ? 'arch.stack.frontend' :
-              s.layer === 'Infrastructure' ? 'arch.stack.infra' :
-              'arch.stack.aiDocs';
-            return (
-              <div>
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-alpha-pink"></span>
-                  <h4 class="text-sm font-mono uppercase tracking-[0.16em] text-white/55" data-i18n={layerKey}>{s.layer}</h4>
-                </div>
-                <ul class="space-y-1.5">
-                  {s.items.map((i) => (
-                    <li class="text-sm text-white/80">— {i}</li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+    {/* Tech-stack visualization */}
+    <div class="mt-20 reveal arch-tech is-visible">
+      <div class="arch-tech-head">
+        <div>
+          <span class="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45" data-i18n="arch.tech.eyebrow">live system map</span>
+          <h3 class="mt-2 text-2xl lg:text-3xl font-semibold tracking-tight" data-i18n="arch.stack.title">Technology stack</h3>
+          <p class="mt-2 text-sm text-white/60 max-w-xl" data-i18n="arch.tech.blurb.schema">
+            A live schematic of how layers exchange traffic — pulses travel between connected components.
+          </p>
         </div>
       </div>
 
-      {/* Multi-tenancy diagram */}
-      <div class="reveal relative rounded-2xl p-[1px] bg-gradient-to-br from-violet-500/30 to-fuchsia-500/20">
-        <div class="panel-dark-strong rounded-2xl p-6 lg:p-8 h-full flex flex-col">
-          <div class="flex items-baseline justify-between">
-            <h3 class="text-xl font-semibold tracking-tight" data-i18n="arch.deploy.title">Two deployment models</h3>
-            <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40" data-i18n="arch.deploy.isolation">isolation</span>
+      <div class="arch-schema">
+        <div class="arch-schema-grid">
+          {stack.map((s, i) => (
+            <div
+              class="arch-schema-row"
+              data-schema-row={s.id}
+              style={`--schema-accent:${s.accent}; --schema-i:${i};`}
+            >
+              <div class="arch-schema-rail">
+                <div class="arch-schema-rail-pulse" aria-hidden="true"></div>
+              </div>
+              <div class="arch-schema-label">
+                <div class="arch-schema-icon">
+                  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                    <path d={s.glyph} fill="currentColor"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="arch-schema-layer" data-i18n={s.layerKey}>{s.layer}</div>
+                  <div class="arch-schema-meta">{s.items.length} components</div>
+                </div>
+              </div>
+              <div class="arch-schema-chips">
+                {s.items.map((item, j) => (
+                  <button
+                    type="button"
+                    class="arch-schema-chip"
+                    data-schema-chip
+                    style={`--chip-j:${j};`}
+                  >
+                    <span class="arch-schema-chip-pin" aria-hidden="true"></span>
+                    <span class="arch-schema-chip-text">{item}</span>
+                    <span class="arch-schema-chip-bar" aria-hidden="true"></span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Animated connection paths */}
+          <svg class="arch-schema-wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="wireGrad" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="rgba(102,126,234,0.0)"/>
+                <stop offset="40%" stop-color="rgba(102,126,234,0.55)"/>
+                <stop offset="60%" stop-color="rgba(240,147,251,0.55)"/>
+                <stop offset="100%" stop-color="rgba(240,147,251,0.0)"/>
+              </linearGradient>
+            </defs>
+            <path d="M2 12 C 30 12, 70 38, 98 38" class="arch-schema-wire" style="--wire-i:0"/>
+            <path d="M2 38 C 30 38, 70 62, 98 62" class="arch-schema-wire" style="--wire-i:1"/>
+            <path d="M2 62 C 30 62, 70 88, 98 88" class="arch-schema-wire" style="--wire-i:2"/>
+            <path d="M2 88 C 30 88, 70 12, 98 12" class="arch-schema-wire" style="--wire-i:3"/>
+          </svg>
+        </div>
+        <p class="arch-schema-hint" data-i18n="arch.tech.hint.schema">Each rail is one architectural layer · pulses indicate inter-layer traffic</p>
+      </div>
+    </div>
+
+    {/* ─── DEPLOYMENT MODELS · animated, tabbed, packet-flow diagram ─── */}
+    <div class="mt-12 reveal arch-deploy" data-deploy-mode="shared">
+      <div class="arch-deploy-frame">
+        <div class="arch-deploy-head">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45" data-i18n="arch.deploy.isolation">isolation</span>
+            <h3 class="mt-2 text-2xl lg:text-3xl font-semibold tracking-tight" data-i18n="arch.deploy.title">Two deployment models</h3>
+            <p class="mt-2 text-sm text-white/60 max-w-xl" data-i18n="arch.deploy.blurb">
+              Watch a request flow through both topologies — same product, two isolation levels.
+            </p>
           </div>
 
-          <div class="mt-6 flex-1 grid grid-rows-2 gap-4">
-            {/* Shared compute */}
-            <div class="rounded-xl border border-white/10 p-4">
-              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3" data-i18n="arch.deploy.shared">Shared compute · DB per tenant</div>
-              <div class="flex items-center gap-2">
-                <div class="flex-1 px-3 py-2.5 rounded-lg bg-alpha-gradient text-white text-xs font-medium text-center" data-i18n="arch.deploy.runtime">Alpha runtime</div>
-              </div>
-              <div class="mt-2 grid grid-cols-4 gap-1.5">
-                {['T1', 'T2', 'T3', 'T4'].map((t) => (
-                  <div class="px-2 py-2 rounded-md bg-white/[0.04] border border-white/10 text-center font-mono text-[10px] text-white/70">{t} · pg</div>
-                ))}
-              </div>
+          <div class="arch-deploy-tabs" role="tablist">
+            <button type="button" class="arch-deploy-tab is-active" role="tab" aria-selected="true" data-mode="shared">
+              <span class="arch-deploy-tab-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="6" r="2.5" fill="currentColor"/><circle cx="5" cy="18" r="2" fill="currentColor"/><circle cx="12" cy="18" r="2" fill="currentColor"/><circle cx="19" cy="18" r="2" fill="currentColor"/><path d="M12 9v3M12 12L5 16M12 12l7 4" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+              </span>
+              <span data-i18n="arch.deploy.shared">Shared compute · DB per tenant</span>
+            </button>
+            <button type="button" class="arch-deploy-tab" role="tab" aria-selected="false" data-mode="dedicated">
+              <span class="arch-deploy-tab-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14"><rect x="3" y="4" width="8" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="13" y="4" width="8" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="7" cy="9" r="1.4" fill="currentColor"/><circle cx="7" cy="15" r="1.4" fill="currentColor"/><circle cx="17" cy="9" r="1.4" fill="currentColor"/><circle cx="17" cy="15" r="1.4" fill="currentColor"/></svg>
+              </span>
+              <span data-i18n="arch.deploy.dedicated">Dedicated · own runtime + own DB</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="arch-deploy-stage">
+          {/* ─── Shared mode diagram ─── */}
+          <div class="ddiagram ddiagram-shared" data-pane="shared">
+            <div class="ddiagram-grid"></div>
+            <svg class="ddiagram-svg" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <linearGradient id="dwireA" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(102,126,234,0.55)"/>
+                  <stop offset="100%" stop-color="rgba(240,147,251,0.55)"/>
+                </linearGradient>
+                <radialGradient id="dpacket" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0%" stop-color="#fff"/>
+                  <stop offset="60%" stop-color="#f093fb"/>
+                  <stop offset="100%" stop-color="rgba(240,147,251,0)"/>
+                </radialGradient>
+              </defs>
+
+              {/* Connection paths (client → runtime → 4 DBs) */}
+              <path id="psh-c" d="M 300 60 C 300 100, 300 120, 300 150" class="dwire" />
+              <path id="psh-1" d="M 300 215 C 240 240, 160 260, 100 300" class="dwire" />
+              <path id="psh-2" d="M 300 215 C 280 245, 240 270, 233 300" class="dwire" />
+              <path id="psh-3" d="M 300 215 C 320 245, 360 270, 367 300" class="dwire" />
+              <path id="psh-4" d="M 300 215 C 360 240, 440 260, 500 300" class="dwire" />
+
+              {/* Traveling packets */}
+              <circle r="4" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.6s" repeatCount="indefinite" rotate="auto"><mpath href="#psh-c"/></animateMotion></circle>
+              <circle r="3.5" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.8s" begin="0.3s" repeatCount="indefinite"><mpath href="#psh-1"/></animateMotion></circle>
+              <circle r="3.5" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.8s" begin="0.6s" repeatCount="indefinite"><mpath href="#psh-2"/></animateMotion></circle>
+              <circle r="3.5" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.8s" begin="0.9s" repeatCount="indefinite"><mpath href="#psh-3"/></animateMotion></circle>
+              <circle r="3.5" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.8s" begin="1.2s" repeatCount="indefinite"><mpath href="#psh-4"/></animateMotion></circle>
+            </svg>
+
+            {/* Nodes — positioned with % over the SVG (viewBox 600×360) */}
+            <div class="dnode dnode-client" style="left:50%; top:8.33%;">
+              <span class="dnode-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </span>
+              <span class="dnode-text">Client request</span>
+              <span class="dnode-meta">https · jwt</span>
             </div>
 
-            {/* Dedicated */}
-            <div class="rounded-xl border border-white/10 p-4">
-              <div class="text-[11px] font-mono uppercase tracking-wider text-white/45 mb-3" data-i18n="arch.deploy.dedicated">Dedicated · own runtime + own DB</div>
-              <div class="grid grid-cols-2 gap-2">
-                {['T-A', 'T-B'].map((t) => (
-                  <div class="rounded-md bg-white/[0.03] border border-white/10 p-2">
-                    <div class="px-2 py-1.5 rounded bg-alpha-gradient text-white text-[10px] font-medium text-center">{t} · runtime</div>
-                    <div class="mt-1 px-2 py-1.5 rounded bg-white/[0.04] border border-white/10 text-center font-mono text-[10px] text-white/70">{t} · pg</div>
-                  </div>
-                ))}
-              </div>
+            <div class="dnode dnode-runtime" style="left:50%; top:42.22%;" data-runtime>
+              <span class="dnode-runtime-pulse" aria-hidden="true"></span>
+              <span class="dnode-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="6" width="18" height="4" rx="1" fill="currentColor"/><rect x="3" y="14" width="18" height="4" rx="1" fill="currentColor" opacity="0.6"/></svg>
+              </span>
+              <span class="dnode-text">Alpha runtime</span>
+              <span class="dnode-meta">shared · 4×8GB</span>
             </div>
+
+            <div class="dnode dnode-db dnode-db-1" style="left:16.66%; top:83.88%;" data-db>
+              <span class="dnode-icon dnode-icon--db"><svg viewBox="0 0 24 24" width="14" height="14"><ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 6v6c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5V6M5 12v6c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5v-6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              T1 · pg
+            </div>
+            <div class="dnode dnode-db dnode-db-2" style="left:38.83%; top:83.88%;" data-db>
+              <span class="dnode-icon dnode-icon--db"><svg viewBox="0 0 24 24" width="14" height="14"><ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 6v12c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              T2 · pg
+            </div>
+            <div class="dnode dnode-db dnode-db-3" style="left:61.16%; top:83.88%;" data-db>
+              <span class="dnode-icon dnode-icon--db"><svg viewBox="0 0 24 24" width="14" height="14"><ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 6v12c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              T3 · pg
+            </div>
+            <div class="dnode dnode-db dnode-db-4" style="left:83.33%; top:83.88%;" data-db>
+              <span class="dnode-icon dnode-icon--db"><svg viewBox="0 0 24 24" width="14" height="14"><ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 6v12c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              T4 · pg
+            </div>
+
+            {/* Annotations */}
+            <span class="ddiagram-tag ddiagram-tag-tl">1 runtime · 4 tenants</span>
+            <span class="ddiagram-tag ddiagram-tag-tr">isolation: database boundary</span>
+          </div>
+
+          {/* ─── Dedicated mode diagram ─── */}
+          <div class="ddiagram ddiagram-dedicated" data-pane="dedicated" aria-hidden="true">
+            <div class="ddiagram-grid"></div>
+            <svg class="ddiagram-svg" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <radialGradient id="dpacket2" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0%" stop-color="#fff"/>
+                  <stop offset="60%" stop-color="#a78bfa"/>
+                  <stop offset="100%" stop-color="rgba(167,139,250,0)"/>
+                </radialGradient>
+              </defs>
+
+              {/* VNet boundaries */}
+              <rect x="20" y="40" width="260" height="290" rx="14" class="dvnet"/>
+              <rect x="320" y="40" width="260" height="290" rx="14" class="dvnet" style="--vnet-i:1"/>
+
+              {/* Tenant A connections */}
+              <path id="pded-a1" d="M 150 90 C 150 130, 150 150, 150 180" class="dwire dwire-A"/>
+              <path id="pded-a2" d="M 150 230 C 150 260, 150 280, 150 295" class="dwire dwire-A"/>
+              {/* Tenant B connections */}
+              <path id="pded-b1" d="M 450 90 C 450 130, 450 150, 450 180" class="dwire dwire-B"/>
+              <path id="pded-b2" d="M 450 230 C 450 260, 450 280, 450 295" class="dwire dwire-B"/>
+
+              {/* Packets */}
+              <circle r="4" fill="url(#dpacket2)" class="dpacket"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#pded-a1"/></animateMotion></circle>
+              <circle r="4" fill="url(#dpacket2)" class="dpacket"><animateMotion dur="2.6s" begin="0.6s" repeatCount="indefinite"><mpath href="#pded-a2"/></animateMotion></circle>
+              <circle r="4" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.6s" begin="0.3s" repeatCount="indefinite"><mpath href="#pded-b1"/></animateMotion></circle>
+              <circle r="4" fill="url(#dpacket)" class="dpacket"><animateMotion dur="2.6s" begin="0.9s" repeatCount="indefinite"><mpath href="#pded-b2"/></animateMotion></circle>
+            </svg>
+
+            {/* VNet labels */}
+            <span class="dvnet-label" style="left:3.33%; top:5%;">
+              <span class="dvnet-dot" aria-hidden="true"></span>
+              VNet · Tenant A
+            </span>
+            <span class="dvnet-label dvnet-label--b" style="left:53.33%; top:5%;">
+              <span class="dvnet-dot" aria-hidden="true"></span>
+              VNet · Tenant B
+            </span>
+
+            {/* Tenant A nodes (left column) */}
+            <div class="dnode dnode-client dnode-mini" style="left:25%; top:16.66%;">
+              <span class="dnode-icon"><svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              Client A
+            </div>
+            <div class="dnode dnode-runtime dnode-runtime--A" style="left:25%; top:50.55%;" data-runtime>
+              <span class="dnode-runtime-pulse" aria-hidden="true"></span>
+              <span class="dnode-text">Runtime A</span>
+              <span class="dnode-meta">dedicated</span>
+            </div>
+            <div class="dnode dnode-db dnode-db--A" style="left:25%; top:83.88%;" data-db>
+              <span class="dnode-icon dnode-icon--db"><svg viewBox="0 0 24 24" width="14" height="14"><ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 6v12c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              DB A · pg
+            </div>
+
+            {/* Tenant B nodes (right column) */}
+            <div class="dnode dnode-client dnode-mini" style="left:75%; top:16.66%;">
+              <span class="dnode-icon"><svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              Client B
+            </div>
+            <div class="dnode dnode-runtime dnode-runtime--B" style="left:75%; top:50.55%;" data-runtime>
+              <span class="dnode-runtime-pulse" aria-hidden="true"></span>
+              <span class="dnode-text">Runtime B</span>
+              <span class="dnode-meta">dedicated</span>
+            </div>
+            <div class="dnode dnode-db dnode-db--B" style="left:75%; top:83.88%;" data-db>
+              <span class="dnode-icon dnode-icon--db"><svg viewBox="0 0 24 24" width="14" height="14"><ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 6v12c0 1.5 3.1 2.5 7 2.5s7-1 7-2.5V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              DB B · pg
+            </div>
+
+            <span class="ddiagram-tag ddiagram-tag-tl">2 isolated stacks · own VNet</span>
+            <span class="ddiagram-tag ddiagram-tag-tr">isolation: network + compute</span>
+          </div>
+        </div>
+
+        {/* Stat strip below the diagram */}
+        <div class="arch-deploy-stats">
+          <div class="arch-deploy-stat">
+            <span class="arch-deploy-stat-k">Region</span>
+            <span class="arch-deploy-stat-v">DE-W-C</span>
+          </div>
+          <div class="arch-deploy-stat">
+            <span class="arch-deploy-stat-k">Database boundary</span>
+            <span class="arch-deploy-stat-v">per-tenant</span>
+          </div>
+          <div class="arch-deploy-stat">
+            <span class="arch-deploy-stat-k">Compute</span>
+            <span class="arch-deploy-stat-v" data-deploy-stat="compute">shared · 4×8GB</span>
+          </div>
+          <div class="arch-deploy-stat">
+            <span class="arch-deploy-stat-k">Network</span>
+            <span class="arch-deploy-stat-v" data-deploy-stat="network">shared egress</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .arch-section { isolation: isolate; }
+
+  /* ─── HERO START · live header + trust panel ─────────────── */
+  .arch-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+    align-items: stretch;
+  }
+  @media (min-width: 1024px) {
+    .arch-hero { grid-template-columns: 1.15fr 0.85fr; gap: 3rem; }
+  }
+  .arch-hero-text { min-width: 0; }
+
+  .arch-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.7);
+  }
+  .arch-eyebrow-id {
+    color: rgba(255,255,255,0.45);
+    font-size: 0.6rem;
+  }
+  .arch-eyebrow-spacer {
+    width: 1px;
+    height: 12px;
+    background: rgba(255,255,255,0.18);
+  }
+  .arch-live-dot {
+    position: relative;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 10px rgba(74,222,128,0.7);
+  }
+  .arch-live-dot::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid #4ade80;
+    animation: liveRing 1.8s ease-out infinite;
+  }
+  @keyframes liveRing {
+    0%   { transform: scale(0.6); opacity: 0.7; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+
+  /* Auto-scrolling meta strip */
+  .arch-meta-strip {
+    margin-top: 1.5rem;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0.7rem 0;
+  }
+  .arch-meta-strip-track {
+    display: inline-flex;
+    gap: 1.5rem;
+    white-space: nowrap;
+    animation: metaScroll 22s linear infinite;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.5);
+  }
+  .arch-meta-strip-track > span:nth-child(odd) { color: rgba(240,147,251,0.7); }
+  @keyframes metaScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Trust panel (right column) */
+  .arch-trust {
+    position: relative;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    background:
+      radial-gradient(280px 160px at 100% 0%, rgba(240,147,251,0.10), transparent 60%),
+      radial-gradient(280px 160px at 0% 100%, rgba(102,126,234,0.10), transparent 60%),
+      rgba(13,10,43,0.6);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(18px);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .arch-trust::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.35), rgba(240,147,251,0.30));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .arch-trust-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .arch-trust-eyebrow {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.5);
+  }
+  .arch-trust-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #4ade80;
+  }
+  .arch-trust-live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px rgba(74,222,128,0.7);
+    animation: trustBlink 1.6s ease-in-out infinite;
+  }
+  @keyframes trustBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+  }
+  .arch-trust-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .arch-trust-item {
+    display: grid;
+    grid-template-columns: 110px 1fr 18px;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.85);
+    opacity: 0;
+    transform: translateY(6px);
+    animation: trustItemIn 480ms var(--ease-soft) forwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 200ms);
+  }
+  @keyframes trustItemIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .arch-trust-name {
+    font-weight: 500;
+    color: rgba(255,255,255,0.92);
+    white-space: nowrap;
+  }
+  .arch-trust-bar {
+    position: relative;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .arch-trust-bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, #667eea, #764ba2 50%, #f093fb);
+    border-radius: 999px;
+    animation: trustFill 1.4s var(--ease-soft) forwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 400ms);
+    box-shadow: 0 0 10px rgba(240,147,251,0.4);
+  }
+  @keyframes trustFill { to { width: 100%; } }
+  .arch-trust-bar-fill::after {
+    /* a thin running highlight that loops once the bar is full */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    transform: translateX(-100%);
+    animation: trustSweep 3.2s var(--ease-soft) infinite;
+    animation-delay: calc(var(--i, 0) * 90ms + 1900ms);
+  }
+  @keyframes trustSweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(120%); }
+  }
+  .arch-trust-check {
+    color: #4ade80;
+    opacity: 0;
+    transform: scale(0.6);
+    animation: trustCheckIn 360ms var(--ease-spring) forwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 1700ms);
+  }
+  @keyframes trustCheckIn {
+    to { opacity: 1; transform: scale(1); }
+  }
+  .arch-trust-foot {
+    margin-top: 1.1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.4);
+  }
+  .arch-trust-foot-region { color: rgba(240,147,251,0.7); }
+
+  /* ─── Pillar cards · per-pillar mini-art ─────────────────── */
+  .arch-pillar {
+    position: relative;
+    border-radius: 1rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(20px);
+    padding: 1.25rem;
+    overflow: hidden;
+    transition: transform var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft);
+    isolation: isolate;
+  }
+  .arch-pillar:hover {
+    transform: translateY(-2px);
+    border-color: rgba(240,147,251,0.30);
+    background: rgba(255,255,255,0.04);
+  }
+  .arch-pillar-glow {
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(118,75,162,0.18);
+    filter: blur(36px);
+    pointer-events: none;
+  }
+  .arch-pillar-art {
+    position: relative;
+    height: 64px;
+    margin: -0.25rem -0.25rem 0.85rem;
+    border-radius: 0.65rem;
+    background: rgba(13,10,43,0.45);
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  /* art 0 · 7-year timeline */
+  .art-timeline {
+    position: relative;
+    display: flex;
+    align-items: end;
+    gap: 4px;
+    padding: 0 14px;
+    height: 100%;
+    width: 100%;
+  }
+  .art-timeline-bar {
+    flex: 1;
+    height: 30%;
+    background: linear-gradient(180deg, rgba(102,126,234,0.6), rgba(240,147,251,0.6));
+    border-radius: 2px;
+    transform-origin: bottom;
+    animation: tlGrow 5.6s ease-in-out infinite;
+    animation-delay: calc(var(--k) * 100ms);
+  }
+  @keyframes tlGrow {
+    0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+    14%      { transform: scaleY(1); opacity: 1; }
+    50%      { transform: scaleY(0.6); opacity: 0.55; }
+  }
+  .art-timeline-cursor {
+    position: absolute;
+    bottom: 8px;
+    left: 14px;
+    width: calc(100% - 28px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(240,147,251,0.7), transparent);
+    animation: tlCursor 5.6s ease-in-out infinite;
+  }
+  @keyframes tlCursor {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* art 1 · per-tenant DB rows */
+  .art-tenants {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    padding: 6px 12px;
+    gap: 2px;
+  }
+  .art-tenant-row {
+    display: grid;
+    grid-template-columns: 14px 1fr 14px;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.45;
+    animation: tenantPulse 4.8s ease-in-out infinite;
+    animation-delay: calc(var(--k) * 280ms);
+  }
+  @keyframes tenantPulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+  .art-tenant-pill {
+    width: 14px; height: 4px;
+    border-radius: 2px;
+    background: rgba(102,126,234,0.7);
+  }
+  .art-tenant-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(102,126,234,0.5), rgba(240,147,251,0.5));
+  }
+  .art-tenant-db {
+    width: 14px; height: 8px;
+    border-radius: 2px;
+    background: rgba(240,147,251,0.7);
+    box-shadow: 0 0 6px rgba(240,147,251,0.5);
+  }
+
+  /* art 2 · radar / region indicator */
+  .art-radar {
+    position: relative;
+    width: 60px; height: 60px;
+  }
+  .art-radar-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(240,147,251,0.4);
+    animation: radarPulse 2.6s ease-out infinite;
+  }
+  .art-radar-r2 { animation-delay: 0.8s; }
+  .art-radar-r3 { animation-delay: 1.6s; }
+  @keyframes radarPulse {
+    0%   { transform: scale(0.4); opacity: 0.9; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  .art-radar-dot {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #667eea, #f093fb);
+    box-shadow: 0 0 12px rgba(240,147,251,0.7);
+  }
+  .art-radar-sweep {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 50%; height: 1px;
+    transform-origin: left center;
+    background: linear-gradient(90deg, rgba(240,147,251,0.8), transparent);
+    animation: radarSweep 3s linear infinite;
+  }
+  @keyframes radarSweep {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* art 3 · 5-level cascade */
+  .art-cascade {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    padding: 0 10px;
+    gap: 4px;
+  }
+  .art-cascade-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.4;
+    animation: cascadeIn 3.2s ease-in-out infinite;
+    animation-delay: calc(var(--k) * 220ms);
+  }
+  @keyframes cascadeIn {
+    0%, 100% { opacity: 0.35; transform: translateY(2px); }
+    25%      { opacity: 1; transform: translateY(0); }
+    60%      { opacity: 0.55; }
+  }
+  .art-cascade-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #f093fb);
+    box-shadow: 0 0 6px rgba(240,147,251,0.6);
+  }
+  .art-cascade-label {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* ─── Tech stage frame ─────────────────────────────── */
+  .arch-tech {
+    position: relative;
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    background:
+      radial-gradient(800px 320px at 0% 0%, rgba(102,126,234,0.10), transparent 60%),
+      radial-gradient(800px 320px at 100% 100%, rgba(240,147,251,0.08), transparent 60%),
+      rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+  }
+  @media (min-width: 1024px) {
+    .arch-tech { padding: 2.25rem; }
+  }
+
+  .arch-tech-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+  }
+
+  /* ─── Schema circuit ─────────────────────────────── */
+  .arch-schema {
+    position: relative;
+    min-height: 460px;
+    padding: 0.75rem 0.5rem 2rem;
+  }
+  .arch-schema-grid {
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(4, minmax(96px, 1fr));
+    gap: 12px;
+    background:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 1rem;
+  }
+  .arch-schema-wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .arch-schema-wire {
+    fill: none;
+    stroke: url(#wireGrad);
+    stroke-width: 0.35;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 2 5;
+    animation: wireDash 6s linear infinite;
+    animation-delay: calc(var(--wire-i) * -1.2s);
+  }
+  @keyframes wireDash { to { stroke-dashoffset: -120; } }
+
+  .arch-schema-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 8px 180px 1fr;
+    gap: 1rem;
+    align-items: center;
+    z-index: 1;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity var(--t-medium) var(--ease-soft),
+                transform var(--t-medium) var(--ease-soft);
+    transition-delay: calc(var(--schema-i) * 90ms + 80ms);
+  }
+  .arch-tech.is-visible .arch-schema-row {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .arch-schema-rail {
+    position: relative;
+    width: 8px;
+    height: 70%;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--schema-accent) 18%, rgba(255,255,255,0.04));
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--schema-accent) 35%, rgba(255,255,255,0.06));
+  }
+  .arch-schema-rail-pulse {
+    position: absolute;
+    left: 0; right: 0;
+    top: -40%;
+    height: 50%;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--schema-accent) 80%, transparent), transparent);
+    animation: railPulse 3.4s ease-in-out infinite;
+    animation-delay: calc(var(--schema-i) * 380ms);
+  }
+  @keyframes railPulse {
+    0%   { top: -50%; opacity: 0; }
+    25%  { opacity: 1; }
+    100% { top: 110%; opacity: 0; }
+  }
+
+  .arch-schema-label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .arch-schema-icon {
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--schema-accent) 18%, rgba(255,255,255,0.04));
+    color: var(--schema-accent);
+    border: 1px solid color-mix(in srgb, var(--schema-accent) 40%, rgba(255,255,255,0.08));
+  }
+  .arch-schema-layer {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #fff;
+  }
+  .arch-schema-meta {
+    margin-top: 1px;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .arch-schema-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .arch-schema-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.7rem 0.4rem 0.55rem;
+    border-radius: 0.5rem;
+    background: rgba(13,10,43,0.6);
+    border: 1px solid color-mix(in srgb, var(--schema-accent) 28%, rgba(255,255,255,0.10));
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    overflow: hidden;
+    transform: translateY(6px);
+    opacity: 0;
+    transition: transform var(--t-short) var(--ease-soft),
+                opacity var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft);
+    transition-delay: calc(var(--schema-i) * 90ms + var(--chip-j) * 40ms + 200ms);
+  }
+  .arch-tech.is-visible .arch-schema-chip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .arch-schema-chip:hover {
+    border-color: color-mix(in srgb, var(--schema-accent) 70%, transparent);
+    background: color-mix(in srgb, var(--schema-accent) 12%, rgba(13,10,43,0.6));
+  }
+  .arch-schema-chip-pin {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--schema-accent);
+    box-shadow: 0 0 8px var(--schema-accent);
+    flex: 0 0 6px;
+  }
+  .arch-schema-chip-bar {
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 1.5px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, var(--schema-accent), transparent);
+    transform: translateX(-100%);
+    opacity: 0.7;
+    transition: transform var(--t-medium) var(--ease-soft);
+  }
+  .arch-schema-chip:hover .arch-schema-chip-bar {
+    transform: translateX(100%);
+  }
+
+  .arch-schema-hint {
+    margin-top: 0.9rem;
+    text-align: center;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ─── DEPLOYMENT MODELS · animated packet-flow diagram ───────── */
+  .arch-deploy {
+    position: relative;
+    border-radius: 1.5rem;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.32), rgba(240,147,251,0.24));
+  }
+  .arch-deploy-frame {
+    border-radius: calc(1.5rem - 1px);
+    background:
+      radial-gradient(800px 320px at 0% 0%, rgba(102,126,234,0.10), transparent 60%),
+      radial-gradient(800px 320px at 100% 100%, rgba(240,147,251,0.08), transparent 60%),
+      rgba(8,6,26,0.94);
+    padding: 1.75rem;
+  }
+  @media (min-width: 1024px) {
+    .arch-deploy-frame { padding: 2.25rem; }
+  }
+  .arch-deploy-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 1.5rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .arch-deploy-tabs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 4px;
+    border-radius: 0.85rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+  .arch-deploy-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.95rem;
+    border-radius: 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.62);
+    cursor: pointer;
+    transition: color var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft);
+  }
+  .arch-deploy-tab:hover { color: rgba(255,255,255,0.9); }
+  .arch-deploy-tab.is-active {
+    color: #fff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 55%, #f093fb 100%);
+    box-shadow:
+      0 6px 22px -6px rgba(118,75,162,0.65),
+      inset 0 1px 0 rgba(255,255,255,0.18);
+  }
+  .arch-deploy-tab-glyph {
+    display: inline-grid;
+    place-items: center;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.18);
+  }
+  .arch-deploy-tab.is-active .arch-deploy-tab-glyph { background: rgba(255,255,255,0.18); }
+
+  /* ── Diagram stage ─────────────────────────────────────────
+     Locked to a fixed 600:360 aspect ratio so SVG paths (in viewBox
+     coords) and HTML nodes (in % of the box) share ONE coordinate
+     space. Without this, `preserveAspectRatio="xMidYMid meet"`
+     letterboxes the SVG inside a wider container and the lines
+     drift away from the nodes. */
+  .arch-deploy-stage {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    aspect-ratio: 600 / 360;
+    margin: 0 auto;
+  }
+  .ddiagram {
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(13,10,43,0.5);
+    overflow: hidden;
+    transition: opacity var(--t-medium) var(--ease-soft),
+                transform var(--t-medium) var(--ease-soft),
+                filter var(--t-medium) var(--ease-soft);
+  }
+  .arch-deploy[data-deploy-mode='shared'] [data-pane='shared'],
+  .arch-deploy[data-deploy-mode='dedicated'] [data-pane='dedicated'] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+    pointer-events: auto;
+  }
+  .arch-deploy[data-deploy-mode='shared'] [data-pane='dedicated'],
+  .arch-deploy[data-deploy-mode='dedicated'] [data-pane='shared'] {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+    filter: blur(6px);
+    pointer-events: none;
+  }
+  .ddiagram-grid {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: -1px -1px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 50%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 50%, transparent 100%);
+  }
+  .ddiagram-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* Wires */
+  .dwire {
+    fill: none;
+    stroke: url(#dwireA);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 5;
+    stroke-linecap: round;
+    animation: dwireDash 4s linear infinite;
+    opacity: 0.85;
+  }
+  .dwire-A { stroke: rgba(167,139,250,0.85); }
+  .dwire-B { stroke: rgba(240,147,251,0.85); }
+  @keyframes dwireDash { to { stroke-dashoffset: -120; } }
+
+  /* VNet boundary rectangles (dedicated mode) */
+  .dvnet {
+    fill: rgba(102,126,234,0.04);
+    stroke: rgba(167,139,250,0.45);
+    stroke-width: 1;
+    stroke-dasharray: 6 4;
+    animation: vnetDash 18s linear infinite;
+  }
+  .dvnet[style*="--vnet-i:1"] { stroke: rgba(240,147,251,0.45); fill: rgba(240,147,251,0.04); }
+  @keyframes vnetDash { to { stroke-dashoffset: -200; } }
+  .dvnet-label {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(167,139,250,0.15);
+    border: 1px solid rgba(167,139,250,0.4);
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.85);
+    z-index: 2;
+  }
+  .dvnet-label--b {
+    background: rgba(240,147,251,0.15);
+    border-color: rgba(240,147,251,0.4);
+  }
+  .dvnet-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
+    color: #a78bfa;
+    animation: trustBlink 1.6s ease-in-out infinite;
+  }
+  .dvnet-label--b .dvnet-dot { color: #f093fb; }
+
+  /* Packet "head" glow */
+  .dpacket {
+    filter: drop-shadow(0 0 6px rgba(240,147,251,0.85));
+  }
+
+  /* Diagram nodes */
+  .dnode {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.95rem;
+    border-radius: 0.6rem;
+    background: rgba(13,10,43,0.85);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.92);
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 2;
+    box-shadow: 0 8px 22px -10px rgba(0,0,0,0.7);
+    transition: transform var(--t-short) var(--ease-soft), border-color var(--t-short) var(--ease-soft);
+  }
+  .dnode-mini { padding: 0.4rem 0.7rem; font-size: 0.7rem; }
+  .dnode-icon {
+    display: inline-grid; place-items: center;
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    background: rgba(102,126,234,0.18);
+    color: #c4b5fd;
+    border: 1px solid rgba(102,126,234,0.4);
+  }
+  .dnode-icon--db {
+    background: rgba(240,147,251,0.14);
+    color: #f0abfc;
+    border-color: rgba(240,147,251,0.4);
+  }
+  .dnode-text { font-weight: 500; }
+  .dnode-meta {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* Runtime node (centerpiece, with pulse halo) */
+  .dnode-runtime {
+    background: linear-gradient(135deg, rgba(102,126,234,0.22), rgba(240,147,251,0.18));
+    border-color: rgba(240,147,251,0.45);
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+  }
+  .dnode-runtime .dnode-text { color: #fff; }
+  .dnode-runtime-pulse {
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    border: 1px solid rgba(240,147,251,0.55);
+    animation: rtPulse 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes rtPulse {
+    0%   { transform: scale(0.96); opacity: 0.9; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+  .dnode-runtime--A { background: linear-gradient(135deg, rgba(102,126,234,0.28), rgba(167,139,250,0.22)); border-color: rgba(167,139,250,0.55); }
+  .dnode-runtime--B { background: linear-gradient(135deg, rgba(167,139,250,0.22), rgba(240,147,251,0.28)); border-color: rgba(240,147,251,0.55); }
+
+  /* DB "arrived" pulse — keyed off packet arrivals (CSS-only loop) */
+  .dnode-db { font-family: 'JetBrains Mono Variable', ui-monospace, monospace; font-size: 0.7rem; }
+  .dnode-db::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    border: 1px solid rgba(240,147,251,0.45);
+    opacity: 0;
+    animation: dbHit 2.8s ease-out infinite;
+  }
+  .dnode-db-1::after { animation-delay: 0.0s; }
+  .dnode-db-2::after { animation-delay: 0.7s; }
+  .dnode-db-3::after { animation-delay: 1.4s; }
+  .dnode-db-4::after { animation-delay: 2.1s; }
+  .dnode-db--A::after { animation-delay: 0.9s; }
+  .dnode-db--B::after { animation-delay: 0.6s; border-color: rgba(167,139,250,0.45); }
+  @keyframes dbHit {
+    0%, 70% { opacity: 0; transform: scale(1); }
+    78%     { opacity: 0.9; transform: scale(1.05); }
+    100%    { opacity: 0; transform: scale(1.18); }
+  }
+
+  /* Diagram corner tags */
+  .ddiagram-tag {
+    position: absolute;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.4rem;
+    background: rgba(13,10,43,0.7);
+    border: 1px solid rgba(255,255,255,0.10);
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.55);
+    z-index: 3;
+  }
+  .ddiagram-tag-tl { top: 12px; left: 12px; }
+  .ddiagram-tag-tr { top: 12px; right: 12px; }
+
+  /* Stat strip */
+  .arch-deploy-stats {
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  @media (min-width: 768px) {
+    .arch-deploy-stats { grid-template-columns: repeat(4, 1fr); }
+  }
+  .arch-deploy-stat {
+    padding: 0.7rem 0.85rem;
+    border-radius: 0.65rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .arch-deploy-stat-k {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.45);
+  }
+  .arch-deploy-stat-v {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  /* ─── Light theme tweaks ────────────────────────────── */
+  :root[data-theme='light'] .arch-tech {
+    background:
+      radial-gradient(800px 320px at 0% 0%, rgba(102,126,234,0.10), transparent 60%),
+      radial-gradient(800px 320px at 100% 100%, rgba(240,147,251,0.10), transparent 60%),
+      rgba(13,10,43,0.04);
+    border-color: rgba(15,18,35,0.10);
+  }
+  :root[data-theme='light'] .arch-schema-grid {
+    background:
+      linear-gradient(rgba(15,18,35,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,18,35,0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+    border-color: rgba(15,18,35,0.10);
+  }
+  :root[data-theme='light'] .arch-schema-chip { color: rgba(15,18,35,0.85); background: rgba(255,255,255,0.7); }
+  :root[data-theme='light'] .arch-schema-layer { color: var(--fg-strong); }
+  :root[data-theme='light'] .arch-trust { background: rgba(13,10,43,0.04); }
+  :root[data-theme='light'] .arch-trust-name { color: rgba(15,18,35,0.92); }
+  :root[data-theme='light'] .arch-trust-foot,
+  :root[data-theme='light'] .arch-eyebrow { color: rgba(15,18,35,0.7); }
+  :root[data-theme='light'] .arch-pillar-art { background: rgba(13,10,43,0.06); }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .arch-schema-row { grid-template-columns: 8px 1fr; }
+    .arch-schema-row .arch-schema-chips { grid-column: 1 / -1; }
+    .arch-schema-label { grid-column: 2 / 3; }
+  }
+
+  /* Reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .arch-schema-rail-pulse,
+    .arch-schema-wire,
+    .arch-meta-strip-track,
+    .arch-trust-bar-fill::after,
+    .art-timeline-bar, .art-timeline-cursor,
+    .art-tenant-row, .art-radar-ring, .art-radar-sweep,
+    .art-cascade-step,
+    .dwire, .dvnet,
+    .dnode-runtime-pulse, .dnode-db::after,
+    .arch-live-dot::after, .dvnet-dot, .arch-trust-live-dot { animation: none; }
+    .ddiagram-svg .dpacket { display: none; }
+  }
+
+  /* Mobile · same proportions, smaller chrome
+     (aspect-ratio handles the height; we only shrink labels/nodes
+     so they stay readable inside the smaller box) */
+  @media (max-width: 720px) {
+    .ddiagram-tag {
+      font-size: 0.46rem;
+      padding: 0.2rem 0.4rem;
+      letter-spacing: 0.14em;
+    }
+    .ddiagram-tag-tl { top: 8px; left: 8px; }
+    .ddiagram-tag-tr { top: 8px; right: 8px; }
+    .dnode {
+      font-size: 0.62rem;
+      padding: 0.3rem 0.55rem;
+      gap: 0.35rem;
+      border-radius: 0.45rem;
+    }
+    .dnode-mini { padding: 0.25rem 0.45rem; font-size: 0.58rem; }
+    .dnode-icon { width: 18px; height: 18px; border-radius: 4px; }
+    .dnode-runtime { padding: 0.4rem 0.7rem; }
+    .dnode-meta { display: none; }
+    .dvnet-label {
+      font-size: 0.5rem;
+      padding: 0.15rem 0.4rem;
+      letter-spacing: 0.12em;
+    }
+  }
+  @media (max-width: 480px) {
+    .dnode { font-size: 0.55rem; padding: 0.25rem 0.45rem; }
+    .dnode-icon { width: 16px; height: 16px; }
+    .dnode-icon svg { width: 11px; height: 11px; }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.querySelector<HTMLElement>('.arch-deploy');
+    if (!root) return;
+
+    const tabs = root.querySelectorAll<HTMLButtonElement>('.arch-deploy-tab');
+    const stats = {
+      compute: { shared: 'shared · 4×8GB', dedicated: 'dedicated · per-tenant' },
+      network: { shared: 'shared egress',  dedicated: 'isolated VNet' },
+    };
+    const computeEl = root.querySelector<HTMLElement>('[data-deploy-stat="compute"]');
+    const networkEl = root.querySelector<HTMLElement>('[data-deploy-stat="network"]');
+
+    const setMode = (mode: 'shared' | 'dedicated') => {
+      root.setAttribute('data-deploy-mode', mode);
+      tabs.forEach((t) => {
+        const active = t.dataset.mode === mode;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      if (computeEl) computeEl.textContent = stats.compute[mode];
+      if (networkEl) networkEl.textContent = stats.network[mode];
+    };
+
+    tabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const m = btn.dataset.mode as 'shared' | 'dedicated';
+        if (m) {
+          setMode(m);
+          stopAuto();
+        }
+      });
+    });
+
+    /* Auto-cycle between modes every 8s — pauses if user clicks a tab,
+       and pauses when the section is offscreen so it's not racing while
+       hidden. */
+    let timer: number | null = null;
+    let stopped = false;
+    const startAuto = () => {
+      if (stopped || timer) return;
+      timer = window.setInterval(() => {
+        const next = root.dataset.deployMode === 'shared' ? 'dedicated' : 'shared';
+        setMode(next as 'shared' | 'dedicated');
+      }, 8000);
+    };
+    const stopAuto = () => {
+      stopped = true;
+      if (timer) { window.clearInterval(timer); timer = null; }
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && !stopped) startAuto();
+          else if (timer) { window.clearInterval(timer); timer = null; }
+        }
+      }, { threshold: 0.4 });
+      io.observe(root);
+    } else {
+      startAuto();
+    }
+  })();
+</script>
