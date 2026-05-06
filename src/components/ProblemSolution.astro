@@ -58,16 +58,26 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
             </defs>
             <rect width="100%" height="100%" fill="url(#brokenLines)"/>
           </svg>
+          {/* `.ps-tile` carries its rest rotation as a CSS variable so the
+              entrance animation can decay from a louder ±6° into the calm
+              ±1.5° tilt. The 80ms per-tile stagger reads as the stack
+              "settling into place" — supports the fragmentation thesis
+              before the arrow takes over. */}
           <div class="relative grid grid-cols-3 gap-3">
-            {fragmented.map((t, i) => (
-              <div
-                class={`glass rounded-xl px-3 py-3 text-center ${i % 2 === 0 ? 'rotate-[-1.5deg]' : 'rotate-[1.5deg]'}`}
-                style={`transform-origin: center; ${i === 6 ? 'grid-column: 1 / span 3;' : ''}`}
-              >
-                <div class="font-mono text-xs tracking-wider text-white/85">{t.code}</div>
-                <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider" data-i18n={t.key}>{t.label}</div>
-              </div>
-            ))}
+            {fragmented.map((t, i) => {
+              const restR = i % 2 === 0 ? -1.5 : 1.5;
+              const enterR = restR * 4;
+              const span = i === 6 ? 'grid-column: 1 / span 3;' : '';
+              return (
+                <div
+                  class="ps-tile glass rounded-xl px-3 py-3 text-center"
+                  style={`--rest-r:${restR}deg; --enter-r:${enterR}deg; --tile-delay:${i * 80}ms; ${span}`}
+                >
+                  <div class="font-mono text-xs tracking-wider text-white/85">{t.code}</div>
+                  <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider" data-i18n={t.key}>{t.label}</div>
+                </div>
+              );
+            })}
           </div>
           <div class="mt-6 flex flex-wrap gap-2 text-[11px]">
             {minusPills.map((p, i) => (
@@ -79,13 +89,18 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
         </div>
       </div>
 
-      {/* Arrow */}
-      <div class="hidden lg:flex items-center justify-center px-2">
+      {/* Arrow — wrapped in its own .reveal so we have an `.is-visible` ancestor
+          to drive the path draw-in. --reveal-delay 700ms times the arrow to
+          land just as the last fragmented tile settles (last tile starts at
+          480ms + 600ms = ~1080ms); the path itself draws over --t-long
+          starting 100ms into the parent fade — so the arrow visibly "extends"
+          across the gap rather than appearing whole. */}
+      <div class="hidden lg:flex items-center justify-center px-2 reveal" style="--reveal-delay: 700ms;">
         <div class="relative w-24 h-24">
           <div class="absolute inset-0 rounded-full bg-alpha-gradient blur-2xl opacity-50"></div>
           <div class="absolute inset-0 grid place-items-center">
             <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
-              <path d="M5 12h14M13 5l7 7-7 7" stroke="url(#arrG)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path class="ps-arrow" d="M5 12h14M13 5l7 7-7 7" pathLength="1" stroke="url(#arrG)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               <defs>
                 <linearGradient id="arrG" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stop-color="#667eea"/>
@@ -97,8 +112,12 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
         </div>
       </div>
 
-      {/* After */}
-      <div class="reveal">
+      {/* After — blooms into view AFTER the arrow finishes drawing
+          (arrow lands ~1.9s; this enters at 1.7s for a small overlap).
+          `data-reveal="scale"` gives the bloom; `.ps-after` is a unique
+          hook so the α-mark ignition only fires off THIS reveal, not the
+          section eyebrow or any other ancestor .reveal. */}
+      <div class="reveal ps-after" data-reveal="scale" style="--reveal-delay: 1700ms;">
         <div class="flex items-center gap-2 mb-4">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
           <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-200/80" data-i18n="ps.after.label">Alpha · one clean core</span>
@@ -107,7 +126,7 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
           <div class="relative rounded-2xl bg-alpha-ink/95 p-6 min-h-[320px]">
             <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-alpha-purple/30 blur-3xl"></div>
             <div class="relative flex items-center gap-3 mb-5">
-              <span class="relative inline-block w-10 h-10 rounded-lg bg-alpha-gradient shadow-glow-violet">
+              <span class="ps-alpha-mark relative inline-block w-10 h-10 rounded-lg bg-alpha-gradient shadow-glow-violet">
                 <span class="absolute inset-0 grid place-items-center text-white font-bold">α</span>
               </span>
               <div>

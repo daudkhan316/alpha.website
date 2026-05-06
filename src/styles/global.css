@@ -764,6 +764,54 @@
 .blob-purple { background: var(--blob-purple); }
 .blob-pink   { background: var(--blob-pink); }
 
+/* ProblemSolution — choreographed entrance.
+   The section's narrative is "fragmented stack → arrow → one clean core",
+   so the motion is the message. Three coordinated beats, all triggered by
+   their own .reveal becoming .is-visible (so the IntersectionObserver
+   handles "when the user gets here" without any new JS):
+
+   1. .ps-tile — fragmented tiles wobble in from a louder ±6° decay to
+      their resting ±1.5° tilt, with an 80ms per-tile stagger. Spring
+      easing gives the slight overshoot that reads as "settling".
+      Last tile lands ~1080ms in.
+   2. .ps-arrow — path stroke draws across the gap, timed to start as the
+      last tile lands. pathLength="1" lets us use a unitless dasharray.
+   3. .ps-alpha-mark — once the after column blooms (1700ms), the α icon
+      gives one short scale + glow pulse to read as "ignition". */
+.ps-tile {
+  opacity: 0;
+  transform: rotate(var(--enter-r, 0deg)) translateY(14px);
+  transform-origin: center;
+  transition: opacity var(--t-medium) var(--ease-soft),
+              transform var(--t-medium) var(--ease-spring);
+  transition-delay: var(--tile-delay, 0ms);
+}
+.reveal.is-visible .ps-tile {
+  opacity: 1;
+  transform: rotate(var(--rest-r, 0deg)) translateY(0);
+}
+
+.ps-arrow {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-long) var(--ease-soft);
+  /* Inherits --reveal-delay from the .reveal ancestor (CSS vars cascade). */
+  transition-delay: calc(var(--reveal-delay, 0ms) + 100ms);
+}
+.reveal.is-visible .ps-arrow { stroke-dashoffset: 0; }
+
+@keyframes ps-alpha-ignite {
+  0%   { transform: scale(1);    box-shadow: 0 0 60px rgba(102, 126, 234, 0.40); }
+  45%  { transform: scale(1.08); box-shadow: 0 0 80px rgba(240, 147, 251, 0.65); }
+  100% { transform: scale(1);    box-shadow: 0 0 60px rgba(102, 126, 234, 0.40); }
+}
+/* Scoped to .ps-after specifically so other .reveal ancestors (eyebrow,
+   etc.) don't trigger the ignition. Animation runs once with no fill —
+   afterward the original .shadow-glow-violet utility takes over. */
+.ps-after.is-visible .ps-alpha-mark {
+  animation: ps-alpha-ignite var(--t-long) var(--ease-soft) 200ms 1;
+}
+
 /* SystemFlow connection lines: draw in after the panel reveals so the
    diagram visibly "boots up" instead of appearing pre-painted.
    `pathLength="1"` on each <path> in defs (SystemFlow.astro) lets us use
@@ -914,6 +962,12 @@
   /* Connection lines must remain visible — they're informational, not
      decorative. Skip the draw-in transition entirely. */
   .flow-line { stroke-dashoffset: 0 !important; transition: none !important; }
+  /* ProblemSolution: collapse the choreography to a single fade — keep
+     the structural information (resting tile rotation, arrow visible)
+     but skip the wobble, draw, and ignite. */
+  .ps-tile { opacity: 1 !important; transform: rotate(var(--rest-r, 0deg)) !important; transition: none !important; }
+  .ps-arrow { stroke-dashoffset: 0 !important; transition: none !important; }
+  .ps-after.is-visible .ps-alpha-mark { animation: none !important; }
   /* Scroll-velocity-driven flow energy: pin to 0 so neither the particle
      glow nor the core energy ring fluctuates. The runtime in Layout.astro
      also bails on reduced-motion, but pinning here protects against
