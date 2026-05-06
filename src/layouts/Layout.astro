@@ -100,6 +100,11 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
 
       const initialLocale = readSavedLocale();
       applyLocale(initialLocale);
+      // Notify other modules that the locale has been applied. Module-script
+      // execution order vs the reveals module is not deterministic in dev, so
+      // the reveals module listens for this event and (re)splits its
+      // .reveal-line headlines into per-word spans against the active text.
+      window.dispatchEvent(new CustomEvent('alpha:locale-changed', { detail: { locale: initialLocale } }));
 
       const banner = document.querySelector<HTMLElement>('[data-locale-banner]');
       const syncBanner = (locale: string) => {
@@ -130,6 +135,238 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       };
       scan();
       document.addEventListener('astro:page-load', scan);
+
+      // Pointer-aware spotlight: write --mx / --my as percentages on the
+      // hovered .spotlight container so its ::before radial-gradient tracks.
+      // One global rAF-throttled listener per move; no per-card handlers.
+      let spotlightFrame = 0;
+      let pendingTarget: Element | null = null;
+      let pendingX = 0;
+      let pendingY = 0;
+      const flushSpotlight = () => {
+        spotlightFrame = 0;
+        if (pendingTarget instanceof HTMLElement) {
+          pendingTarget.style.setProperty('--mx', pendingX + '%');
+          pendingTarget.style.setProperty('--my', pendingY + '%');
+        }
+      };
+      document.addEventListener('pointermove', (e) => {
+        const target = (e.target as Element | null)?.closest('.spotlight');
+        if (!target) return;
+        const rect = target.getBoundingClientRect();
+        pendingTarget = target;
+        pendingX = ((e.clientX - rect.left) / rect.width) * 100;
+        pendingY = ((e.clientY - rect.top) / rect.height) * 100;
+        if (!spotlightFrame) spotlightFrame = requestAnimationFrame(flushSpotlight);
+      }, { passive: true });
+
+      // Stagger: any [data-stagger] container gives its .reveal children
+      // an incremental --reveal-delay so they animate in sequence rather
+      // than all together when scrolled into view at once.
+      const applyStagger = () => {
+        document.querySelectorAll<HTMLElement>('[data-stagger]').forEach((root) => {
+          const step = Number(root.dataset.staggerStep || 60);
+          const max = Number(root.dataset.staggerMax || 9);
+          const items = root.querySelectorAll<HTMLElement>(':scope > .reveal, :scope > * > .reveal');
+          items.forEach((el, i) => {
+            if (!el.style.getPropertyValue('--reveal-delay')) {
+              el.style.setProperty('--reveal-delay', Math.min(i, max) * step + 'ms');
+            }
+          });
+        });
+      };
+      applyStagger();
+      document.addEventListener('astro:page-load', applyStagger);
+
+      // Word-by-word headline reveal. Any .reveal-line wraps each whitespace-
+      // separated chunk in <span class="reveal-word"><span>word</span></span>
+      // and computes incremental --word-delay so the line writes itself in.
+      // We share the parent .reveal's IntersectionObserver — the .reveal-line
+      // adds .is-visible to its words when its own .reveal ancestor does.
+      // Split a string into .reveal-word spans appended to `host`, with each
+      // word's --word-delay incrementing from a shared counter.
+      const splitTextInto = (host: HTMLElement, text: string, counter: { i: number }, step: number) => {
+        const parts = text.split(/(\s+)/);
+        for (const p of parts) {
+          if (/^\s+$/.test(p)) {
+            host.appendChild(document.createTextNode(p));
+          } else if (p.length) {
+            const wrap = document.createElement('span');
+            wrap.className = 'reveal-word';
+            const inner = document.createElement('span');
+            inner.style.setProperty('--word-delay', (counter.i * step) + 'ms');
+            inner.appendChild(document.createTextNode(p));
+            wrap.appendChild(inner);
+            host.appendChild(wrap);
+            counter.i++;
+          }
+        }
+      };
+
+      // Split each child of .reveal-line into reveal-words. For element
+      // children (typically <span data-i18n=...>) we split *inside* the
+      // element so it remains in the tree — that way the i18n runtime can
+      // still find it on locale change and we re-split via the event.
+      const splitWords = (root: HTMLElement) => {
+        if (root.dataset.split === '1') return;
+        const step = Number(root.dataset.wordStep || 70);
+        const counter = { i: 0 };
+        const childNodes = Array.from(root.childNodes);
+        // Build a parallel list of replacement nodes / mutated nodes.
+        const replacements: Node[] = [];
+        for (const n of childNodes) {
+          if (n.nodeType === Node.TEXT_NODE) {
+            const frag = document.createDocumentFragment();
+            const tmp = document.createElement('span');
+            splitTextInto(tmp, n.textContent || '', counter, step);
+            // Hoist tmp's children into the fragment (we don't want the wrapper).
+            while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+            replacements.push(frag);
+          } else if (n instanceof HTMLElement) {
+            const text = n.textContent || '';
+            n.textContent = '';
+            splitTextInto(n, text, counter, step);
+            replacements.push(n);
+          }
+        }
+        root.textContent = '';
+        replacements.forEach((r) => root.appendChild(r));
+        root.dataset.split = '1';
+      };
+
+      const wireWords = (forceResplit = false) => {
+        const lines = document.querySelectorAll<HTMLElement>('.reveal-line');
+        lines.forEach((line) => {
+          if (forceResplit) line.dataset.split = '';
+          splitWords(line);
+          // Find the nearest .reveal ancestor (or the line itself if it is one)
+          // and mirror its is-visible state to the .reveal-word children so
+          // they trigger when the headline enters view.
+          const host = line.closest('.reveal') as HTMLElement | null;
+          if (!host) return;
+          const apply = () => {
+            const visible = host.classList.contains('is-visible');
+            line.querySelectorAll('.reveal-word').forEach((w) => {
+              w.classList.toggle('is-visible', visible);
+            });
+          };
+          apply();
+          if (line.dataset.wordsObserved !== '1') {
+            const mo = new MutationObserver(apply);
+            mo.observe(host, { attributes: true, attributeFilter: ['class'] });
+            line.dataset.wordsObserved = '1';
+          }
+        });
+      };
+      // Initial split. The i18n module may run after this on first paint —
+      // we re-split after a microtask AND on locale change to make sure the
+      // active-locale text is what gets split into words.
+      wireWords();
+      Promise.resolve().then(() => wireWords(true));
+      document.addEventListener('astro:page-load', () => wireWords(true));
+      window.addEventListener('alpha:locale-changed', () => wireWords(true));
+
+      // Pointer-tilt for any .tilt container. One global rAF-throttled
+      // listener — no per-element handler. Writes --tx / --ty in [-1, 1].
+      let tiltFrame = 0;
+      let pendingTilt: HTMLElement | null = null;
+      let pendingTx = 0, pendingTy = 0;
+      const flushTilt = () => {
+        tiltFrame = 0;
+        if (pendingTilt) {
+          pendingTilt.style.setProperty('--tx', String(pendingTx));
+          pendingTilt.style.setProperty('--ty', String(pendingTy));
+        }
+      };
+      document.addEventListener('pointermove', (e) => {
+        const target = (e.target as Element | null)?.closest('.tilt, .tilt-strong') as HTMLElement | null;
+        if (!target) return;
+        const r = target.getBoundingClientRect();
+        pendingTilt = target;
+        pendingTx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        pendingTy = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        if (!tiltFrame) tiltFrame = requestAnimationFrame(flushTilt);
+      }, { passive: true });
+      document.addEventListener('pointerleave', (e) => {
+        const target = (e.target as Element | null)?.closest('.tilt, .tilt-strong') as HTMLElement | null;
+        if (target) {
+          target.style.setProperty('--tx', '0');
+          target.style.setProperty('--ty', '0');
+        }
+      }, true);
+
+      // Scroll-driven parallax. Any [data-parallax] writes --pY in pixels
+      // proportional to its distance past the viewport top, scaled by speed.
+      // Cheap: one rAF coalesced scroll/resize handler for all elements.
+      const parallaxEls = () =>
+        Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
+      let parallaxItems = parallaxEls();
+      let parallaxFrame = 0;
+      const updateParallax = () => {
+        parallaxFrame = 0;
+        const vh = window.innerHeight;
+        for (const el of parallaxItems) {
+          const speed = Number(el.dataset.parallax || '0.15');
+          const r = el.getBoundingClientRect();
+          // Center of the element relative to viewport center, in viewport units.
+          const center = r.top + r.height / 2 - vh / 2;
+          el.style.setProperty('--pY', `${(center * -speed).toFixed(1)}px`);
+        }
+      };
+      const requestParallax = () => {
+        if (!parallaxFrame) parallaxFrame = requestAnimationFrame(updateParallax);
+      };
+      updateParallax();
+      window.addEventListener('scroll', requestParallax, { passive: true });
+      window.addEventListener('resize', () => {
+        parallaxItems = parallaxEls();
+        requestParallax();
+      });
+      document.addEventListener('astro:page-load', () => {
+        parallaxItems = parallaxEls();
+        requestParallax();
+      });
+
+      // Numeric count-up. Any [data-count] element gets its leading integer
+      // animated from 0 → original on first reveal. The integer + suffix are
+      // parsed from the live textContent (after i18n has applied), so the
+      // animated suffix matches the active locale (e.g. "-year" / "Jahre").
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+      const animateCount = (el: HTMLElement) => {
+        const original = el.textContent || '';
+        const m = original.match(/^(\d+)(.*)$/s);
+        if (!m) return;
+        const to = Number(m[1]);
+        const suffix = m[2];
+        const dur = Number(el.dataset.countDuration || '1400');
+        if (reduceMotion) { el.textContent = to + suffix; return; }
+        el.textContent = '0' + suffix;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / dur);
+          const v = Math.round(to * easeOut(t));
+          el.textContent = v + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+      const countObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            animateCount(entry.target as HTMLElement);
+            countObserver.unobserve(entry.target);
+          }
+        }
+      }, { threshold: 0.4 });
+      const wireCounts = () => {
+        document.querySelectorAll<HTMLElement>('[data-count]:not([data-counted])').forEach((el) => {
+          el.dataset.counted = '1';
+          countObserver.observe(el);
+        });
+      };
+      wireCounts();
+      document.addEventListener('astro:page-load', wireCounts);
     </script>
   </body>
 </html>

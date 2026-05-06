@@ -12,12 +12,12 @@ const secondary = [
 <section id="cta" class="relative py-32 lg:py-40 overflow-hidden">
   <div class="absolute inset-0 -z-10">
     <div class="absolute inset-0 bg-grid opacity-30 mask-fade-radial"></div>
-    <div class="blob blob-violet w-[600px] h-[600px] -top-20 left-1/3 opacity-60"></div>
-    <div class="blob blob-pink w-[500px] h-[500px] bottom-[-160px] right-1/3 opacity-60"></div>
+    <div class="blob blob-violet w-[600px] h-[600px] -top-20 left-1/3 opacity-60" data-parallax="0.18"></div>
+    <div class="blob blob-pink w-[500px] h-[500px] bottom-[-160px] right-1/3 opacity-60" data-parallax="0.14"></div>
   </div>
 
   <div class="container-narrow">
-    <div class="reveal relative rounded-[28px] p-[1.5px] bg-alpha-gradient overflow-hidden">
+    <div class="reveal relative rounded-[28px] p-[1.5px] bg-alpha-gradient overflow-hidden" data-reveal="scale">
       <div class="relative rounded-[26px] bg-alpha-ink/95 px-8 sm:px-14 py-14 sm:py-20 text-center">
         <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[80%] h-64 bg-alpha-purple/30 blur-3xl rounded-full pointer-events-none"></div>
 
@@ -31,9 +31,9 @@ const secondary = [
         </p>
 
         <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <a href="mailto:hello@alpha-platform.de" class="btn-primary text-base">
+          <a href="mailto:hello@alpha-platform.de" class="btn-primary pulse-once text-base">
             <span data-i18n="cta.primary">Request a tailored demo</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>

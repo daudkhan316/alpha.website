@@ -18,13 +18,13 @@ const links = [
   data-nav
 >
   <div class="container-wide">
-    <nav class="mt-4 flex items-center justify-between rounded-full px-4 lg:px-6 py-3 glass">
+    <nav data-nav-bar class="mt-4 flex items-center justify-between rounded-full px-4 lg:px-6 py-3 glass transition-[padding,margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
       <a href="/" class="flex items-center gap-2.5 sm:gap-3 group min-w-0" aria-label="Klaus — Alpha Platform home">
         <img
           src="/klaus-logo-white.svg"
           alt="Klaus"
           width="84" height="26"
-          class="show-on-dark h-[22px] w-auto select-none shrink-0"
+          class="show-on-dark h-[22px] w-auto select-none shrink-0 transition-[height] duration-300"
           loading="eager"
           decoding="async"
         />
@@ -32,7 +32,7 @@ const links = [
           src="/klaus-logo-color.svg"
           alt="Klaus"
           width="84" height="26"
-          class="show-on-light h-[22px] w-auto select-none shrink-0"
+          class="show-on-light h-[22px] w-auto select-none shrink-0 transition-[height] duration-300"
           loading="eager"
           decoding="async"
         />
@@ -142,7 +142,7 @@ const links = [
         class="btn-primary w-full text-base"
       >
         <span data-i18n="hero.cta.demo">Request a tailored demo</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
@@ -162,11 +162,26 @@ const links = [
   [data-mobile-panel].is-open [data-mobile-backdrop]   { opacity: 1; }
   [data-mobile-panel].is-open [data-mobile-drawer]     { transform: translateX(0); }
   [data-mobile-panel] [data-mobile-link]:hover         { background: var(--surface-elev); }
+
+  /* Shrunk nav state — past 200px scroll. Tighter padding + margin and
+     a slightly smaller logo. Animated by the parent's transition utility. */
+  [data-nav-bar].is-shrunk {
+    margin-top: 0.5rem;          /* was mt-4 = 1rem */
+    padding-top: 0.5rem;          /* was py-3 = 0.75rem */
+    padding-bottom: 0.5rem;
+  }
+  [data-nav-bar].is-shrunk img {
+    height: 18px;                 /* was 22px */
+  }
 </style>
 
 <script>
-  // Nav scroll tint + theme tracking
+  // Nav scroll tint + theme tracking + shrink-on-scroll.
+  // Past ~200px the bar tightens its padding/margin and the logo nudges
+  // smaller, the way Apple's nav does — gives a quiet sense the page has
+  // travelled without snapping or jumping.
   const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const bar = document.querySelector<HTMLElement>('[data-nav-bar]');
   const tintFor = () => {
     const theme = document.documentElement.getAttribute('data-theme');
     return theme === 'light'
@@ -176,6 +191,10 @@ const links = [
   const onScroll = () => {
     if (!nav) return;
     nav.style.background = window.scrollY > 12 ? tintFor() : 'transparent';
+    if (bar) {
+      const shrunk = window.scrollY > 200;
+      bar.classList.toggle('is-shrunk', shrunk);
+    }
   };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });

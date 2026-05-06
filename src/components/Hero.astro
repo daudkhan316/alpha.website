@@ -5,25 +5,31 @@ import SystemFlow from './SystemFlow.astro';
 // Entity/service/controller counts say nothing to a broker, COO, or
 // compliance officer; coverage, retention, residency, and consolidation
 // are what they care about.
-const stats = [
-  { v: '64+',      l: 'modules · clean core' },
-  { v: '7-year',   l: 'field-level audit' },
-  { v: 'Germany',  l: 'data residency' },
-  { v: '6 → 1',    l: 'tools replaced' },
+//
+// `animate` opts a stat into the count-up effect on first reveal. The
+// integer + locale-specific suffix are parsed at runtime from the current
+// textContent, so the animated suffix follows whatever locale is active.
+// "Germany" / "6 → 1" don't lead with a digit and are intentionally skipped.
+const stats: { v: string; l: string; animate?: boolean }[] = [
+  { v: '64+',     l: 'modules · clean core', animate: true },
+  { v: '7-year',  l: 'field-level audit',    animate: true },
+  { v: 'Germany', l: 'data residency' },
+  { v: '6 → 1',   l: 'tools replaced' },
 ];
 ---
 
 <section id="hero" class="relative pt-36 pb-24 lg:pt-44 lg:pb-32 overflow-hidden">
-  {/* Ambient background */}
+  {/* Ambient background — blobs drift with scroll for subtle depth.
+      Each one gets a different speed so they don't move as a group. */}
   <div class="absolute inset-0 -z-10 bg-grid mask-fade-radial opacity-60"></div>
-  <div class="blob blob-violet w-[640px] h-[640px] -top-40 -left-40 animate-float-slow"></div>
-  <div class="blob blob-purple w-[520px] h-[520px] top-1/4 right-[-160px] animate-float-slower"></div>
-  <div class="blob blob-pink w-[440px] h-[440px] bottom-[-160px] left-1/3 animate-float-slow"></div>
+  <div class="blob blob-violet w-[640px] h-[640px] -top-40 -left-40 animate-float-slow"  data-parallax="0.18"></div>
+  <div class="blob blob-purple w-[520px] h-[520px] top-1/4 right-[-160px] animate-float-slower" data-parallax="0.12"></div>
+  <div class="blob blob-pink   w-[440px] h-[440px] bottom-[-160px] left-1/3 animate-float-slow" data-parallax="0.22"></div>
 
   <div class="container-wide grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center min-w-0">
     {/* Copy */}
-    <div class="reveal min-w-0">
-      <div class="inline-flex items-center gap-2 badge badge-dot mb-6">
+    <div class="min-w-0">
+      <div class="reveal inline-flex items-center gap-2 badge badge-dot mb-6">
         <span class="ml-2" data-i18n="hero.eyebrow">Insurance Management Platform · Hosted in Germany</span>
       </div>
 
@@ -31,42 +37,55 @@ const stats = [
         class="text-balance text-[clamp(2.4rem,6vw,5rem)] font-semibold leading-[1.04] tracking-tight"
         style="overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; min-width: 0;"
       >
-        <span class="block" data-i18n="hero.headline.l1">One platform.</span>
-        <span class="block" data-i18n="hero.headline.l2">Every step of</span>
-        <span class="block">
+        {/* Each line is its own .reveal so we get a per-line entrance, and
+            .reveal-line tells the runtime to split each child element's text
+            into per-word spans for a writer-style sweep. data-i18n stays on
+            child spans (not on the .reveal-line itself) so the i18n runtime
+            replaces the inner text without blowing away the line wrapper.
+            Timing: per-line offsets are intentionally small (100ms steps);
+            the per-word stagger does most of the cascade work. Total hero
+            entrance now lands in ~900ms instead of ~1.4s. */}
+        <span class="reveal reveal-line block" data-word-step="45"><span data-i18n="hero.headline.l1">One platform.</span></span>
+        <span class="reveal reveal-line block" data-word-step="45" style="--reveal-delay: 100ms;"><span data-i18n="hero.headline.l2">Every step of</span></span>
+        <span class="reveal reveal-line block" data-word-step="45" style="--reveal-delay: 200ms;">
           <span data-i18n="hero.headline.l3a">the</span>
           <span class="gradient-text-strong" data-i18n="hero.headline.l3b">insurance business.</span>
         </span>
       </h1>
 
-      <p class="mt-7 max-w-xl text-lg text-white/65 leading-relaxed" data-i18n="hero.subtext">
+      <p class="reveal mt-7 max-w-xl text-lg text-white/65 leading-relaxed" data-i18n="hero.subtext" style="--reveal-delay: 380ms;">
         Alpha is the modular insurance management platform for brokers, agencies, and distributors —
         customers, contracts, billing, signatures, documents, commissions and the customer portal in
         one audit-grade, multi-tenant system.
       </p>
 
-      <div class="mt-9 flex flex-wrap items-center gap-3">
+      <div class="reveal mt-9 flex flex-wrap items-center gap-3" style="--reveal-delay: 480ms;">
         <a href="#cta" class="btn-primary">
           <span data-i18n="hero.cta.demo">Request a tailored demo</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </a>
         <a href="#how-it-works" class="btn-secondary" data-i18n="hero.cta.seeHow">See how it works</a>
       </div>
 
-      <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/45">
-        <span class="font-mono uppercase tracking-wider" data-i18n="hero.compliance">Compliance</span>
+      <div class="reveal mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-white/45" style="--reveal-delay: 560ms;">
+        <span class="font-mono uppercase tracking-wider mr-1" data-i18n="hero.compliance">Compliance</span>
         {['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR', 'eIDAS', 'IDD'].map((b) => (
-          <span class="text-white/65">{b}</span>
+          <span class="px-2 py-1 rounded-md bg-white/[0.03] border border-white/10 text-white/70 transition-colors hover:text-white hover:border-white/20">{b}</span>
         ))}
       </div>
     </div>
 
-    {/* Visual */}
-    <div class="relative reveal">
+    {/* Visual — pointer-tilt the system panel for a subtle 3D lift.
+        Reveal and tilt have to live on different elements: both animate
+        `transform`, and the reveal's would override tilt's at end-state.
+        Outer wrapper owns the entrance; the panel itself owns the
+        cursor-following 3D rotation. The soft glow stays untilted —
+        keeps the bloom anchored while the panel moves. */}
+    <div class="relative reveal" data-reveal="scale" style="--reveal-delay: 200ms;">
       <div class="absolute -inset-10 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[40px]"></div>
-      <div class="panel-dark-strong relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
+      <div class="panel-dark-strong tilt relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
@@ -85,12 +104,23 @@ const stats = [
     </div>
   </div>
 
-  {/* Stats strip */}
-  <div class="container-wide mt-20 lg:mt-28 reveal">
-    <div class="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5 glass rounded-2xl">
+  {/* Stats strip — numeric values count up on first visible.
+      Non-numeric values get a subtle gradient sweep via .stat-value. */}
+  <div class="container-wide mt-20 lg:mt-28">
+    <div
+      class="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5 glass rounded-2xl overflow-hidden"
+      data-stagger
+      data-stagger-step="80"
+    >
       {stats.map((s, i) => (
-        <div class="px-6 py-6 text-center">
-          <div class="text-3xl md:text-4xl font-semibold tracking-tight text-white" data-i18n={`hero.stats.${i}.v`}>{s.v}</div>
+        <div class="reveal spotlight px-6 py-6 text-center transition-colors duration-300 hover:bg-white/[0.02]" data-reveal="scale">
+          <div class="text-3xl md:text-4xl font-semibold tracking-tight stat-value">
+            <span
+              data-i18n={`hero.stats.${i}.v`}
+              data-count={s.animate ? '1' : undefined}
+              data-count-duration="1100"
+            >{s.v}</span>
+          </div>
           <div class="text-xs uppercase tracking-[0.18em] text-white/45 mt-1.5" data-i18n={`hero.stats.${i}.l`}>{s.l}</div>
         </div>
       ))}

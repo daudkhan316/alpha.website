@@ -12,7 +12,7 @@ const specialized: { codes: string; key: string; label: string }[] = [
 
 <section id="modules" class="section">
   <div class="absolute inset-0 -z-10 bg-grid opacity-30 mask-fade-bottom"></div>
-  <div class="blob blob-violet w-[480px] h-[480px] -top-20 right-[-160px] opacity-50"></div>
+  <div class="blob blob-violet w-[480px] h-[480px] -top-20 right-[-160px] opacity-50" data-parallax="0.15"></div>
 
   <div class="container-wide">
     <div class="max-w-3xl reveal">
@@ -28,10 +28,10 @@ const specialized: { codes: string; key: string; label: string }[] = [
       </p>
     </div>
 
-    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-stagger data-stagger-step="80">
       {moduleGroups.map((g) => (
-        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${g.hue} hover:scale-[1.01] transition-transform duration-500`}>
-          <div class="rounded-2xl bg-alpha-deep/80 backdrop-blur p-5 h-full">
+        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${g.hue} hover:scale-[1.01] transition-transform duration-500`} data-reveal="scale">
+          <div class="spotlight rounded-2xl bg-alpha-deep/80 backdrop-blur p-5 h-full">
             <div class="flex items-start justify-between gap-3">
               <div>
                 <h3 class="text-lg font-semibold tracking-tight" data-i18n={`modules.group.${g.id}.title`}>{g.title}</h3>

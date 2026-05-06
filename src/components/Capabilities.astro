@@ -143,18 +143,18 @@ const Icon = (name: string) => {
       </defs>
     </svg>
 
-    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" data-stagger data-stagger-step="60">
       {features.map((f, i) => (
         <article
-          class={`reveal relative rounded-2xl p-6 transition-all duration-500 ${
+          class={`reveal spotlight group relative rounded-2xl p-6 transition-all duration-500 ${
             f.feature
               ? 'bg-gradient-to-br from-violet-500/10 via-fuchsia-500/5 to-transparent border border-white/10'
               : 'glass hover:border-white/15'
           }`}
-          style={`animation-delay:${i * 40}ms`}
+          data-reveal={f.feature ? 'blur' : undefined}
         >
           <div class="flex items-center gap-3">
-            <span class="grid place-items-center w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10" set:html={Icon(f.icon)}></span>
+            <span class="icon-plate icon-plate-spring grid place-items-center w-10 h-10 rounded-xl" set:html={Icon(f.icon)}></span>
             <div class="flex-1 flex flex-wrap gap-1.5">
               {f.modules.map((m) => (
                 <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/55 tracking-wider">{m}</span>

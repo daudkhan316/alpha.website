@@ -203,15 +203,34 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-white transition-all duration-300;
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-white;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 60%, #f093fb 100%);
     background-size: 200% 200%;
-    box-shadow: 0 10px 40px -8px rgba(118, 75, 162, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 10px 40px -8px rgba(118, 75, 162, 0.55),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                background-position 600ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .btn-primary:hover {
     background-position: 100% 50%;
     transform: translateY(-1px);
-    box-shadow: 0 16px 50px -8px rgba(118, 75, 162, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0 18px 56px -8px rgba(118, 75, 162, 0.75),
+      0 0 0 1px rgba(255, 255, 255, 0.14) inset,
+      0 0 32px -4px rgba(240, 147, 251, 0.45);
+  }
+  .btn-primary:active { transform: translateY(0); transition-duration: 120ms; }
+  /* Children with .btn-arrow micro-translate on hover for "this goes somewhere" cue. */
+  .btn-primary .btn-arrow,
+  .btn-secondary .btn-arrow {
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-primary:hover .btn-arrow,
+  .btn-secondary:hover .btn-arrow {
+    transform: translateX(3px);
   }
 
   .btn-secondary {
@@ -264,11 +283,15 @@
   }
 
   .module-tile {
-    @apply relative flex flex-col justify-between gap-2 rounded-xl p-3 transition-all duration-300 cursor-default;
+    @apply relative flex flex-col justify-between gap-2 rounded-xl p-3 cursor-default;
     min-height: 5.75rem;
     min-width: 0;          /* let the grid cell shrink so long DE compounds wrap inside */
     background: var(--surface);
     border: 1px solid var(--border-2);
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+                background 300ms ease,
+                border-color 300ms ease,
+                box-shadow 360ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .module-tile :where(span:last-child) {
     overflow-wrap: break-word;
@@ -278,19 +301,270 @@
   }
   .module-tile:hover {
     background: var(--surface-elev);
-    border-color: var(--border-4);
+    border-color: rgba(240, 147, 251, 0.30);
     transform: translateY(-2px);
+    box-shadow:
+      0 10px 30px -12px rgba(118, 75, 162, 0.55),
+      0 0 0 1px rgba(240, 147, 251, 0.06) inset;
   }
 
+  /* Reveal-on-scroll. Default = subtle fade + lift.
+     Variants via [data-reveal] keep entrances from feeling identical
+     across the page — Apple pages use a small, considered set of motions,
+     not one global curve. Duration intentionally tight (700ms) so that
+     stacked staggers don't compound into a slow crawl. */
   .reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translateY(16px);
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                filter 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                clip-path 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
   }
   .reveal.is-visible {
     opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+    clip-path: inset(0 0 0 0);
+  }
+
+  .reveal[data-reveal='scale']      { transform: translateY(12px) scale(0.97); }
+  .reveal[data-reveal='blur']       { filter: blur(8px); transform: translateY(8px); }
+  .reveal[data-reveal='left']       { transform: translateX(-24px); }
+  .reveal[data-reveal='right']      { transform: translateX(24px); }
+  .reveal[data-reveal='mask']       { clip-path: inset(0 100% 0 0); transform: none; opacity: 1; }
+
+  /* Variant `is-visible` overrides need higher specificity than the variant
+     base rules above (which tie with `.reveal.is-visible` on (0,2,0) and
+     would win by source order otherwise). The combined selector is (0,3,0)
+     and resets transform/filter to their settled state. */
+  .reveal[data-reveal='scale'].is-visible { transform: translateY(0) scale(1); }
+  .reveal[data-reveal='blur'].is-visible  { filter: blur(0); transform: translateY(0); }
+  .reveal[data-reveal='left'].is-visible,
+  .reveal[data-reveal='right'].is-visible { transform: translateX(0); }
+  .reveal[data-reveal='mask'].is-visible  { clip-path: inset(0 0 0 0); }
+
+  /* Word-by-word headline reveal — each word wrapped in .reveal-word
+     gets a per-word delay computed in JS so the line "writes" itself in
+     instead of fading as one block. The mask sits on a per-word inline
+     wrapper so descenders aren't clipped. */
+  .reveal-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    /* tighten the box around the glyph so descenders aren't cropped */
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+  .reveal-word > span {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--word-delay, 0ms);
+    will-change: transform, opacity;
+  }
+  .reveal-word.is-visible > span {
     transform: translateY(0);
+    opacity: 1;
+  }
+  /* When .reveal-words sit inside a gradient-clipped text container,
+     the children inherit the parent's transparent color but not the
+     background — they'd render invisible. Re-apply the gradient to each
+     split word's inner span by inheriting the parent's background. */
+  :where(.gradient-text-strong, .gradient-text) .reveal-word,
+  :where(.gradient-text-strong, .gradient-text) .reveal-word > span {
+    background: inherit;
+    -webkit-background-clip: text;
+            background-clip: text;
+  }
+
+  /* Pointer-tilt: subtle 3D lift on cursor. Drives --tx/--ty from a global
+     rAF listener (see Layout.astro). Short transition so that pointer
+     tracking feels live (without easing each frame), but the return to
+     rest on pointer-leave is still smooth. Tilt magnitude reduced from
+     ±4deg → ±3deg — Apple's product-page tilt is barely perceptible. */
+  .tilt {
+    transform-style: preserve-3d;
+    transform: perspective(1200px)
+               rotateX(calc(var(--ty, 0) * -3deg))
+               rotateY(calc(var(--tx, 0) * 3deg))
+               translateZ(0);
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .tilt-strong {
+    transform: perspective(1100px)
+               rotateX(calc(var(--ty, 0) * -5deg))
+               rotateY(calc(var(--tx, 0) * 5deg))
+               translateZ(0);
+  }
+
+  /* Numeric value highlight: a one-shot gradient sweep across the
+     digit when its container reveals. Used on the hero stat strip.
+     Sweep duration trimmed (1400→1000ms) to align with the count-up
+     so the two effects finish around the same beat. */
+  .stat-value {
+    background: linear-gradient(120deg,
+      var(--fg-strong) 0%,
+      var(--fg-strong) 35%,
+      #f093fb 50%,
+      var(--fg-strong) 65%,
+      var(--fg-strong) 100%);
+    background-size: 220% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    transition: background-position 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-visible .stat-value {
+    background-position: 0% 0;
+  }
+
+  /* Card border draw-in: a gradient ring whose mask scales from 0 to 1
+     on reveal — gives the impression the card "lights up" as it lands. */
+  .border-trace {
+    position: relative;
+    isolation: isolate;
+  }
+  .border-trace::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg,
+      rgba(102, 126, 234, 0.55) 0%,
+      rgba(118, 75, 162, 0.4) 45%,
+      rgba(240, 147, 251, 0.55) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transform: scaleX(0.6);
+    transform-origin: left center;
+    transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 120ms);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .reveal.is-visible .border-trace::before,
+  .border-trace.reveal.is-visible::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  /* Icon plate spring: triggered when its parent .reveal becomes visible.
+     A small, quiet scale pop — original (0.34, 1.56) overshoot felt
+     bouncy/playful, wrong for an enterprise product page. (0.22, 1.18)
+     just barely overshoots and settles, more like Apple's product cards. */
+  .reveal .icon-plate-spring {
+    transform: scale(0.85);
+    opacity: 0;
+    transition: transform 520ms cubic-bezier(0.22, 1.18, 0.36, 1),
+                opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 60ms);
+  }
+  .reveal.is-visible .icon-plate-spring {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  /* CTA button: a quiet one-time glow lift on viewport-entry. Original
+     pulse fully relaxed back to baseline — too much movement. This just
+     blooms once and stays at the relaxed state, feels like a confident
+     "ready" cue rather than a marketing flash. */
+  @keyframes cta-pulse {
+    0%   { box-shadow:
+      0 10px 40px -8px rgba(118, 75, 162, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.08) inset; }
+    55%  { box-shadow:
+      0 16px 50px -8px rgba(118, 75, 162, 0.70),
+      0 0 28px -6px rgba(240, 147, 251, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.12) inset; }
+    100% { box-shadow:
+      0 10px 40px -8px rgba(118, 75, 162, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.08) inset; }
+  }
+  .reveal.is-visible .pulse-once {
+    animation: cta-pulse 1100ms cubic-bezier(0.22, 1, 0.36, 1) 220ms 1;
+  }
+
+  /* Heading sweep: REMOVED. The CTA already entrances with reveal-scale +
+     button pulse-once + the static gradient-text. A third moving highlight
+     was over-budget and ended in a different gradient stop than the rest
+     of the page's gradient-text — broke visual cohesion. */
+
+  /* Pointer-aware spotlight.
+     A radial gradient follows the cursor inside any .spotlight container.
+     Vars --mx / --my are written on mousemove from Layout.astro.
+     The element stays cheap at rest (opacity 0); only the inner ::before paints. */
+  .spotlight { position: relative; isolation: isolate; }
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      520px circle at var(--mx, 50%) var(--my, 0%),
+      rgba(102, 126, 234, 0.18),
+      rgba(240, 147, 251, 0.06) 30%,
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .spotlight:hover::before { opacity: 1; }
+  .spotlight > * { position: relative; z-index: 1; }
+
+  /* A thin rotating gradient ring that lights only on hover.
+     Used to give cards a "this is the right thing to click" cue. */
+  .ring-glow {
+    position: relative;
+  }
+  .ring-glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg,
+      rgba(102, 126, 234, 0.55),
+      rgba(118, 75, 162, 0.4) 45%,
+      rgba(240, 147, 251, 0.55));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .ring-glow:hover::after { opacity: 1; }
+
+  /* Icon plate: replaces the flat dark square with a soft inner-lit pad.
+     Keeps the icon legible while feeling layered, not pasted on. */
+  .icon-plate {
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgba(102, 126, 234, 0.18), transparent 60%),
+      radial-gradient(120% 80% at 100% 100%, rgba(240, 147, 251, 0.14), transparent 60%),
+      var(--surface-strong);
+    border: 1px solid var(--border-3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: border-color 300ms ease, transform 300ms ease;
+  }
+  .group:hover .icon-plate,
+  .icon-plate:hover {
+    border-color: rgba(240, 147, 251, 0.30);
+    transform: translateY(-1px);
   }
 }
 
@@ -325,15 +599,32 @@
   /* Theme-conditional visibility: pair two assets, show the one that fits. */
   :root[data-theme='dark']  .show-on-light { display: none !important; }
   :root[data-theme='light'] .show-on-dark  { display: none !important; }
+
+  /* Soft seam between sections — barely-there gradient hairline that
+     suggests one continuous canvas instead of stacked boxes. */
+  .section-seam {
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(102, 126, 234, 0.22) 30%,
+      rgba(240, 147, 251, 0.28) 50%,
+      rgba(102, 126, 234, 0.22) 70%,
+      transparent 100%);
+    opacity: 0.55;
+  }
 }
 
-/* Floating ambient blobs — fills swap with theme. */
+/* Floating ambient blobs — fills swap with theme.
+   --pY is written from the global scroll listener so blobs drift with
+   scroll on top of their idle float keyframes. The individual `translate`
+   property composes independently of the keyframe-animated `transform`. */
 .blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(120px);
   pointer-events: none;
-  will-change: transform;
+  will-change: transform, translate;
+  translate: 0 calc(var(--pY, 0px));
 }
 .blob-violet { background: var(--blob-violet); }
 .blob-purple { background: var(--blob-purple); }
@@ -413,3 +704,49 @@
 /* Same idea for bg dots used as status pills (rose-400, emerald-300, amber-300) — they're tiny dots, bump opacity for light. */
 [data-theme='light'] .bg-rose-400    { background-color: rgb(244 63 94); }
 [data-theme='light'] .bg-emerald-300 { background-color: rgb(16 185 129); }
+
+/* SystemFlow: a faint scan beam that drifts along each connection line
+   when no particle is on it, so the diagram never feels frozen.
+   stroke-dashoffset animates a long dash through a long gap. */
+@keyframes flow-scan {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -240; }
+}
+.flow-scan {
+  stroke-dasharray: 4 236;   /* tiny dash, big gap → looks like a single dot drifting */
+  animation: flow-scan 6s linear infinite;
+}
+
+/* SystemFlow: input/output node "arrival pulse".
+   The pulse is timed to overlap with when a particle reaches the node.
+   Each node is offset by ~0.32s to match the particle stagger. */
+@keyframes node-pulse {
+  0%, 70%, 100% { opacity: 0; transform: scale(1); }
+  78%           { opacity: 1; transform: scale(1.08); }
+  92%           { opacity: 0; transform: scale(1.18); }
+}
+.flow-node-pulse {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: node-pulse 2.8s linear infinite;
+}
+
+/* Respect users who prefer reduced motion — kill long-running ambient loops.
+   Functional motion (reveal entrance, hover) stays but is shortened. */
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .flow-particle,
+  .flow-scan,
+  .flow-node-pulse,
+  .marquee {
+    animation: none !important;
+  }
+  :root .reveal { transition-duration: 0.3s; }
+  .reveal.is-visible .pulse-once { animation: none !important; }
+  .reveal.is-visible .gradient-text-sweep { animation: none !important; }
+  .reveal[data-reveal='blur'] { filter: none; }
+  .reveal[data-reveal='mask'] { clip-path: none; }
+  .tilt, .tilt-strong { transform: none !important; }
+  .blob { translate: 0 0 !important; }
+  .reveal-word > span { transition-duration: 0.3s; }
+}
