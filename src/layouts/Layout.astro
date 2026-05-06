@@ -171,7 +171,12 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       // than all together when scrolled into view at once.
       const applyStagger = () => {
         document.querySelectorAll<HTMLElement>('[data-stagger]').forEach((root) => {
-          const step = Number(root.dataset.staggerStep || 60);
+          // Default 50ms (was 60). With reveal duration at 600ms, a 50ms
+          // step gives an 8-item grid a 400ms cascade tail — fits cleanly
+          // inside one reveal window so the last item lands while the
+          // first is still settling. 60ms made the cascade run past the
+          // first item's settle, breaking the "one wave" feel.
+          const step = Number(root.dataset.staggerStep || 50);
           const max = Number(root.dataset.staggerMax || 9);
           const items = root.querySelectorAll<HTMLElement>(':scope > .reveal, :scope > * > .reveal');
           items.forEach((el, i) => {
@@ -215,7 +220,12 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       // still find it on locale change and we re-split via the event.
       const splitWords = (root: HTMLElement) => {
         if (root.dataset.split === '1') return;
-        const step = Number(root.dataset.wordStep || 70);
+        // Default 50ms (was 70). Matches the [data-stagger] step and
+        // pulls the per-word cascade tighter — a 5-word headline now
+        // cascades over 250ms instead of 350ms, so the line writes
+        // itself in just inside one reveal window. Hero overrides this
+        // to 45 explicitly; everywhere else inherits this default.
+        const step = Number(root.dataset.wordStep || 50);
         const counter = { i: 0 };
         const childNodes = Array.from(root.childNodes);
         // Build a parallel list of replacement nodes / mutated nodes.
@@ -445,6 +455,15 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       // SystemFlow particles + a core energy ring — the diagram visibly
       // reacts to attention rather than looping on a fixed cadence.
       //
+      // Polish-pass tuning (vs. original 0.45 / 0.18 / 0.94):
+      //   burst cap   0.45 → 0.30  — single wheel tick contributes less,
+      //                              so the visual no longer flares on
+      //                              casual scrolling
+      //   smoothing   0.18 → 0.12  — energy lerps slower toward target,
+      //                              giving a flowing ramp instead of a
+      //                              quick snap; reads as breath, not jitter
+      //   decay       0.94 → 0.94  — kept; ~0.5s half-life still feels right
+      //
       // One global rAF loop. Scroll handler is passive and only does
       // arithmetic; the rAF idles itself out (`frame = 0`) once both
       // target and energy decay below a threshold, so an idle page costs
@@ -460,12 +479,8 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
 
         const flowTick = () => {
           flowFrame = 0;
-          // Exponential decay: ~0.5s half-life. Scrolling pumps target
-          // up; this brings it back to rest while the user pauses.
           flowTarget *= 0.94;
-          // Smooth chase. Decoupling target from energy means quick
-          // scroll bursts don't snap the visual — it eases up and down.
-          flowEnergy += (flowTarget - flowEnergy) * 0.18;
+          flowEnergy += (flowTarget - flowEnergy) * 0.12;
 
           const v = flowEnergy.toFixed(3);
           flowEls().forEach((el) => el.style.setProperty('--flow-energy', v));
@@ -483,12 +498,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
           const y = window.scrollY;
           const dy = Math.abs(y - flowLastY);
           const dt = Math.max(1, now - flowLastT);
-          // Velocity in px/ms. A typical scroll-wheel tick is ~50px in
-          // ~16ms ≈ 3.1 px/ms; a fast trackpad flick can reach ~12 px/ms.
-          // Divisor 5 maps a wheel tick to ~0.6 of a "burst", and a flick
-          // saturates to 1.0. Cap each event's contribution so a single
-          // flick can't slam target to 1.0 in one frame — feels less twitchy.
-          const burst = Math.min(0.45, dy / dt / 5);
+          const burst = Math.min(0.30, dy / dt / 5);
           flowTarget = Math.min(1, flowTarget + burst);
           flowLastY = y;
           flowLastT = now;

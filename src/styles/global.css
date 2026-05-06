@@ -209,6 +209,32 @@
     color: rgba(255, 255, 255, 0.92);
   }
 
+  /* ──────────────────────────────────────────────────────────────────
+     Motion tokens — pick one of four durations + one easing for any
+     animated property anywhere on the page. Apple's product pages feel
+     cohesive because every motion lands in the same rhythm; ad-hoc
+     400/450/520/650ms values, however well-tuned individually, read as
+     a different hand on every section.
+
+       --t-micro      220ms  — cursor follow, hover lift, button press lift
+       --t-short      360ms  — state transitions, focus shift, group hover
+       --t-medium     600ms  — entrance reveals, word-by-word, AI cap focus
+       --t-long      1100ms  — signature moments: gradient sweep, count-up,
+                               seam dot sweep, CTA bloom
+       --t-press      120ms  — :active rebound (must beat finger lift-off)
+       --ease-soft    cubic-bezier(0.22, 1, 0.36, 1)  — Apple "soft out"
+       --ease-spring  cubic-bezier(0.22, 1.06, 0.36, 1)  — barely overshoot
+     ────────────────────────────────────────────────────────────────── */
+  :where(:root) {
+    --t-micro: 220ms;
+    --t-short: 360ms;
+    --t-medium: 600ms;
+    --t-long: 1100ms;
+    --t-press: 120ms;
+    --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.22, 1.06, 0.36, 1);
+  }
+
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-white;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 60%, #f093fb 100%);
@@ -217,9 +243,9 @@
       0 10px 40px -8px rgba(118, 75, 162, 0.55),
       0 1px 0 rgba(255, 255, 255, 0.06) inset,
       0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
-                background-position 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--t-micro) var(--ease-soft),
+                box-shadow var(--t-micro) var(--ease-soft),
+                background-position var(--t-medium) var(--ease-soft);
   }
   .btn-primary:hover {
     background-position: 100% 50%;
@@ -229,11 +255,11 @@
       0 0 0 1px rgba(255, 255, 255, 0.14) inset,
       0 0 32px -4px rgba(240, 147, 251, 0.45);
   }
-  .btn-primary:active { transform: translateY(0); transition-duration: 120ms; }
+  .btn-primary:active { transform: translateY(0); transition-duration: var(--t-press); }
   /* Children with .btn-arrow micro-translate on hover for "this goes somewhere" cue. */
   .btn-primary .btn-arrow,
   .btn-secondary .btn-arrow {
-    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--t-micro) var(--ease-soft);
   }
   .btn-primary:hover .btn-arrow,
   .btn-secondary:hover .btn-arrow {
@@ -241,10 +267,13 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium transition-all duration-300;
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium;
     color: var(--fg);
     background: var(--surface-strong);
     border: 1px solid var(--border-3);
+    transition: background var(--t-micro) var(--ease-soft),
+                border-color var(--t-micro) var(--ease-soft),
+                transform var(--t-micro) var(--ease-soft);
   }
   .btn-secondary:hover {
     background: var(--surface-elev);
@@ -295,10 +324,10 @@
     min-width: 0;          /* let the grid cell shrink so long DE compounds wrap inside */
     background: var(--surface);
     border: 1px solid var(--border-2);
-    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
-                background 300ms ease,
-                border-color 300ms ease,
-                box-shadow 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                box-shadow var(--t-short) var(--ease-soft);
   }
   .module-tile :where(span:last-child) {
     overflow-wrap: break-word;
@@ -323,10 +352,10 @@
   .reveal {
     opacity: 0;
     transform: translateY(16px);
-    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
-                transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
-                filter 700ms cubic-bezier(0.22, 1, 0.36, 1),
-                clip-path 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--t-medium) var(--ease-soft),
+                transform var(--t-medium) var(--ease-soft),
+                filter var(--t-medium) var(--ease-soft),
+                clip-path var(--t-medium) var(--ease-soft);
     transition-delay: var(--reveal-delay, 0ms);
     will-change: opacity, transform;
   }
@@ -369,8 +398,8 @@
     display: inline-block;
     transform: translateY(110%);
     opacity: 0;
-    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--t-medium) var(--ease-soft),
+                opacity var(--t-medium) var(--ease-soft);
     transition-delay: var(--word-delay, 0ms);
     will-change: transform, opacity;
   }
@@ -400,7 +429,7 @@
                rotateX(calc(var(--ty, 0) * -3deg))
                rotateY(calc(var(--tx, 0) * 3deg))
                translateZ(0);
-    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--t-micro) var(--ease-soft);
   }
   .tilt-strong {
     transform: perspective(1100px)
@@ -411,8 +440,10 @@
 
   /* Numeric value highlight: a one-shot gradient sweep across the
      digit when its container reveals. Used on the hero stat strip.
-     Sweep duration trimmed (1400→1000ms) to align with the count-up
-     so the two effects finish around the same beat. */
+     Now uses --t-long (1100ms) so the sweep finishes on the same beat
+     as the count-up animation (also 1100ms via data-count-duration).
+     Two effects, one heartbeat — feels intentional rather than
+     two parallel timers that happen to overlap. */
   .stat-value {
     background: linear-gradient(120deg,
       var(--fg-strong) 0%,
@@ -425,7 +456,7 @@
     -webkit-background-clip: text;
             background-clip: text;
     color: transparent;
-    transition: background-position 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: background-position var(--t-long) var(--ease-soft);
     transition-delay: var(--reveal-delay, 0ms);
   }
   .reveal.is-visible .stat-value {
@@ -455,8 +486,12 @@
     opacity: 0;
     transform: scaleX(0.6);
     transform-origin: left center;
-    transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
-                transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+    /* Both axes share --t-long. Splitting opacity 900 / transform 1100
+       made the line fade in before it finished extending — the visual
+       arrived in two beats instead of one. Unified, the border draws
+       in as a single gesture. */
+    transition: opacity var(--t-long) var(--ease-soft),
+                transform var(--t-long) var(--ease-soft);
     transition-delay: calc(var(--reveal-delay, 0ms) + 120ms);
     pointer-events: none;
     z-index: 1;
@@ -468,14 +503,16 @@
   }
 
   /* Icon plate spring: triggered when its parent .reveal becomes visible.
-     A small, quiet scale pop — original (0.34, 1.56) overshoot felt
-     bouncy/playful, wrong for an enterprise product page. (0.22, 1.18)
-     just barely overshoots and settles, more like Apple's product cards. */
+     Iterations have walked this from (0.34, 1.56) → (0.22, 1.18) → now
+     (0.22, 1.06) via --ease-spring. 6% overshoot is the smallest amount
+     that still reads as spring rather than ease — anything more starts
+     to feel like a marketing site. Both axes on --t-medium so the icon
+     scales-up and fades-in on the same beat as the surrounding reveal. */
   .reveal .icon-plate-spring {
     transform: scale(0.85);
     opacity: 0;
-    transition: transform 520ms cubic-bezier(0.22, 1.18, 0.36, 1),
-                opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--t-medium) var(--ease-spring),
+                opacity var(--t-medium) var(--ease-soft);
     transition-delay: calc(var(--reveal-delay, 0ms) + 60ms);
   }
   .reveal.is-visible .icon-plate-spring {
@@ -500,7 +537,7 @@
       0 0 0 1px rgba(255, 255, 255, 0.08) inset; }
   }
   .reveal.is-visible .pulse-once {
-    animation: cta-pulse 1100ms cubic-bezier(0.22, 1, 0.36, 1) 220ms 1;
+    animation: cta-pulse var(--t-long) var(--ease-soft) var(--t-micro) 1;
   }
 
   /* Heading sweep: REMOVED. The CTA already entrances with reveal-scale +
@@ -527,7 +564,7 @@
       transparent 55%
     );
     opacity: 0;
-    transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--t-micro) var(--ease-soft);
   }
   .spotlight:hover::before { opacity: 1; }
   .spotlight > * { position: relative; z-index: 1; }
@@ -552,7 +589,7 @@
     -webkit-mask-composite: xor;
             mask-composite: exclude;
     opacity: 0;
-    transition: opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--t-micro) var(--ease-soft);
     pointer-events: none;
   }
   .ring-glow:hover::after { opacity: 1; }
@@ -563,24 +600,24 @@
      state for whichever capability is currently centered. The dot
      to the left also brightens with focus to draw the eye.
 
-     The transition is intentionally moderate (520ms) — fast enough to
-     feel responsive to scroll, slow enough not to blink past you when
-     you scroll quickly. cubic-bezier(0.22, 1, 0.36, 1) matches the
-     reveal easing used elsewhere on the page. */
+     Now on --t-medium / --ease-soft to match the reveal-class motions
+     elsewhere on the page. The focus shift is the same family of
+     animation as a content reveal — a panel of meaning rising into
+     view — so it should sound the same beat. */
   @media (min-width: 1024px) {
     .ai-cap-step {
       opacity: 0.32;
       transform: translateX(0);
-      transition: opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: opacity var(--t-medium) var(--ease-soft),
+                  transform var(--t-medium) var(--ease-soft);
     }
     .ai-cap-step.is-focused {
       opacity: 1;
       transform: translateX(4px);
     }
     .ai-cap-step > span:first-child {
-      transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
-                  box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform var(--t-medium) var(--ease-soft),
+                  box-shadow var(--t-medium) var(--ease-soft);
     }
     .ai-cap-step.is-focused > span:first-child {
       transform: scale(1.5);
@@ -596,7 +633,11 @@
       var(--surface-strong);
     border: 1px solid var(--border-3);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    transition: border-color 300ms ease, transform 300ms ease;
+    /* Was `300ms ease` — the only `ease` keyword in the file. Unifying
+       on --ease-soft so card hover-affordance matches every other state
+       transition on the page. */
+    transition: border-color var(--t-short) var(--ease-soft),
+                transform var(--t-short) var(--ease-soft);
   }
   .group:hover .icon-plate,
   .icon-plate:hover {
@@ -671,7 +712,7 @@
       rgba(102, 126, 234, 0.30) 70%,
       transparent 100%);
     opacity: 0;
-    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--t-medium) var(--ease-soft);
     pointer-events: none;
   }
   .section-seam.is-active::after { opacity: 1; }
@@ -692,12 +733,17 @@
     pointer-events: none;
   }
   .section-seam.is-active::before {
-    animation: seam-sweep 1400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    /* Trimmed 1400 → --t-long (1100ms): the dot now lands on the same
+       beat as count-up, gradient sweep, and CTA pulse — every "look at
+       me" moment on the page resolves in the same window. The fade-in
+       and fade-out are also tightened (15→10%, 85→90%) so most of the
+       1.1s is actually the dot traveling, not appearing/disappearing. */
+    animation: seam-sweep var(--t-long) var(--ease-soft) forwards;
   }
   @keyframes seam-sweep {
     0%   { left: 0;    opacity: 0; }
-    15%  { left: 0;    opacity: 1; }
-    85%  { left: 100%; opacity: 1; }
+    10%  { left: 0;    opacity: 1; }
+    90%  { left: 100%; opacity: 1; }
     100% { left: 100%; opacity: 0; }
   }
 }
@@ -864,12 +910,12 @@
      itself stays since CSS sticky isn't motion. */
   .ai-cap-step { opacity: 1 !important; transform: none !important; }
   .ai-cap-step > span:first-child { transform: none !important; }
-  :root .reveal { transition-duration: 0.3s; }
+  :root .reveal { transition-duration: var(--t-short); }
   .reveal.is-visible .pulse-once { animation: none !important; }
   .reveal.is-visible .gradient-text-sweep { animation: none !important; }
   .reveal[data-reveal='blur'] { filter: none; }
   .reveal[data-reveal='mask'] { clip-path: none; }
   .tilt, .tilt-strong { transform: none !important; }
   .blob { translate: 0 0 !important; }
-  .reveal-word > span { transition-duration: 0.3s; }
+  .reveal-word > span { transition-duration: var(--t-short); }
 }

@@ -28,9 +28,9 @@ const specialized: { codes: string; key: string; label: string }[] = [
       </p>
     </div>
 
-    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-stagger data-stagger-step="80">
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-stagger>
       {moduleGroups.map((g) => (
-        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${g.hue} hover:scale-[1.01] transition-transform duration-500`} data-reveal="scale">
+        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${g.hue} hover:scale-[1.01] transition-transform duration-[var(--t-short)] ease-[var(--ease-soft)]`} data-reveal="scale">
           <div class="spotlight rounded-2xl bg-alpha-deep/80 backdrop-blur p-5 h-full">
             <div class="flex items-start justify-between gap-3">
               <div>

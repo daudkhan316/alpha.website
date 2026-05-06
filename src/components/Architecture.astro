@@ -46,7 +46,7 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR Â· DSGVO', 'eIDAS Â
     {/* Pillars */}
     <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger data-stagger-step="60">
       {pillars.map((p, i) => (
-        <div class="reveal spotlight relative rounded-2xl glass p-6 overflow-hidden transition-transform duration-500 hover:-translate-y-0.5">
+        <div class="reveal spotlight relative rounded-2xl glass p-6 overflow-hidden transition-transform duration-[var(--t-short)] ease-[var(--ease-soft)] hover:-translate-y-0.5">
           <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-alpha-purple/20 blur-2xl"></div>
           <div class="relative">
             <div class="font-display text-3xl font-semibold tracking-tight gradient-text-strong" data-i18n={`arch.pillar.${i}.kpi`}>{p.kpi}</div>
