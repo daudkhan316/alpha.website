@@ -164,24 +164,21 @@ const outputY = (i: number) => 70 + i * 65;
             font-size="22" font-weight="700" fill="white">α</text>
     </g>
 
-    {/* Particles — driven by the scroll-energy runtime in the script
-        below, NOT SMIL. data-progress carries each particle's initial
-        position along its path (spread out across the path so the
-        diagram doesn't look bunched at startup); data-rate is
-        cycles-per-second at energy = 1, preserved from the original
-        SMIL durations. cx/cy are placeholder values; the script
-        positions each particle on first frame. */}
+    {/* Particles in */}
     {inputs.map((_, i) => (
-      <circle r="2.5" cx="0" cy="0" class="flow-particle"
-              data-particle data-path={`#pIn${i}`}
-              data-progress={(i * 0.2).toFixed(2)}
-              data-rate={(1 / (2.6 + i * 0.18)).toFixed(4)} />
+      <circle r="2.5" class="flow-particle">
+        <animateMotion dur={`${2.6 + i * 0.18}s`} begin={`${i * 0.32}s`} repeatCount="indefinite">
+          <mpath href={`#pIn${i}`} />
+        </animateMotion>
+      </circle>
     ))}
+    {/* Particles out */}
     {outputs.map((_, i) => (
-      <circle r="2.5" cx="0" cy="0" class="flow-particle"
-              data-particle data-path={`#pOut${i}`}
-              data-progress={(0.1 + i * 0.2).toFixed(2)}
-              data-rate={(1 / (2.4 + i * 0.18)).toFixed(4)} />
+      <circle r="2.5" class="flow-particle">
+        <animateMotion dur={`${2.4 + i * 0.18}s`} begin={`${0.6 + i * 0.32}s`} repeatCount="indefinite">
+          <mpath href={`#pOut${i}`} />
+        </animateMotion>
+      </circle>
     ))}
   </svg>
 
@@ -205,76 +202,3 @@ const outputY = (i: number) => 70 + i * 65;
     ))}
   </div>
 </div>
-
-<script>
-  // Scroll-energy-driven particle motion. The original SMIL animateMotion
-  // looped from page load — particles streamed perpetually whether the
-  // user was looking or not, burning paint cycles for no narrative gain.
-  // Now each particle's progress along its path is integrated from
-  // --flow-energy (written by Layout.astro's scroll-velocity runtime),
-  // so particles only move while the user is scrolling and freeze where
-  // they are when the user stops. Combined with the .is-flowing class
-  // toggle below, the entire diagram has TWO states — at rest, asleep;
-  // attended-to, alive.
-  const wireFlow = () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
-    const container = document.querySelector<HTMLElement>('[data-flow]');
-    if (!container) return;
-    const particles = Array.from(container.querySelectorAll<SVGCircleElement>('[data-particle]')).map((el) => {
-      const ref = el.dataset.path || '';
-      const path = document.querySelector<SVGPathElement>(ref);
-      if (!path) return null;
-      return {
-        el,
-        path,
-        length: path.getTotalLength(),
-        progress: Number(el.dataset.progress || '0'),
-        rate: Number(el.dataset.rate || '0.4'),
-      };
-    }).filter((p): p is NonNullable<typeof p> => p !== null);
-
-    // Position each particle at its initial progress so they're visible
-    // (spread along the paths) before the first scroll, instead of all
-    // bunched at the path origin or hidden off-canvas.
-    particles.forEach((p) => {
-      const pt = p.path.getPointAtLength(p.progress * p.length);
-      p.el.setAttribute('cx', String(pt.x));
-      p.el.setAttribute('cy', String(pt.y));
-    });
-
-    let frame = 0;
-    let lastT = 0;
-    const tick = (t: number) => {
-      frame = 0;
-      if (!lastT) lastT = t;
-      // Cap dt to prevent jump if the rAF was paused (tab backgrounded).
-      const dt = Math.min(0.05, (t - lastT) / 1000);
-      lastT = t;
-      const energy = Number(container.style.getPropertyValue('--flow-energy') || '0');
-
-      if (energy > 0.002) {
-        container.classList.add('is-flowing');
-        for (const p of particles) {
-          p.progress = (p.progress + dt * energy * p.rate) % 1;
-          const pt = p.path.getPointAtLength(p.progress * p.length);
-          p.el.setAttribute('cx', String(pt.x));
-          p.el.setAttribute('cy', String(pt.y));
-        }
-        frame = requestAnimationFrame(tick);
-      } else {
-        container.classList.remove('is-flowing');
-        lastT = 0;
-      }
-    };
-
-    // Kick off the rAF on every scroll. Layout.astro's scroll handler
-    // also fires (registered before this one), so it bumps --flow-energy
-    // FIRST, then we read the fresh value on our next frame.
-    window.addEventListener('scroll', () => {
-      if (!frame) frame = requestAnimationFrame(tick);
-    }, { passive: true });
-  };
-  wireFlow();
-  document.addEventListener('astro:page-load', wireFlow);
-</script>
