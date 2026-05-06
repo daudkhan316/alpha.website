@@ -84,14 +84,19 @@ const steps = [
       <ol class="space-y-14">
         {steps.map((s, i) => (
           <li class="relative grid md:grid-cols-[10rem_1fr] gap-6 md:gap-12 reveal" data-step={i}>
-            {/* Number column */}
+            {/* Number column — `.step-num` so the script below can scale +
+                glow it when this step is the puck's active lane. */}
             <div class="flex md:flex-col items-center md:items-end md:text-right gap-3 md:gap-2">
-              <div class="relative z-10 grid place-items-center w-14 h-14 rounded-2xl border border-white/10 bg-alpha-deep">
-                <span class="font-mono text-xs tracking-wider text-white/55">{s.n}</span>
+              <div class="step-num relative z-10 grid place-items-center w-14 h-14 rounded-2xl border border-white/10 bg-alpha-deep">
+                <span class="step-num-text font-mono text-xs tracking-wider text-white/55">{s.n}</span>
               </div>
+              {/* `.step-tag` items wait for `.is-active` to fade in
+                  left-to-right via --tag-i. They're hidden by default and
+                  reveal as the puck enters the step's lane, so each step
+                  has its own "you're here, these are the modules" beat. */}
               <div class="md:mt-2 hidden md:flex flex-wrap gap-1 justify-end">
-                {s.modules.map((m) => (
-                  <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/65">{m}</span>
+                {s.modules.map((m, k) => (
+                  <span class="step-tag font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/65" style={`--tag-i:${k}`}>{m}</span>
                 ))}
               </div>
             </div>
@@ -105,8 +110,8 @@ const steps = [
                 {s.body}
               </p>
               <div class="md:hidden mt-3 flex flex-wrap gap-1">
-                {s.modules.map((m) => (
-                  <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/65">{m}</span>
+                {s.modules.map((m, k) => (
+                  <span class="step-tag font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-white/65" style={`--tag-i:${k}`}>{m}</span>
                 ))}
               </div>
             </div>
@@ -118,25 +123,65 @@ const steps = [
 </section>
 
 <script>
-  // Drive the timeline progress + puck from section scroll position.
+  // Drive the timeline progress + puck from section scroll position, and
+  // tie which step is "active" to wherever the puck currently sits. The
+  // puck position is a 0..1 progress; the active step is whichever
+  // step's vertical center is closest to the puck. Toggling .is-active
+  // ticks the number circle (CSS scale + glow) and fades the step's
+  // module tags in left-to-right via --tag-i.
+  //
+  // Step center offsets are cached against the timeline top and only
+  // recomputed on resize/page-load — recomputing on every scroll would
+  // mean N getBoundingClientRect calls per frame.
   const root = document.querySelector<HTMLElement>('[data-timeline]');
   const progress = document.querySelector<HTMLElement>('[data-timeline-progress]');
   const puck = document.querySelector<HTMLElement>('[data-timeline-puck]');
   if (root && progress && puck) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
+    let stepCenters: number[] = [];
+    let lastActive = -1;
+
+    const measure = () => {
+      const rTop = root.getBoundingClientRect().top + window.scrollY;
+      stepCenters = steps.map((s) => {
+        const sr = s.getBoundingClientRect();
+        return sr.top + window.scrollY + sr.height / 2 - rTop;
+      });
+    };
+
     const update = () => {
       const r = root.getBoundingClientRect();
       const vh = window.innerHeight;
       const total = r.height;
-      // Start when section top hits 60% of viewport, end when bottom hits 40%.
       const start = vh * 0.6;
       const end = -total + vh * 0.4;
       const raw = (start - r.top) / (start - end);
       const clamped = Math.max(0, Math.min(1, raw));
       progress.style.setProperty('--progress', String(clamped));
       puck.style.setProperty('--puck', String(clamped));
+
+      if (reduceMotion || stepCenters.length === 0) return;
+      const puckY = clamped * total;
+      let activeIdx = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < stepCenters.length; i++) {
+        const d = Math.abs(stepCenters[i] - puckY);
+        if (d < bestDist) { bestDist = d; activeIdx = i; }
+      }
+      // Only mutate when activeIdx actually changes — class toggling
+      // every scroll frame would queue extra style invalidations.
+      if (activeIdx !== lastActive) {
+        if (lastActive >= 0) steps[lastActive].classList.remove('is-active');
+        steps[activeIdx].classList.add('is-active');
+        lastActive = activeIdx;
+      }
     };
+
+    measure();
     update();
     window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+    window.addEventListener('resize', () => { measure(); update(); });
+    document.addEventListener('astro:page-load', () => { measure(); update(); });
   }
 </script>
