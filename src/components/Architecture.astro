@@ -1417,6 +1417,86 @@ const compliance = ['ISO 27001', 'ISO 27701', 'SOC 2', 'GDPR · DSGVO', 'eIDAS �
   :root[data-theme='light'] .arch-eyebrow { color: rgba(15,18,35,0.7); }
   :root[data-theme='light'] .arch-pillar-art { background: rgba(13,10,43,0.06); }
 
+  /* "Two deployment models" — light theme.
+     The frame, tabs, diagrams, nodes, tags and stat strip were all
+     authored against a near-black canvas. Re-base each onto a paper
+     surface with the same accent tint and flip the white text/borders
+     to dark equivalents so contrast holds. */
+  :root[data-theme='light'] .arch-deploy-frame {
+    background:
+      radial-gradient(800px 320px at 0% 0%, rgba(102,126,234,0.10), transparent 60%),
+      radial-gradient(800px 320px at 100% 100%, rgba(240,147,251,0.08), transparent 60%),
+      rgba(13,10,43,0.04);
+  }
+  :root[data-theme='light'] .arch-deploy-tabs {
+    background: rgba(13,10,43,0.04);
+    border-color: rgba(15,18,35,0.12);
+  }
+  :root[data-theme='light'] .arch-deploy-tab { color: rgba(15,18,35,0.65); }
+  :root[data-theme='light'] .arch-deploy-tab:hover { color: rgba(15,18,35,0.92); }
+  :root[data-theme='light'] .arch-deploy-tab.is-active { color: #fff; }
+  :root[data-theme='light'] .arch-deploy-tab-glyph { background: rgba(15,18,35,0.06); }
+
+  :root[data-theme='light'] .ddiagram {
+    background: rgba(255,255,255,0.7);
+    border-color: rgba(15,18,35,0.10);
+  }
+  :root[data-theme='light'] .ddiagram-grid {
+    background:
+      linear-gradient(rgba(15,18,35,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,18,35,0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: -1px -1px;
+  }
+
+  :root[data-theme='light'] .dvnet { fill: rgba(102,126,234,0.05); }
+  :root[data-theme='light'] .dvnet[style*="--vnet-i:1"] { fill: rgba(240,147,251,0.05); }
+  :root[data-theme='light'] .dvnet-label { color: rgba(15,18,35,0.85); }
+
+  :root[data-theme='light'] .dnode {
+    background: rgba(255,255,255,0.92);
+    border-color: rgba(15,18,35,0.14);
+    color: rgba(15,18,35,0.92);
+    box-shadow: 0 8px 22px -12px rgba(15,18,35,0.25);
+  }
+  :root[data-theme='light'] .dnode-icon { color: #6d54d4; }
+  :root[data-theme='light'] .dnode-icon--db { color: #c026d3; }
+  :root[data-theme='light'] .dnode-meta { color: rgba(15,18,35,0.55); }
+
+  :root[data-theme='light'] .dnode-runtime {
+    background: linear-gradient(135deg, rgba(102,126,234,0.18), rgba(240,147,251,0.16));
+  }
+  :root[data-theme='light'] .dnode-runtime .dnode-text { color: rgba(15,18,35,0.92); }
+  :root[data-theme='light'] .dnode-runtime--A {
+    background: linear-gradient(135deg, rgba(102,126,234,0.20), rgba(167,139,250,0.16));
+  }
+  :root[data-theme='light'] .dnode-runtime--B {
+    background: linear-gradient(135deg, rgba(167,139,250,0.16), rgba(240,147,251,0.20));
+  }
+
+  :root[data-theme='light'] .ddiagram-tag {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(15,18,35,0.12);
+    color: rgba(15,18,35,0.7);
+  }
+
+  :root[data-theme='light'] .arch-deploy-stat {
+    background: rgba(13,10,43,0.04);
+    border-color: rgba(15,18,35,0.10);
+  }
+  :root[data-theme='light'] .arch-deploy-stat-k { color: rgba(15,18,35,0.55); }
+  :root[data-theme='light'] .arch-deploy-stat-v { color: rgba(15,18,35,0.92); }
+
+  /* Header text inside the deploy frame uses Tailwind's text-white/* —
+     re-color for paper. */
+  :root[data-theme='light'] .arch-deploy-head [data-i18n='arch.deploy.isolation'],
+  :root[data-theme='light'] .arch-deploy-head [data-i18n='arch.deploy.blurb'] {
+    color: rgba(15,18,35,0.65);
+  }
+  :root[data-theme='light'] .arch-deploy-head [data-i18n='arch.deploy.title'] {
+    color: rgba(15,18,35,0.95);
+  }
+
   /* Mobile */
   @media (max-width: 720px) {
     .arch-schema-row { grid-template-columns: 8px 1fr; }
