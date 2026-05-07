@@ -324,11 +324,12 @@
   .section-heading {
     @apply text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05];
     color: var(--fg-strong);
-    /* German compound nouns ("Versicherungsverteilung") can blow past the
-       column width at h2 size; enable hyphenation + safe break. */
+    /* German compound nouns carry explicit soft hyphens (U+00AD) at
+       morpheme boundaries; `manual` honors those without auto-breaking
+       ordinary English words mid-syllable. */
     overflow-wrap: break-word;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    hyphens: manual;
+    -webkit-hyphens: manual;
     min-width: 0;
   }
 
@@ -346,8 +347,8 @@
   .module-tile :where(span:last-child) {
     overflow-wrap: break-word;
     word-break: normal;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    hyphens: manual;
+    -webkit-hyphens: manual;
   }
   .module-tile:hover {
     background: var(--surface-elev);
@@ -368,8 +369,7 @@
     transform: translateY(16px);
     transition: opacity var(--t-medium) var(--ease-soft),
                 transform var(--t-medium) var(--ease-soft),
-                filter var(--t-medium) var(--ease-soft),
-                clip-path var(--t-medium) var(--ease-soft);
+                filter var(--t-medium) var(--ease-soft);
     transition-delay: var(--reveal-delay, 0ms);
     will-change: opacity, transform;
   }
@@ -377,7 +377,6 @@
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
-    clip-path: inset(0 0 0 0);
   }
   /* No-JS fallback: without IntersectionObserver running, every .reveal
      (which is most copy on the page) would stay at opacity:0 and the page
@@ -388,12 +387,10 @@
     .reveal[data-reveal='scale'],
     .reveal[data-reveal='blur'],
     .reveal[data-reveal='left'],
-    .reveal[data-reveal='right'],
-    .reveal[data-reveal='mask'] {
+    .reveal[data-reveal='right'] {
       opacity: 1 !important;
       transform: none !important;
       filter: none !important;
-      clip-path: none !important;
     }
     .reveal-word > span {
       transform: none !important;
@@ -405,7 +402,6 @@
   .reveal[data-reveal='blur']       { filter: blur(8px); transform: translateY(8px); }
   .reveal[data-reveal='left']       { transform: translateX(-24px); }
   .reveal[data-reveal='right']      { transform: translateX(24px); }
-  .reveal[data-reveal='mask']       { clip-path: inset(0 100% 0 0); transform: none; opacity: 1; }
 
   /* Variant `is-visible` overrides need higher specificity than the variant
      base rules above (which tie with `.reveal.is-visible` on (0,2,0) and
@@ -415,7 +411,6 @@
   .reveal[data-reveal='blur'].is-visible  { filter: blur(0); transform: translateY(0); }
   .reveal[data-reveal='left'].is-visible,
   .reveal[data-reveal='right'].is-visible { transform: translateX(0); }
-  .reveal[data-reveal='mask'].is-visible  { clip-path: inset(0 0 0 0); }
 
   /* Word-by-word headline reveal — each word wrapped in .reveal-word
      gets a per-word delay computed in JS so the line "writes" itself in
@@ -1831,8 +1826,8 @@
     opacity: 0.7;
     overflow-wrap: break-word;
     word-break: normal;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    hyphens: manual;
+    -webkit-hyphens: manual;
   }
   .mod-tile-shine {
     position: absolute;
@@ -2216,7 +2211,6 @@
   .reveal.is-visible .pulse-once { animation: none !important; }
   .reveal.is-visible .gradient-text-sweep { animation: none !important; }
   .reveal[data-reveal='blur'] { filter: none; }
-  .reveal[data-reveal='mask'] { clip-path: none; }
   .tilt, .tilt-strong { transform: none !important; }
   .blob { translate: 0 0 !important; }
   .reveal-word > span { transition-duration: var(--t-short); }

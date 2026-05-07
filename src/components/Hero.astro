@@ -21,7 +21,7 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
 <section id="hero" class="relative pt-36 pb-24 lg:pt-44 lg:pb-32 overflow-hidden">
   {/* Ambient background — blobs drift with scroll for subtle depth.
       Each one gets a different speed so they don't move as a group. */}
-  <div class="absolute inset-0 -z-10 bg-grid mask-fade-radial opacity-60"></div>
+  <div class="absolute inset-0 -z-10 bg-grid mask-fade-radial opacity-25"></div>
   <div class="blob blob-violet w-[640px] h-[640px] -top-40 -left-40 animate-float-slow"  data-parallax="0.18"></div>
   <div class="blob blob-purple w-[520px] h-[520px] top-1/4 right-[-160px] animate-float-slower" data-parallax="0.12"></div>
   <div class="blob blob-pink   w-[440px] h-[440px] bottom-[-160px] left-1/3 animate-float-slow" data-parallax="0.22"></div>
@@ -39,7 +39,7 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
 
       <h1
         class="text-balance text-[clamp(2.4rem,6vw,5rem)] font-semibold leading-[1.04] tracking-tight"
-        style="overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; min-width: 0;"
+        style="overflow-wrap: break-word; hyphens: manual; -webkit-hyphens: manual; min-width: 0;"
       >
         {/* Each line is its own .reveal so we get a per-line entrance, and
             .reveal-line tells the runtime to split each child element's text
@@ -90,8 +90,8 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
         anchored while only the panel itself rotates with the cursor. */}
     <div class="relative" data-hero-scrub="panel">
       <div class="reveal" data-reveal="scale" style="--reveal-delay: 200ms;">
-      <div class="absolute -inset-10 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[40px]"></div>
-      <div class="glass-strong tilt relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple">
+      <div class="absolute -inset-10 bg-alpha-gradient-soft blur-3xl opacity-60 rounded-[28px]"></div>
+      <div class="glass-strong tilt relative rounded-[28px] p-5 sm:p-7 shadow-glow-purple overflow-hidden bg-[rgba(15,12,40,0.55)]">
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-rose-400/80"></span>
