@@ -187,11 +187,14 @@ const outputY = (i: number) => 70 + i * 65;
     ))}
   </svg>
 
-  {/* Floating labels keyed to nodes (positioned with absolute % to overlay svg) */}
-  <div class="absolute inset-0 pointer-events-none hidden md:block">
+  {/* Floating labels keyed to nodes (positioned with absolute % to
+      overlay the svg). Previously hidden on mobile, leaving the diagram
+      a meaningless code matrix below md — now shown at every width with
+      a smaller font on small screens so they fit alongside the nodes. */}
+  <div class="absolute inset-0 pointer-events-none">
     {inputs.map((n, i) => (
       <span
-        class="absolute font-mono text-[10px] tracking-wider uppercase text-white/60"
+        class="absolute font-mono text-[8px] sm:text-[10px] tracking-wider uppercase text-white/60 max-w-[28%] leading-tight"
         style={`left: 1.5%; top: ${(inputY(i) + 18) / 460 * 100}%;`}
       >
         {n.label}
@@ -199,7 +202,7 @@ const outputY = (i: number) => 70 + i * 65;
     ))}
     {outputs.map((n, i) => (
       <span
-        class="absolute font-mono text-[10px] tracking-wider uppercase text-white/60 text-right"
+        class="absolute font-mono text-[8px] sm:text-[10px] tracking-wider uppercase text-white/60 text-right max-w-[28%] leading-tight"
         style={`right: 1%; top: ${(outputY(i) + 18) / 460 * 100}%;`}
       >
         {n.label}

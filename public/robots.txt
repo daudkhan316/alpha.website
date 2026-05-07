@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Add Sitemap directive once a real domain is configured in astro.config.mjs
+# Example: Sitemap: https://alpha-platform.de/sitemap-index.xml

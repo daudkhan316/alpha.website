@@ -48,15 +48,32 @@ const seedModule = seed.modules[0];
       </span>
     </div>
 
-    <div class="cap-filters reveal mt-7" data-reveal="scale" role="tablist" data-mod-filters>
-      <button type="button" class="cap-filter is-active" data-mod-filter="all" role="tab" aria-selected="true">
+    {/* Filter chips: not a tabs pattern (no separate panels — same grid
+        with hidden cards), so `aria-pressed` is the correct semantic for
+        "this filter is currently active." aria-label spells out what the
+        chip filters by, since the visible label can be just a short word
+        ("Operations") with a count chip beside it. */}
+    <div class="cap-filters reveal mt-7" data-reveal="scale" data-mod-filters role="group" aria-label="Filter modules">
+      <button
+        type="button"
+        class="cap-filter is-active"
+        data-mod-filter="all"
+        aria-pressed="true"
+        aria-label={`Show all modules (${allModuleCount})`}
+      >
         <span data-i18n="modules.filters.all">All</span>
-        <span class="cap-filter-count">{allModuleCount}</span>
+        <span class="cap-filter-count" aria-hidden="true">{allModuleCount}</span>
       </button>
       {moduleGroups.map((g) => (
-        <button type="button" class="cap-filter" data-mod-filter={g.id} role="tab" aria-selected="false">
+        <button
+          type="button"
+          class="cap-filter"
+          data-mod-filter={g.id}
+          aria-pressed="false"
+          aria-label={`Show ${g.title} modules (${g.modules.length})`}
+        >
           <span data-i18n={`modules.group.${g.id}.title`}>{g.title}</span>
-          <span class="cap-filter-count">{g.modules.length}</span>
+          <span class="cap-filter-count" aria-hidden="true">{g.modules.length}</span>
         </button>
       ))}
     </div>
@@ -217,8 +234,15 @@ const seedModule = seed.modules[0];
         }
       };
 
+      // Reduced-motion users: don't auto-cycle. The previous code ran a
+      // setInterval(3200) regardless, waking the main thread every few
+      // seconds for users who explicitly asked for no motion. The
+      // initial seed tile is still visible; users can hover/focus tiles
+      // to drive the spotlight manually.
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const startCycle = () => {
         stopCycle();
+        if (reducedMotion) return;
         cycleTimer = window.setInterval(() => {
           if (isPaused || !inView) return;
           const cyc = getCycleTiles();
@@ -251,7 +275,7 @@ const seedModule = seed.modules[0];
           filters.forEach((x) => {
             const on = x === f;
             x.classList.toggle('is-active', on);
-            x.setAttribute('aria-selected', on ? 'true' : 'false');
+            x.setAttribute('aria-pressed', on ? 'true' : 'false');
           });
           activeFilter = id;
           board.querySelectorAll('[data-mod-group]').forEach((g) => {

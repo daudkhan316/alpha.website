@@ -1,12 +1,9 @@
 ---
-// Only links with a real destination remain. The previous "Talk to a solutions
-// architect", "Partner documentation", and "Security whitepaper" entries all
-// pointed at #cta — self-referential dead links — and have been removed until
-// real targets exist.
-const secondary = [
-  { label: 'Talk to a solutions architect', href: 'mailto:hello@alpha-platform.de' },
-  { label: 'Compare deployment models',     href: '#architecture' },
-];
+// No secondary list — the only real destinations are duplicates of the
+// primary CTA (mailto) and on-page anchors the user has already passed.
+// The two primary buttons cover the meaningful actions; everything else
+// either belonged elsewhere or didn't exist yet. Re-add when there are
+// real targets (pricing page, security white-paper, customer references).
 ---
 
 <section id="cta" class="relative py-32 lg:py-40 overflow-hidden">
@@ -18,7 +15,13 @@ const secondary = [
 
   <div class="container-narrow">
     <div class="reveal relative rounded-[28px] p-[1.5px] bg-alpha-gradient overflow-hidden" data-reveal="scale">
-      <div class="relative rounded-[26px] bg-alpha-ink/95 px-8 sm:px-14 py-14 sm:py-20 text-center">
+      {/* `panel-dark` opts this card out of the page-level light-theme
+          re-mapping of `text-white/N` utilities. The card stays dark in
+          both themes (it's a fixed-dark gradient panel), so the text
+          inside should stay light too — without this class the page-
+          theme rewrites would make the secondary links and reassurance
+          text near-black on a near-black background in light mode. */}
+      <div class="panel-dark relative rounded-[26px] bg-alpha-ink/95 px-8 sm:px-14 py-14 sm:py-20 text-center">
         <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[80%] h-64 bg-alpha-purple/30 blur-3xl rounded-full pointer-events-none"></div>
 
         <p class="section-eyebrow" data-i18n="cta.eyebrow">See Alpha in action</p>
@@ -39,19 +42,6 @@ const secondary = [
           </a>
           <a href="#architecture" class="btn-secondary text-base" data-i18n="cta.viewArch">View architecture</a>
         </div>
-
-        <ul class="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          {secondary.map((s, i) => (
-            <li>
-              <a class="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-1.5" href={s.href}>
-                <span data-i18n={`cta.secondary.${i}`}>{s.label}</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </a>
-            </li>
-          ))}
-        </ul>
 
         <div class="mt-12 pt-8 border-t border-white/10 text-xs text-white/45" data-i18n="cta.reassurance">
           Hosted exclusively in Microsoft Azure Germany (Frankfurt).

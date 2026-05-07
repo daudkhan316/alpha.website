@@ -134,7 +134,11 @@ const capabilities = [
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-white/60">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-              <span data-i18n="ai.terminal.result">result · 4 rows · 312 ms</span>
+              {/* The header reflects the current demo's row count + a small
+                  jittered ms reading so it doesn't lie when demo #2 returns
+                  a single row. The runtime updates `data-ai-result-meta`
+                  on each cycle. */}
+              <span data-ai-result-meta data-i18n="ai.terminal.result">result · 4 rows · 312 ms</span>
             </div>
             <span class="text-[10px] text-white/55 font-mono" data-i18n="ai.terminal.audit">audit · logged</span>
           </div>
@@ -249,9 +253,43 @@ const capabilities = [
   const promptEl = document.querySelector<HTMLElement>('[data-ai-prompt]');
   const qlEl = document.querySelector<HTMLElement>('[data-ai-ql]');
   const resEl = document.querySelector<HTMLElement>('[data-ai-result]');
+  const metaEl = document.querySelector<HTMLElement>('[data-ai-result-meta]');
+  // Reduced-motion users get a single static demo painted once — no
+  // typewriter, no looped cycling. The same data drives both modes;
+  // only the presentation differs.
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Off-screen pause: we only run the demo while the section is in the
+  // viewport. After scrolling past it, the loop suspends instead of
+  // typing into an invisible terminal forever.
+  let isVisible = false;
   if (promptEl && qlEl && resEl) {
     let demoIdx = 0;
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const interruptibleSleep = async (ms: number) => {
+      // Pause-aware sleep: yields control if visibility flips off.
+      const start = performance.now();
+      while (performance.now() - start < ms) {
+        await sleep(Math.min(ms - (performance.now() - start), 80));
+        if (!isVisible) {
+          // Wait until visible again before continuing.
+          await new Promise<void>((r) => {
+            const tick = () => isVisible ? r() : setTimeout(tick, 200);
+            tick();
+          });
+        }
+      }
+    };
+    const setMeta = (rows: number) => {
+      if (!metaEl) return;
+      // Vary ms a tiny bit per demo so the indicator feels alive without
+      // straying from "snappy backend response" range.
+      const ms = 240 + Math.floor(Math.random() * 220);
+      const word = rows === 1 ? 'row' : 'rows';
+      metaEl.textContent = `result · ${rows} ${word} · ${ms} ms`;
+      // Drop the i18n key once we override; locale change re-renders via
+      // runDemo() which calls setMeta again with the active demo.
+      metaEl.removeAttribute('data-i18n');
+    };
 
     // rAF-paced typewriter. The previous setTimeout-per-char loop kept
     // queuing callbacks while the tab was backgrounded — when the tab
@@ -290,9 +328,12 @@ const capabilities = [
 
     function paintResult(rows: Demo['result']) {
       resEl!.innerHTML = '';
+      const startCls = reducedMotion
+        ? 'grid grid-cols-[1fr_auto] items-center gap-4'
+        : 'opacity-0 translate-y-1 transition-all duration-500 grid grid-cols-[1fr_auto] items-center gap-4';
       rows.forEach((r, idx) => {
         const row = document.createElement('div');
-        row.className = 'opacity-0 translate-y-1 transition-all duration-500 grid grid-cols-[1fr_auto] items-center gap-4';
+        row.className = startCls;
         row.innerHTML = `
           <div class="space-y-1">
             <div class="text-[13px] text-white/85">${r.label}</div>
@@ -303,10 +344,12 @@ const capabilities = [
           <div class="font-mono text-xs text-white/85 tabular-nums">${r.value}</div>
         `;
         resEl!.appendChild(row);
-        setTimeout(() => {
-          row.classList.remove('opacity-0', 'translate-y-1');
-          row.classList.add('opacity-100', 'translate-y-0');
-        }, 80 + idx * 90);
+        if (!reducedMotion) {
+          setTimeout(() => {
+            row.classList.remove('opacity-0', 'translate-y-1');
+            row.classList.add('opacity-100', 'translate-y-0');
+          }, 80 + idx * 90);
+        }
       });
     }
 
@@ -316,42 +359,77 @@ const capabilities = [
       demoIdx = 0;
     });
 
-    async function runDemo() {
-      // Reset and re-pick the locale-correct demo set on each cycle.
-      demos = pickDemos();
-      qlEl!.textContent = '';
+    function paintStatic(d: Demo) {
+      // Reduced-motion variant: render the demo as a finished snapshot,
+      // no typing, no streaming. Same data, no animation.
+      promptEl!.textContent = d.prompt;
+      qlEl!.textContent = d.ql;
       resEl!.innerHTML = '';
-      const d = demos[demoIdx];
-      // Type prompt
-      await typeInto(promptEl!, d.prompt, 22);
-      await sleep(420);
-      // Type QL
-      await typeInto(qlEl!, d.ql, 6);
-      // Show thinking dots before results stream in — gives the demo a
-      // "system is computing" beat instead of jumping QL → answer in
-      // one frame. 600ms is long enough to read but short enough to not
-      // feel laggy on the third or fourth loop.
-      await sleep(140);
-      showThinking();
-      await sleep(600);
-      // Paint result (clears the thinking dots)
-      paintResult(d.result);
-      await sleep(5400);
-      demoIdx = (demoIdx + 1) % demos.length;
-      runDemo();
+      d.result.forEach((r) => {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-[1fr_auto] items-center gap-4';
+        row.innerHTML = `
+          <div class="space-y-1">
+            <div class="text-[13px] text-white/85">${r.label}</div>
+            <div class="h-1 rounded-full bg-white/[0.05] overflow-hidden">
+              <div class="h-full rounded-full" style="width:${r.bar}%; background: linear-gradient(90deg,#667eea,#f093fb)"></div>
+            </div>
+          </div>
+          <div class="font-mono text-xs text-white/85 tabular-nums">${r.value}</div>
+        `;
+        resEl!.appendChild(row);
+      });
+      setMeta(d.result.length);
     }
 
-    // Only start when user nears the section.
+    async function runDemo() {
+      while (true) {
+        // Reset and re-pick the locale-correct demo set on each cycle.
+        demos = pickDemos();
+        qlEl!.textContent = '';
+        resEl!.innerHTML = '';
+        const d = demos[demoIdx];
+        setMeta(d.result.length);
+        // Type prompt
+        await typeInto(promptEl!, d.prompt, 22);
+        await interruptibleSleep(420);
+        // Type QL
+        await typeInto(qlEl!, d.ql, 6);
+        // Show thinking dots before results stream in — gives the demo a
+        // "system is computing" beat instead of jumping QL → answer in
+        // one frame. 600ms is long enough to read but short enough to not
+        // feel laggy on the third or fourth loop.
+        await interruptibleSleep(140);
+        showThinking();
+        await interruptibleSleep(600);
+        // Paint result (clears the thinking dots)
+        paintResult(d.result);
+        await interruptibleSleep(5400);
+        demoIdx = (demoIdx + 1) % demos.length;
+      }
+    }
+
+    // Only start when user nears the section. The IntersectionObserver
+    // also keeps `isVisible` updated so the demo loop pauses when the
+    // section scrolls out of view (instead of typing into an invisible
+    // terminal forever and stealing main-thread time).
     const trigger = document.querySelector('#ai');
-    if (trigger) {
+    if (reducedMotion) {
+      // Static snapshot — no loop, no observer needed.
+      paintStatic(demos[0]);
+    } else if (trigger) {
+      let started = false;
       const io = new IntersectionObserver((entries) => {
-        if (entries[0]?.isIntersecting) {
-          io.disconnect();
+        const e = entries[0];
+        isVisible = !!e?.isIntersecting;
+        if (isVisible && !started) {
+          started = true;
           runDemo();
         }
       }, { threshold: 0.15 });
       io.observe(trigger);
     } else {
+      isVisible = true;
       runDemo();
     }
   }

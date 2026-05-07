@@ -11,6 +11,10 @@
   class="relative inline-flex items-center h-11 rounded-full overflow-hidden font-mono text-[11px] tracking-wider"
   style="background: var(--surface-strong); border: 1px solid var(--border-3); color: var(--fg);"
 >
+  {/* aria-current reflects the active locale per pill. The visible gradient
+      pill is purely decorative — screen readers learn the active state from
+      this attribute. The button's aria-label is updated by the script to
+      describe the destination ("Switch to German" / "Switch to English"). */}
   <span data-locale-pill="en" class="px-2.5 h-full grid place-items-center transition-colors">EN</span>
   <span data-locale-pill="de" class="px-2.5 h-full grid place-items-center transition-colors">DE</span>
 </button>
@@ -30,13 +34,35 @@
   import { applyLocale, persistLocale, locales, type Locale } from '../i18n/runtime';
 
   const btn = document.querySelector<HTMLButtonElement>('[data-locale-toggle]');
+  // Each toggle button doubles as one of multiple language switches; we
+  // mark each pill `aria-current="true"` for the active one and keep the
+  // surrounding button's aria-label pointing at the *destination* locale,
+  // so screen readers say "Switch to German, button" / "Switch to English".
+  const pillEn = btn?.querySelector<HTMLElement>('[data-locale-pill="en"]');
+  const pillDe = btn?.querySelector<HTMLElement>('[data-locale-pill="de"]');
+  const syncA11y = (locale: Locale) => {
+    if (!btn) return;
+    pillEn?.setAttribute('aria-current', locale === 'en' ? 'true' : 'false');
+    pillDe?.setAttribute('aria-current', locale === 'de' ? 'true' : 'false');
+    // Destination-state aria-label (overridden by i18n runtime if a key exists).
+    const next: Locale = locale === 'en' ? 'de' : 'en';
+    const label = next === 'de' ? 'Switch to German' : 'Switch to English';
+    btn.setAttribute('aria-label', label);
+  };
+  syncA11y((document.documentElement.getAttribute('data-locale') as Locale | null) ?? 'en');
+
   if (btn) {
     btn.addEventListener('click', () => {
       const current = (document.documentElement.getAttribute('data-locale') as Locale | null) ?? 'en';
       const next: Locale = current === 'en' ? 'de' : 'en';
       applyLocale(next);
       persistLocale(next);
+      syncA11y(next);
       window.dispatchEvent(new CustomEvent('alpha:locale-changed', { detail: { locale: next } }));
     });
   }
+  window.addEventListener('alpha:locale-changed', (e: Event) => {
+    const ev = e as CustomEvent<{ locale: Locale }>;
+    syncA11y(ev.detail.locale);
+  });
 </script>

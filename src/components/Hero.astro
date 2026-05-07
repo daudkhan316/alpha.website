@@ -101,10 +101,15 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
           <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-white/55" data-i18n="hero.live">alpha · live system flow</span>
         </div>
         <SystemFlow />
-        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-white/60 uppercase tracking-wider">
-          <span data-i18n="hero.inputs">Inputs · 7 channels</span>
-          <span class="hidden sm:inline" data-i18n="hero.workflow">Workflow · WF · NS · TE · LG</span>
-          <span data-i18n="hero.outputs">Outputs · audit-trailed</span>
+        {/* In English the three pills sit on one line (justify-between).
+            German runs longer ("Ausgaben · revisionssicher") and previously
+            broke pills mid-word. Reducing the font a notch (10px) and
+            allowing flex-wrap with `gap-y-1` keeps each pill whole and
+            wraps the row only when the text genuinely doesn't fit. */}
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-y-1 text-[10px] sm:text-[11px] font-mono text-white/60 uppercase tracking-wider">
+          <span class="whitespace-nowrap" data-i18n="hero.inputs">Inputs · 7 channels</span>
+          <span class="hidden sm:inline whitespace-nowrap" data-i18n="hero.workflow">Workflow · WF · NS · TE · LG</span>
+          <span class="whitespace-nowrap" data-i18n="hero.outputs">Outputs · audit-trailed</span>
         </div>
       </div>
       </div>
@@ -119,8 +124,8 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
       data-stagger
     >
       {stats.map((s, i) => (
-        <div class="reveal spotlight px-6 py-6 text-center transition-colors duration-[var(--t-short)] ease-[var(--ease-soft)] hover:bg-white/[0.02]" data-reveal="scale">
-          <div class="text-3xl md:text-4xl font-semibold tracking-tight stat-value">
+        <div class="reveal spotlight px-3 sm:px-6 py-6 text-center transition-colors duration-[var(--t-short)] ease-[var(--ease-soft)] hover:bg-white/[0.02] min-w-0" data-reveal="scale">
+          <div class="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight stat-value">
             <span
               data-i18n={`hero.stats.${i}.v`}
               data-count={s.animate ? '1' : undefined}
@@ -151,17 +156,27 @@ const stats: { v: string; l: string; animate?: boolean }[] = [
   //   .panel-stage (this scrub) / .reveal (entrance) / .tilt (cursor 3D)
   // CSS transforms cascade through the DOM, so each effect can own its
   // own element without the others snapping at end-state.
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  // gsap is heavy (~70KB). Only load it when the hero scrub scene actually
+  // runs: lg+ viewport AND no reduced-motion preference. Mobile/reduced
+  // visitors never download the bundle; the IntersectionObserver reveals
+  // already provide a static-friendly fallback.
+  const heroSceneEligible = () =>
+    window.matchMedia('(min-width: 1024px)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  gsap.registerPlugin(ScrollTrigger);
-
-  const wireHeroScene = () => {
+  const wireHeroScene = async () => {
     const hero = document.querySelector<HTMLElement>('#hero');
     if (!hero) return;
     const panel = hero.querySelector<HTMLElement>('[data-hero-scrub="panel"]');
     const text  = hero.querySelector<HTMLElement>('[data-hero-scrub="text"]');
     if (!panel || !text) return;
+    if (!heroSceneEligible()) return;
+
+    const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+      import('gsap'),
+      import('gsap/ScrollTrigger'),
+    ]);
+    gsap.registerPlugin(ScrollTrigger);
 
     // gsap.matchMedia handles cleanup on resize / preference change.
     // - lg+ only: at smaller widths the layout stacks single-column, so

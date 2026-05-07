@@ -58,11 +58,16 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
         </p>
       </div>
 
-      {/* Icon-based view selector */}
+      {/* Icon-based view selector — proper tab pattern (each button toggles
+          a different .uc-variant panel). Roving tabindex + arrow keys are
+          wired in the script below. */}
       <div class="uc-toggle" role="tablist" aria-label="View style">
         <button
           type="button"
           role="tab"
+          id="uc-tab-studio"
+          aria-controls="uc-panel-studio"
+          tabindex="0"
           class="uc-toggle-btn is-on"
           data-view="studio"
           aria-selected="true"
@@ -80,6 +85,9 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
         <button
           type="button"
           role="tab"
+          id="uc-tab-bento"
+          aria-controls="uc-panel-bento"
+          tabindex="-1"
           class="uc-toggle-btn"
           data-view="bento"
           aria-selected="false"
@@ -100,7 +108,14 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
     {/* ============================================================ */}
     {/* VARIANT 1 — CASE STUDIO (pinned scrub)                       */}
     {/* ============================================================ */}
-    <div class="uc-variant is-on" data-variant="studio" data-studio-variant>
+    <div
+      class="uc-variant is-on"
+      data-variant="studio"
+      data-studio-variant
+      id="uc-panel-studio"
+      role="tabpanel"
+      aria-labelledby="uc-tab-studio"
+    >
       <div class="studio-stage">
         <div class="studio-tabs" role="tablist" aria-label="Use cases">
           {cases.map((c, i) => (
@@ -154,7 +169,13 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
     {/* ============================================================ */}
     {/* VARIANT 2 — BENTO GRID                                       */}
     {/* ============================================================ */}
-    <div class="uc-variant" data-variant="bento">
+    <div
+      class="uc-variant"
+      data-variant="bento"
+      id="uc-panel-bento"
+      role="tabpanel"
+      aria-labelledby="uc-tab-bento"
+    >
       <div class="uc-bento" data-uc-bento>
         {cases.map((c, i) => (
           <article class={`bento-card spotlight bento-${bentoSizes[i]}`} data-bento-card>
@@ -223,6 +244,10 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
     flex-shrink: 0;
   }
   .uc-toggle-btn:hover { color: var(--fg-strong); }
+  .uc-toggle-btn:focus-visible {
+    outline: 2px solid #c4b5fd;
+    outline-offset: 2px;
+  }
   .uc-toggle-btn.is-on {
     color: var(--fg-strong);
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.22), rgba(240, 147, 251, 0.20));
@@ -489,13 +514,44 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
   .bento-outcomes svg { color: #c4b5fd; flex-shrink: 0; }
   :root[data-theme='light'] .bento-outcomes svg { color: #6d28d9; }
 
-  /* small cards: hide outcome list to keep them tight */
-  .bento-small .bento-outcomes { display: none; }
+  /* Small bento cards: show only the first outcome to stay compact while
+     still surfacing measurable proof. Previously we hid the entire list,
+     which meant the bento variant showed less content than the studio
+     variant for the same case. */
+  .bento-small .bento-outcomes li:nth-child(n+2) { display: none; }
+  .bento-small .bento-outcomes {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
 
   /* ── Responsive ────────────────────────────────────────────────── */
   @media (max-width: 1024px) {
     .studio-stage { grid-template-columns: 1fr; gap: 24px; }
-    .studio-tabs { display: none; }
+    /* Below 1024px, the vertical rail wouldn't fit beside the panel — but
+       hiding it entirely (the previous behavior) left mobile users with
+       no way to know there were 6 cases or to jump between them. Convert
+       to a horizontal scrollable rail instead. */
+    .studio-tabs {
+      flex-direction: row;
+      gap: 6px;
+      border-left: none;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+    }
+    .studio-tab {
+      padding: 12px 16px;
+      border-left: none;
+      border-bottom: 2px solid transparent;
+      margin-left: 0;
+      flex: 0 0 auto;
+      max-width: 220px;
+    }
+    .studio-tab.is-active {
+      border-bottom-color: #c4b5fd;
+      background: linear-gradient(0deg, rgba(196, 181, 253, 0.10), transparent);
+    }
+    :root[data-theme='light'] .studio-tab.is-active { border-bottom-color: #6d28d9; }
   }
   @media (max-width: 900px) {
     .uc-bento { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
@@ -515,9 +571,14 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
 </style>
 
 <script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  gsap.registerPlugin(ScrollTrigger);
+  // GSAP is heavy (~70KB min+gzip including ScrollTrigger). Dynamic-import
+  // it so users on small screens or with reduced-motion never download
+  // the bundle — the scrubbed studio scene is a desktop-only effect.
+  // Type-only imports are fine eagerly because they're erased.
+  import type { gsap as GSAPType } from 'gsap';
+  import type { ScrollTrigger as ScrollTriggerType } from 'gsap/ScrollTrigger';
+  let gsap: typeof GSAPType | null = null;
+  let ScrollTrigger: typeof ScrollTriggerType | null = null;
 
   type Outcome = string;
   type Case = {
@@ -530,33 +591,76 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
   const dataEl = document.getElementById('uc-cases-data');
   if (dataEl) {
     const CASES: Case[] = JSON.parse(dataEl.textContent || '[]');
-    let studioTrigger: ScrollTrigger | null = null;
+    let studioTrigger: InstanceType<typeof ScrollTriggerType> | null = null;
+    let gsapLoading: Promise<void> | null = null;
+    const loadGsap = (): Promise<void> => {
+      if (gsap && ScrollTrigger) return Promise.resolve();
+      if (gsapLoading) return gsapLoading;
+      gsapLoading = Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger'),
+      ]).then(([g, st]) => {
+        gsap = g.gsap;
+        ScrollTrigger = st.ScrollTrigger;
+        gsap.registerPlugin(ScrollTrigger);
+      });
+      return gsapLoading;
+    };
 
     /* ─────────────────────────────────────────────
        View toggle
        ───────────────────────────────────────────── */
-    const toggleBtns = document.querySelectorAll<HTMLButtonElement>('.uc-toggle-btn');
+    const toggleBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.uc-toggle-btn'));
     const variants = document.querySelectorAll<HTMLElement>('.uc-variant');
-    toggleBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.view;
-        toggleBtns.forEach((b) => {
-          const on = b === btn;
-          b.classList.toggle('is-on', on);
-          b.setAttribute('aria-selected', on ? 'true' : 'false');
-        });
-        variants.forEach((v) => v.classList.toggle('is-on', v.dataset.variant === target));
-        if (target === 'bento') {
-          if (studioTrigger) {
-            studioTrigger.kill();
-            studioTrigger = null;
-          }
-          requestAnimationFrame(() => ScrollTrigger.refresh());
-        } else if (target === 'studio') {
+    const activateView = (btn: HTMLButtonElement) => {
+      const target = btn.dataset.view;
+      toggleBtns.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+        // Roving tabindex per APG tabs pattern: only the active tab is
+        // tabbable; arrow keys move focus between tabs.
+        b.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      variants.forEach((v) => v.classList.toggle('is-on', v.dataset.variant === target));
+      if (target === 'bento') {
+        if (studioTrigger) {
+          studioTrigger.kill();
+          studioTrigger = null;
+        }
+        requestAnimationFrame(() => ScrollTrigger?.refresh());
+      } else if (target === 'studio') {
+        // Studio variant needs gsap; load lazily then build the scene.
+        loadGsap().then(() => {
           requestAnimationFrame(() => {
             buildStudioScene();
-            ScrollTrigger.refresh();
+            ScrollTrigger?.refresh();
           });
+        });
+      }
+    };
+    toggleBtns.forEach((btn, i) => {
+      btn.addEventListener('click', () => activateView(btn));
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = toggleBtns[(i + 1) % toggleBtns.length];
+          activateView(next);
+          next.focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = toggleBtns[(i - 1 + toggleBtns.length) % toggleBtns.length];
+          activateView(prev);
+          prev.focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          activateView(toggleBtns[0]);
+          toggleBtns[0].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          const last = toggleBtns[toggleBtns.length - 1];
+          activateView(last);
+          last.focus();
         }
       });
     });
@@ -622,7 +726,7 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
         studioProgressBar.style.width = pct + '%';
       }
 
-      if (animate && studioInner) {
+      if (animate && studioInner && gsap) {
         gsap.fromTo(
           studioInner,
           { y: 16, opacity: 0 },
@@ -670,7 +774,7 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
         studioTrigger.kill();
         studioTrigger = null;
       }
-      if (!studioVariant) return;
+      if (!studioVariant || !ScrollTrigger) return;
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduced) {
         paintStudio(0, false);
@@ -702,23 +806,20 @@ const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
     }
 
     paintStudio(0, false);
-    buildStudioScene();
+    // Load gsap lazily — the studio scene only fires on lg+ with motion
+    // allowed. Reduced-motion users get the static first card painted
+    // above; small viewports skip the scene entirely.
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reducedMotion) {
+      loadGsap().then(() => buildStudioScene());
+    }
 
     /* ─────────────────────────────────────────────
        VARIANT 2 — BENTO mouse-tracking glow
-       (Falls back to .spotlight global mouse tracking
-        from Layout.astro if it's already wired; this
-        ensures it works even without that.)
+       Layout.astro's global pointermove handler already covers .spotlight
+       elements with rAF throttling; this used to add an unthrottled
+       mousemove on every bento card on top of that. Removed — the global
+       handler does the job. (.bento-card has .spotlight in its class list.)
        ───────────────────────────────────────────── */
-    const bentoCards = document.querySelectorAll<HTMLElement>('[data-bento-card]');
-    bentoCards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const mx = ((e.clientX - rect.left) / rect.width) * 100;
-        const my = ((e.clientY - rect.top) / rect.height) * 100;
-        card.style.setProperty('--mx', mx + '%');
-        card.style.setProperty('--my', my + '%');
-      });
-    });
   }
 </script>

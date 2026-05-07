@@ -69,8 +69,20 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    {/* Open Graph / Twitter image — share previews on LinkedIn, Slack,
+        Twitter, etc. Rendered as a static SVG (under public/) so there's
+        no build-time image generation. Replace with a 1200×630 PNG if
+        platforms reject SVG (LinkedIn historically does). */}
+    <meta property="og:image" content="/og-image.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:image" content="/og-image.svg" />
+
     {/* Fonts are self-hosted via @fontsource-variable in src/styles/global.css.
-        No third-party requests to fonts.googleapis.com — required for DSGVO. */}
+        No third-party requests to fonts.googleapis.com — required for DSGVO.
+        Preload would help FCP but the hashed `/_astro/...woff2` filenames
+        aren't known at template time; add via integration if needed. */}
 
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -105,27 +117,29 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         covers every section. Decorative only — aria-hidden, pointer-
         events:none.
 
-        Positions are vh-based against scroll. On a typical desktop the
-        page is ~1500vh tall (14k px / 900px viewport), so the orbs
-        below cover roughly hero → footer. Sides alternate L/R and sizes
-        vary 60–130px so the eye doesn't see a column or a march of
-        identical bubbles. Colors rotate through the brand triad. */}
+        Positions are %-based against the body height (the parent
+        .atmosphere-3d is `inset: 0` on body) so they distribute evenly
+        from hero to footer regardless of page height. Each orb is parked
+        in a section-seam gap rather than over a content card — landing
+        a bright orb inside a glass-strong panel reads as a UI bug, not
+        atmosphere. Sides alternate L/R and sizes vary 60–130px so the
+        eye doesn't see a column. Colors rotate through the brand triad. */}
     <div class="atmosphere-3d" aria-hidden="true">
-      <div class="orb-3d orb-violet" style="width:  92px; height:  92px; top:   28vh; right:  6vw;"></div>
-      <div class="orb-3d orb-pink"   style="width:  60px; height:  60px; top:   92vh; left:   5vw;"></div>
-      <div class="orb-3d orb-purple" style="width: 124px; height: 124px; top:  178vh; right: 14vw;"></div>
-      <div class="orb-3d orb-violet" style="width:  72px; height:  72px; top:  312vh; left:   9vw;"></div>
-      <div class="orb-3d orb-pink"   style="width:  98px; height:  98px; top:  430vh; right:  8vw;"></div>
-      <div class="orb-3d orb-purple" style="width: 110px; height: 110px; top:  555vh; left:   6vw;"></div>
-      <div class="orb-3d orb-violet" style="width:  78px; height:  78px; top:  690vh; right: 11vw;"></div>
-      <div class="orb-3d orb-pink"   style="width: 132px; height: 132px; top:  820vh; left:   7vw;"></div>
-      <div class="orb-3d orb-purple" style="width:  84px; height:  84px; top:  955vh; right: 12vw;"></div>
-      <div class="orb-3d orb-violet" style="width: 108px; height: 108px; top: 1085vh; left:   9vw;"></div>
-      <div class="orb-3d orb-pink"   style="width:  68px; height:  68px; top: 1220vh; right:  6vw;"></div>
-      <div class="orb-3d orb-purple" style="width: 116px; height: 116px; top: 1355vh; left:  10vw;"></div>
-      <div class="orb-3d orb-violet" style="width:  74px; height:  74px; top: 1475vh; right:  9vw;"></div>
-      <div class="orb-3d orb-pink"   style="width:  90px; height:  90px; top: 1530vh; left:   8vw;"></div>
-      <div class="orb-3d orb-purple" style="width:  60px; height:  60px; top: 1605vh; right:  7vw;"></div>
+      <div class="orb-3d orb-violet" style="width:  92px; height:  92px; top:   5%; right:  6vw;"></div>
+      <div class="orb-3d orb-pink"   style="width:  60px; height:  60px; top:  10%; left:   5vw;"></div>
+      <div class="orb-3d orb-purple" style="width: 124px; height: 124px; top:  16%; right: 14vw;"></div>
+      <div class="orb-3d orb-violet" style="width:  72px; height:  72px; top:  22%; left:   9vw;"></div>
+      <div class="orb-3d orb-pink"   style="width:  98px; height:  98px; top:  29%; right:  8vw;"></div>
+      <div class="orb-3d orb-purple" style="width: 110px; height: 110px; top:  37%; left:   6vw;"></div>
+      <div class="orb-3d orb-violet" style="width:  78px; height:  78px; top:  49%; left:   5vw;"></div>
+      <div class="orb-3d orb-pink"   style="width: 132px; height: 132px; top:  55%; left:   7vw;"></div>
+      <div class="orb-3d orb-purple" style="width:  84px; height:  84px; top:  58%; right: 12vw;"></div>
+      <div class="orb-3d orb-violet" style="width: 108px; height: 108px; top:  68%; left:   9vw;"></div>
+      <div class="orb-3d orb-pink"   style="width:  68px; height:  68px; top:  76%; right:  6vw;"></div>
+      <div class="orb-3d orb-purple" style="width: 116px; height: 116px; top:  82%; left:  3vw;"></div>
+      <div class="orb-3d orb-violet" style="width:  74px; height:  74px; top:  92%; right:  9vw;"></div>
+      <div class="orb-3d orb-pink"   style="width:  90px; height:  90px; top:  95%; left:   8vw;"></div>
+      <div class="orb-3d orb-purple" style="width:  60px; height:  60px; top:  98%; right:  7vw;"></div>
     </div>
 
     <slot />
@@ -172,6 +186,40 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
       };
       scan();
       document.addEventListener('astro:page-load', scan);
+
+      // Atmosphere orbs are positioned by `top: NN%` so they distribute
+      // across the body. Different breakpoints stretch sections at
+      // different ratios, so the same % can land squarely inside a
+      // glass card on mobile while hitting a section seam on desktop.
+      // A bright orb behind a glass card reads as a UI bug, not as
+      // atmosphere, so we hide any orb whose box intersects a content
+      // card. Recomputed on resize because column reflow can move cards
+      // (e.g. cap-cards go from 3 cols → 1 col at sm).
+      const cardSel = '.glass-strong, .cap-card, .bento-card, .studio-panel, .arch-pillar, .arch-trust, .arch-tech, .mod-spotlight';
+      const orbs = Array.from(document.querySelectorAll<HTMLElement>('.orb-3d'));
+      const updateOrbVisibility = () => {
+        if (!orbs.length) return;
+        const cards = Array.from(document.querySelectorAll<HTMLElement>(cardSel)).map((el) => {
+          const r = el.getBoundingClientRect();
+          return { x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height };
+        });
+        for (const orb of orbs) {
+          const r = orb.getBoundingClientRect();
+          const ox = r.left + window.scrollX, oy = r.top + window.scrollY, ow = r.width, oh = r.height;
+          const hit = cards.some((c) => ox < c.x + c.w && ox + ow > c.x && oy < c.y + c.h && oy + oh > c.y);
+          orb.style.visibility = hit ? 'hidden' : '';
+        }
+      };
+      // Defer to next frame so layout has settled (esp. after font load).
+      requestAnimationFrame(updateOrbVisibility);
+      let orbResizeFrame = 0;
+      window.addEventListener('resize', () => {
+        if (!orbResizeFrame) orbResizeFrame = requestAnimationFrame(() => {
+          orbResizeFrame = 0;
+          updateOrbVisibility();
+        });
+      });
+      document.addEventListener('astro:page-load', () => requestAnimationFrame(updateOrbVisibility));
 
       // Pointer-aware spotlight: write --mx / --my as percentages on the
       // hovered .spotlight container so its ::before radial-gradient tracks.
@@ -311,11 +359,13 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
           }
         });
       };
-      // Initial split. The i18n module may run after this on first paint —
-      // we re-split after a microtask AND on locale change to make sure the
-      // active-locale text is what gets split into words.
+      // Initial split runs once. The previous code did a microtask
+      // forced re-split as insurance against i18n racing — but that
+      // mutates the DOM a second time on every load, causing visible
+      // headline jitter. The i18n runtime now re-renders headline text
+      // through the same data-i18n element and our `splitWords` re-runs
+      // only on locale change (which legitimately replaces the text).
       wireWords();
-      Promise.resolve().then(() => wireWords(true));
       document.addEventListener('astro:page-load', () => wireWords(true));
       window.addEventListener('alpha:locale-changed', () => wireWords(true));
 

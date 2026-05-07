@@ -7,6 +7,7 @@
   type="button"
   data-theme-toggle
   aria-label="Toggle color theme"
+  aria-pressed="false"
   title="Toggle color theme"
   class="relative inline-grid place-items-center w-11 h-11 rounded-full transition-colors"
   style="background: var(--surface-strong); border: 1px solid var(--border-3);"
@@ -44,12 +45,23 @@
 
 <script>
   const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  // aria-pressed reflects "currently in light mode" (i.e. the moon button
+  // is "engaged"). aria-label is also kept in sync so SR users hear the
+  // destination action — "Switch to dark theme" / "Switch to light theme".
+  const syncA11y = () => {
+    if (!toggle) return;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    toggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+    toggle.setAttribute('aria-label', isLight ? 'Switch to dark theme' : 'Switch to light theme');
+  };
+  syncA11y();
   if (toggle) {
     toggle.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme');
       const next = current === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('alpha-theme', next); } catch {}
+      syncA11y();
     });
 
     // Respond to OS preference changes only if the user hasn't picked manually.
@@ -59,6 +71,7 @@
         if (localStorage.getItem('alpha-theme')) return;
       } catch {}
       document.documentElement.setAttribute('data-theme', e.matches ? 'light' : 'dark');
+      syncA11y();
     });
   }
 </script>

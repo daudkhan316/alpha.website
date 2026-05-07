@@ -256,6 +256,16 @@
       0 0 32px -4px rgba(240, 147, 251, 0.45);
   }
   .btn-primary:active { transform: translateY(0); transition-duration: var(--t-press); }
+  /* Visible focus ring — the gradient + box-shadow visually swallows the UA
+     default outline, so keyboard users can't see where focus is. A tight
+     2px white ring + 4px brand-tinted halo reads on both light and dark. */
+  .btn-primary:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--bg),
+      0 0 0 4px rgba(240, 147, 251, 0.85),
+      0 10px 40px -8px rgba(118, 75, 162, 0.55);
+  }
   /* Children with .btn-arrow micro-translate on hover for "this goes somewhere" cue. */
   .btn-primary .btn-arrow,
   .btn-secondary .btn-arrow {
@@ -279,6 +289,10 @@
     background: var(--surface-elev);
     border-color: var(--border-4);
     transform: translateY(-1px);
+  }
+  .btn-secondary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(196, 181, 253, 0.85);
   }
 
   .badge {
@@ -364,6 +378,27 @@
     transform: translateY(0) scale(1);
     filter: blur(0);
     clip-path: inset(0 0 0 0);
+  }
+  /* No-JS fallback: without IntersectionObserver running, every .reveal
+     (which is most copy on the page) would stay at opacity:0 and the page
+     would render blank below the fold. `(scripting: none)` matches when
+     scripts can't run — JS disabled, fetched-without-JS crawler, etc. */
+  @media (scripting: none) {
+    .reveal,
+    .reveal[data-reveal='scale'],
+    .reveal[data-reveal='blur'],
+    .reveal[data-reveal='left'],
+    .reveal[data-reveal='right'],
+    .reveal[data-reveal='mask'] {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+      clip-path: none !important;
+    }
+    .reveal-word > span {
+      transform: none !important;
+      opacity: 1 !important;
+    }
   }
 
   .reveal[data-reveal='scale']      { transform: translateY(12px) scale(0.97); }
@@ -611,7 +646,9 @@
       transition: opacity var(--t-medium) var(--ease-soft),
                   transform var(--t-medium) var(--ease-soft);
     }
-    .ai-cap-step.is-focused {
+    .ai-cap-step.is-focused,
+    .ai-cap-step:focus-within,
+    .ai-cap-step:hover {
       opacity: 1;
       transform: translateX(4px);
     }
@@ -619,7 +656,8 @@
       transition: transform var(--t-medium) var(--ease-soft),
                   box-shadow var(--t-medium) var(--ease-soft);
     }
-    .ai-cap-step.is-focused > span:first-child {
+    .ai-cap-step.is-focused > span:first-child,
+    .ai-cap-step:focus-within > span:first-child {
       transform: scale(1.5);
     }
   }
@@ -727,6 +765,11 @@
   .cap-filter:hover {
     border-color: var(--border-4);
     transform: translateY(-1px);
+  }
+  .cap-filter:focus-visible {
+    outline: none;
+    border-color: rgba(240, 147, 251, 0.65);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(196, 181, 253, 0.65);
   }
   .cap-filter.is-active {
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.22), rgba(240, 147, 251, 0.18));
@@ -1609,6 +1652,11 @@
     margin-top: 0.95rem;
     letter-spacing: 0.06em;
   }
+  /* The hint says "Hover any tile · auto-cycles" — meaningless on touch.
+     Hide on devices without fine-pointer hover. */
+  @media (hover: none) {
+    .mod-spot-hint { display: none; }
+  }
 
   /* Right side: stacked group rows. */
   .mod-grid {
@@ -1991,17 +2039,6 @@
   opacity: calc(0.55 * var(--flow-energy, 0));
 }
 
-/* Marquee */
-.marquee {
-  display: flex;
-  gap: 3rem;
-  animation: marquee 40s linear infinite;
-  white-space: nowrap;
-}
-@keyframes marquee {
-  to { transform: translateX(-50%); }
-}
-
 /* ─────────────────────────────────────────────
    LIGHT-THEME OVERRIDES for Tailwind utilities used directly in components.
    This lets components keep their existing markup (text-white/65, bg-white/[0.04],
@@ -2040,17 +2077,55 @@
 /* divide-x / divide-y also use white borders in our stat strip */
 [data-theme='light'] :where(.divide-white\/5):not(.panel-dark *) > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 18 35 / 0.07); }
 
-/* Component utilities that we kept hard-dark in templates */
-[data-theme='light'] .bg-alpha-ink\/95   { background-color: color-mix(in srgb, var(--bg) 92%, white); }
-[data-theme='light'] .bg-alpha-deep      { background-color: color-mix(in srgb, var(--bg) 96%, white); }
-[data-theme='light'] .bg-alpha-deep\/80,
-[data-theme='light'] .bg-alpha-deep\/85,
-[data-theme='light'] .bg-alpha-deep\/90  { background-color: color-mix(in srgb, var(--bg) 90%, white); }
+/* `.panel-dark` is an escape hatch for cards that stay dark regardless of
+   the page theme. Inside this scope we re-pin the theme tokens to their
+   dark values so CSS-variable-driven children (.btn-secondary surface,
+   .section-heading fg, .text-white/N rewrites) all behave as if the page
+   were in dark mode. The `:not(.panel-dark *)` guards on the rewrites
+   below scope the page-level light-mode flips out of this island. */
+[data-theme='light'] .panel-dark {
+  --bg: #08061a;
+  --fg: #e9ecf6;
+  --fg-strong: #ffffff;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --surface-elev: rgba(255, 255, 255, 0.10);
+  --border-2: rgba(255, 255, 255, 0.08);
+  --border-3: rgba(255, 255, 255, 0.12);
+  --border-4: rgba(255, 255, 255, 0.18);
+  color-scheme: dark;
+}
+
+/* Component utilities that we kept hard-dark in templates. The `.panel-dark`
+   escape applies to fixed-dark cards (CTA) where the inner content is also
+   white-on-dark and shouldn't flip with the theme. */
+[data-theme='light'] :where(.bg-alpha-ink\/95):not(.panel-dark)   { background-color: color-mix(in srgb, var(--bg) 92%, white); }
+[data-theme='light'] :where(.bg-alpha-deep):not(.panel-dark)      { background-color: color-mix(in srgb, var(--bg) 96%, white); }
+[data-theme='light'] :where(.bg-alpha-deep\/80):not(.panel-dark),
+[data-theme='light'] :where(.bg-alpha-deep\/85):not(.panel-dark),
+[data-theme='light'] :where(.bg-alpha-deep\/90):not(.panel-dark)  { background-color: color-mix(in srgb, var(--bg) 90%, white); }
 
 /* Accent text/borders calibrated for dark — strengthen for light. */
 [data-theme='light'] :where(.text-rose-300\/80):not(.panel-dark *)   { color: rgb(190 18 60 / 0.85); }
 [data-theme='light'] :where(.text-rose-200\/70):not(.panel-dark *)   { color: rgb(159 18 57 / 0.80); }
 [data-theme='light'] :where(.text-emerald-200\/80):not(.panel-dark *){ color: rgb(4 120 87 / 0.85); }
+
+/* Architecture mini-art labels are hardcoded white-55% in the component
+   (rgba(255,255,255,0.55)). On the dark theme they sit on a near-black
+   art panel and read fine; on the light theme the art panel is much
+   paler and the white labels disappear entirely. Re-color for light. */
+[data-theme='light'] .arch-pillar-art {
+  background: rgb(15 18 35 / 0.05);
+  border-color: rgb(15 18 35 / 0.10);
+}
+[data-theme='light'] .art-cascade-label { color: rgb(15 18 35 / 0.65); }
+[data-theme='light'] .art-tenant-pill   { background: rgb(102 126 234 / 0.65); }
+[data-theme='light'] .art-tenant-line   { background: linear-gradient(90deg, rgb(102 126 234 / 0.45), rgb(199 80 215 / 0.45)); }
+[data-theme='light'] .art-tenant-db     { background: rgb(199 80 215 / 0.65); box-shadow: 0 0 6px rgb(199 80 215 / 0.45); }
+[data-theme='light'] .art-radar-ring    { border-color: rgb(199 80 215 / 0.45); }
+[data-theme='light'] .art-radar-sweep   { background: linear-gradient(90deg, rgb(199 80 215 / 0.75), transparent); }
+[data-theme='light'] .art-timeline-bar  { background: linear-gradient(180deg, rgb(102 126 234 / 0.55), rgb(199 80 215 / 0.55)); }
+[data-theme='light'] .art-timeline-cursor { background: linear-gradient(90deg, transparent, rgb(199 80 215 / 0.7), transparent); }
 
 [data-theme='light'] :where(.border-rose-500\/15):not(.panel-dark *) { border-color: rgb(244 63 94 / 0.30); }
 [data-theme='light'] :where(.border-rose-400\/20):not(.panel-dark *) { border-color: rgb(244 63 94 / 0.30); }
@@ -2093,9 +2168,35 @@
   .flow-particle,
   .flow-scan,
   .flow-node-pulse,
-  .marquee {
+  .orb-3d,
+  .mod-rail-sweep,
+  .mod-spot-glow,
+  .mod-spot-dot,
+  .arch-meta-strip-track,
+  .arch-trust-live-dot,
+  .arch-live-dot,
+  .art-timeline-bar,
+  .art-timeline-cursor,
+  .art-tenant-row,
+  .art-radar-ring,
+  .art-radar-sweep,
+  .art-cascade-step,
+  .ai-think-dot,
+  .animate-caret-blink,
+  .cap-card-bottom-sweep,
+  .cap-strip-breathe {
     animation: none !important;
   }
+  /* Pin animation final/idle states so content remains readable when
+     animations are killed: the cascade steps and tenant rows otherwise
+     render at their first-keyframe (low) opacity. */
+  .art-cascade-step,
+  .art-tenant-row { opacity: 1 !important; transform: none !important; }
+  .art-timeline-bar { transform: scaleY(0.7); opacity: 0.7; }
+  /* SystemFlow SMIL: the `<animate>` ring pulse and `<animateMotion>`
+     particles aren't gated by CSS animations. Hide them outright when
+     the user has asked for reduced motion. */
+  svg .flow-particle { display: none; }
   /* Scroll-velocity-driven flow energy: pin to 0 so neither the particle
      glow nor the core energy ring fluctuates. The runtime in Layout.astro
      also bails on reduced-motion, but pinning here protects against

@@ -241,17 +241,20 @@ const sepaStages = [
       </span>
     </div>
 
-    <div class="cap-filters reveal mt-7" data-reveal="scale" role="tablist" aria-label="Filter capabilities">
+    {/* Filter chips: filter the same grid in place; not a tabs pattern.
+        See Modules.astro for the same rationale — `aria-pressed` is the
+        right semantic for "this filter is on." */}
+    <div class="cap-filters reveal mt-7" data-reveal="scale" role="group" aria-label="Filter capabilities">
       {filters.map((f, i) => (
         <button
           type="button"
           class={`cap-filter ${i === 0 ? 'is-active' : ''}`}
           data-cap-filter={f.id}
-          role="tab"
-          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+          aria-label={`Show ${f.label} capabilities (${f.count})`}
         >
           <span data-i18n={f.i18n}>{f.label}</span>
-          <span class="cap-filter-count">{f.count}</span>
+          <span class="cap-filter-count" aria-hidden="true">{f.count}</span>
         </button>
       ))}
     </div>
@@ -360,7 +363,7 @@ const sepaStages = [
           chips.forEach((c) => {
             const active = c === chip;
             c.classList.toggle('is-active', active);
-            c.setAttribute('aria-selected', active ? 'true' : 'false');
+            c.setAttribute('aria-pressed', active ? 'true' : 'false');
           });
           const cards = grid.querySelectorAll<HTMLElement>('[data-cap-card]');
           cards.forEach((card) => {
