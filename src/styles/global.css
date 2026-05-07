@@ -2272,3 +2272,14 @@
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50%      { opacity: 1;   transform: scale(1.35); }
 }
+
+/* SystemFlow connection lines: draw in after the panel reveals so the
+   diagram visibly "boots up" instead of appearing pre-painted. The
+   stroke-dasharray + stroke-dashoffset values are also set as SVG
+   presentation attributes inline (see SystemFlow.astro) so the lines
+   are invisible from first paint. This CSS owns the transition only. */
+.flow-line {
+  transition: stroke-dashoffset var(--t-long) var(--ease-soft);
+  transition-delay: var(--line-delay, 700ms);
+}
+.reveal.is-visible .flow-line { stroke-dashoffset: 0; }
