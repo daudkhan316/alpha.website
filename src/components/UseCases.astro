@@ -5,92 +5,720 @@ const cases = [
     title: 'Replacing six fragmented tools',
     body: 'A mid-sized brokerage was running CRM, contract admin, SEPA, document storage, e-signing and customer portal as separate vendors. Migrated everything to Alpha.',
     outcomes: ['~40% lower license cost', 'IDD-compliant in every conversation', '70% faster CAMT reconciliation'],
-    accent: 'from-violet-500/20 to-fuchsia-500/10',
   },
   {
     tag: 'Insurer · new agency partner',
     title: 'New distribution partner live in days',
     body: 'A new agency arrives with a custom GDV format and bespoke commission rules. EM configures the mapping, IM orchestrates the import, EI resolves conflicts, LG captures the rules.',
     outcomes: ['Zero partner-specific code', 'Configuration-only onboarding', 'Days, not months'],
-    accent: 'from-indigo-500/20 to-violet-500/10',
   },
   {
     tag: 'End customer · mobile',
     title: 'Filing a claim in under five minutes',
     body: 'Policyholder receives damage notification → opens portal on phone → OTP login → uploads photos → files claim ticket → books appointment with their advisor.',
     outcomes: ['Passwordless OTP login', 'Auto-routed via WF', 'OCR + status updates'],
-    accent: 'from-fuchsia-500/20 to-pink-400/10',
   },
   {
     tag: 'Compliance · audit',
     title: 'Answering an audit request in seconds',
     body: '"Who changed customer X\'s IBAN on March 14, 2024?" Hibernate Envers returns the user, timestamp, old value, new value — for any field, for the last 7 years.',
     outcomes: ['Field-level audit', '7-year retention', 'Instant answers'],
-    accent: 'from-cyan-400/20 to-violet-500/10',
   },
   {
     tag: 'Marketing · retention',
     title: 'Multi-channel campaigns with propensity',
     body: '"Customers with car insurance expiring in 60 days, propensity-to-renew > 0.7, opted-in for SMS." CT runs A/B variants. NS sends email + SMS. Every touch logged.',
     outcomes: ['A/B + propensity', 'Email · SMS · Push', 'Per-customer audit'],
-    accent: 'from-amber-400/20 to-rose-400/10',
   },
   {
     tag: 'Executive · self-serve analytics',
     title: 'Natural-language reporting',
     body: 'Executive types into the CB workbench: "Show me total billed premium for Q1 broken down by product line." CB translates to QL, executes against the database, results render instantly.',
     outcomes: ['No BI request needed', 'Schema-grounded', 'RLHF-trained'],
-    accent: 'from-pink-500/20 to-violet-500/10',
   },
 ];
+
+// Bento layout: which card occupies which slot. Values are class names.
+const bentoSizes = ['feature', 'tall', 'small', 'small', 'wide', 'small'];
 ---
 
 <section id="use-cases" class="section">
   <div class="absolute inset-0 -z-10 bg-grid opacity-25 mask-fade-bottom"></div>
 
   <div class="container-wide">
-    <div class="max-w-2xl reveal">
-      <p class="section-eyebrow" data-i18n="use.eyebrow">Use cases</p>
-      <h2 class="section-heading mt-3">
-        <span data-i18n="use.heading.a">Real teams.</span>
-        <span class="gradient-text" data-i18n="use.heading.b">Real outcomes.</span>
-      </h2>
-      <p class="mt-5 text-lg text-white/65 leading-relaxed" data-i18n="use.body">
-        From single brokerage migrations to nationwide insurer rollouts — Alpha consolidates the operating stack and delivers measurable results.
-      </p>
+    <div class="uc-head reveal">
+      <div class="max-w-2xl">
+        <p class="section-eyebrow" data-i18n="use.eyebrow">Use cases</p>
+        <h2 class="section-heading mt-3">
+          <span data-i18n="use.heading.a">Real teams.</span>
+          <span class="gradient-text" data-i18n="use.heading.b">Real outcomes.</span>
+        </h2>
+        <p class="mt-5 text-lg text-white/65 leading-relaxed" data-i18n="use.body">
+          From single brokerage migrations to nationwide insurer rollouts — Alpha consolidates the operating stack and delivers measurable results.
+        </p>
+      </div>
+
+      {/* Icon-based view selector */}
+      <div class="uc-toggle" role="tablist" aria-label="View style">
+        <button
+          type="button"
+          role="tab"
+          class="uc-toggle-btn is-on"
+          data-view="studio"
+          aria-selected="true"
+          aria-label="Case studio view"
+          title="01 · Case Studio"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <rect x="3" y="4" width="6" height="3" rx="1" />
+            <rect x="3" y="10.5" width="6" height="3" rx="1" fill="currentColor" stroke="none" />
+            <rect x="3" y="17" width="6" height="3" rx="1" />
+            <rect x="12" y="4" width="9" height="16" rx="1.5" />
+          </svg>
+          <span class="uc-toggle-label">Case Studio</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="uc-toggle-btn"
+          data-view="bento"
+          aria-selected="false"
+          aria-label="Bento grid view"
+          title="02 · Bento Grid"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="11" height="11" rx="1.6" />
+            <rect x="16" y="3" width="5" height="5" rx="1.4" />
+            <rect x="16" y="10" width="5" height="11" rx="1.4" />
+            <rect x="3" y="16" width="11" height="5" rx="1.4" />
+          </svg>
+          <span class="uc-toggle-label">Bento Grid</span>
+        </button>
+      </div>
     </div>
 
-    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-5" data-stagger data-stagger-step="70">
-      {cases.map((c, i) => (
-        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${c.accent} transition-transform duration-[var(--t-short)] ease-[var(--ease-soft)] hover:-translate-y-0.5`}>
-          <div class="spotlight relative h-full rounded-2xl bg-alpha-deep/85 backdrop-blur p-6">
-            <div class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/60" data-i18n={`use.c.${i}.tag`}>{c.tag}</div>
-            <h3 class="mt-3 text-xl font-semibold tracking-tight leading-snug" data-i18n={`use.c.${i}.title`}>{c.title}</h3>
-            <p class="mt-3 text-sm text-white/60 leading-relaxed" data-i18n={`use.c.${i}.body`}>{c.body}</p>
-            {/* `--check-i` per outcome combines with the inherited
-                `--reveal-delay` (set by [data-stagger] on each card) so
-                checkmark strokes draw in left-to-right per-card AND
-                staggered across cards. CSS in global.css resolves the
-                final delay via calc. */}
-            <ul class="mt-5 space-y-2">
-              {c.outcomes.map((o, j) => (
-                <li class="flex items-center gap-2.5 text-sm" style={`--check-i:${j}`}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path class="uc-check" d="M4 12.5l5 5L20 6" pathLength="1" stroke="url(#iconGrad2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    {/* ============================================================ */}
+    {/* VARIANT 1 — CASE STUDIO (pinned scrub)                       */}
+    {/* ============================================================ */}
+    <div class="uc-variant is-on" data-variant="studio" data-studio-variant>
+      <div class="studio-stage">
+        <div class="studio-tabs" role="tablist" aria-label="Use cases">
+          {cases.map((c, i) => (
+            <button
+              type="button"
+              role="tab"
+              class={`studio-tab${i === 0 ? ' is-active' : ''}`}
+              data-i={i}
+              aria-selected={i === 0 ? 'true' : 'false'}
+            >
+              <span class="studio-tab-eyebrow" data-i18n={`use.c.${i}.tag`}>{c.tag}</span>
+              <span class="studio-tab-title" data-i18n={`use.c.${i}.title`}>{c.title}</span>
+            </button>
+          ))}
+        </div>
+
+        <div class="studio-panel" data-studio-panel data-bigno="01">
+          <div class="studio-panel-inner" data-studio-inner>
+            <div class="studio-meta">
+              <span data-studio-meta-no>01</span>
+              &nbsp;/&nbsp;
+              <span data-studio-meta-tag data-i18n="use.c.0.tag">{cases[0].tag}</span>
+            </div>
+            <h3 class="studio-title" data-studio-title data-i18n="use.c.0.title">{cases[0].title}</h3>
+            <p class="studio-body" data-studio-body data-i18n="use.c.0.body">{cases[0].body}</p>
+            <ul class="studio-checks" data-studio-checks>
+              {cases[0].outcomes.map((o, j) => (
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3 8l3.5 3.5L13 5" stroke="url(#ucCheckGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     <defs>
-                      <linearGradient id="iconGrad2" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#c4b5fd"/>
-                        <stop offset="100%" stop-color="#f093fb"/>
+                      <linearGradient id="ucCheckGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#c4b5fd" />
+                        <stop offset="100%" stop-color="#f093fb" />
                       </linearGradient>
                     </defs>
                   </svg>
-                  <span class="text-white/80" data-i18n={`use.c.${i}.o.${j}`}>{o}</span>
+                  <span data-i18n={`use.c.0.o.${j}`}>{o}</span>
                 </li>
               ))}
             </ul>
           </div>
-        </article>
-      ))}
+        </div>
+      </div>
+
+      <div class="studio-progress" aria-hidden="true">
+        <div class="studio-progress-bar" data-studio-progress style="width:0%"></div>
+      </div>
+    </div>
+
+    {/* ============================================================ */}
+    {/* VARIANT 2 — BENTO GRID                                       */}
+    {/* ============================================================ */}
+    <div class="uc-variant" data-variant="bento">
+      <div class="uc-bento" data-uc-bento>
+        {cases.map((c, i) => (
+          <article class={`bento-card spotlight bento-${bentoSizes[i]}`} data-bento-card>
+            <div class="bento-tag" data-i18n={`use.c.${i}.tag`}>{c.tag}</div>
+            <h3 class="bento-title" data-i18n={`use.c.${i}.title`}>{c.title}</h3>
+            <p class="bento-body" data-i18n={`use.c.${i}.body`}>{c.body}</p>
+            <ul class="bento-outcomes">
+              {c.outcomes.map((o, j) => (
+                <li>
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span data-i18n={`use.c.${i}.o.${j}`}>{o}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
     </div>
   </div>
 </section>
+
+<script id="uc-cases-data" type="application/json" set:html={JSON.stringify(cases)}></script>
+
+<style>
+  /* ── Section head: heading + view toggle ───────────────────────── */
+  .uc-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .uc-toggle {
+    display: inline-flex;
+    padding: 4px;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+  }
+  .uc-toggle-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--fg) 60%, transparent);
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition:
+      color var(--t-short) var(--ease-soft),
+      background var(--t-short) var(--ease-soft),
+      box-shadow var(--t-short) var(--ease-soft);
+  }
+  .uc-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .uc-toggle-btn:hover { color: var(--fg-strong); }
+  .uc-toggle-btn.is-on {
+    color: var(--fg-strong);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.22), rgba(240, 147, 251, 0.20));
+    box-shadow:
+      0 0 0 1px rgba(240, 147, 251, 0.20) inset,
+      0 8px 24px -10px rgba(118, 75, 162, 0.55);
+  }
+  @media (max-width: 640px) {
+    .uc-toggle-label { display: none; }
+    .uc-toggle-btn { padding: 10px; }
+  }
+
+  /* ── Variant container ──────────────────────────────────────────── */
+  .uc-variant {
+    display: none;
+    margin-top: 3.5rem;
+  }
+  .uc-variant.is-on { display: block; }
+
+  /* ============================================================== */
+  /* VARIANT 1 — CASE STUDIO                                        */
+  /* ============================================================== */
+  .studio-stage {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .studio-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-left: 1px solid var(--border-2);
+  }
+  .studio-tab {
+    all: unset;
+    cursor: pointer;
+    padding: 18px 22px;
+    color: color-mix(in srgb, var(--fg) 50%, transparent);
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+    transition:
+      color var(--t-short) var(--ease-soft),
+      border-color var(--t-short) var(--ease-soft),
+      background var(--t-short) var(--ease-soft);
+    display: block;
+  }
+  .studio-tab:hover { color: var(--fg-strong); }
+  .studio-tab:focus-visible {
+    outline: 1px solid #c9b6ff;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .studio-tab-eyebrow {
+    display: block;
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--fg) 45%, transparent);
+    margin-bottom: 6px;
+    transition: color var(--t-short) var(--ease-soft);
+  }
+  .studio-tab-title {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .studio-tab.is-active {
+    color: var(--fg-strong);
+    border-left-color: #c4b5fd;
+    background: linear-gradient(90deg, rgba(196, 181, 253, 0.10), transparent);
+  }
+  .studio-tab.is-active .studio-tab-eyebrow { color: #c4b5fd; }
+  :root[data-theme='light'] .studio-tab.is-active .studio-tab-eyebrow { color: #6d28d9; }
+  :root[data-theme='light'] .studio-tab.is-active { border-left-color: #6d28d9; }
+
+  .studio-panel {
+    position: relative;
+    border: 1px solid var(--border-2);
+    border-radius: 20px;
+    padding: 40px 44px;
+    background:
+      radial-gradient(600px 300px at 100% 0%, rgba(157, 123, 255, 0.10), transparent 60%),
+      var(--surface);
+    overflow: hidden;
+    min-height: 460px;
+  }
+  .studio-panel::before {
+    content: attr(data-bigno);
+    position: absolute;
+    right: -8px;
+    bottom: -70px;
+    font-family: 'Inter Variable', Inter, sans-serif;
+    font-weight: 700;
+    font-size: 240px;
+    line-height: 1;
+    background: linear-gradient(135deg, #667eea, #f093fb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0.10;
+    letter-spacing: -0.04em;
+    pointer-events: none;
+  }
+
+  .studio-meta {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+    margin-bottom: 20px;
+  }
+  :root[data-theme='light'] .studio-meta { color: #6d28d9; }
+
+  .studio-title {
+    font-family: 'Inter Variable', Inter, sans-serif;
+    font-weight: 600;
+    font-size: clamp(28px, 3.5vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    color: var(--fg-strong);
+    max-width: 22ch;
+  }
+
+  .studio-body {
+    font-size: 16px;
+    line-height: 1.65;
+    color: color-mix(in srgb, var(--fg) 70%, transparent);
+    max-width: 60ch;
+    margin: 0 0 32px;
+  }
+
+  .studio-checks {
+    list-style: none;
+    margin: 0;
+    padding: 28px 0 0;
+    border-top: 1px solid var(--border-2);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .studio-checks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: color-mix(in srgb, var(--fg) 85%, transparent);
+    font-size: 15px;
+  }
+  .studio-checks svg { flex-shrink: 0; }
+
+  /* Progress strip — shows scrub position when pinned */
+  .studio-progress {
+    margin-top: 24px;
+    height: 2px;
+    background: var(--border-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .studio-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2 50%, #f093fb);
+    border-radius: 999px;
+    box-shadow: 0 0 12px rgba(157, 123, 255, 0.5);
+    transition: width var(--t-short) var(--ease-soft);
+  }
+
+  /* ============================================================== */
+  /* VARIANT 2 — BENTO GRID                                         */
+  /* ============================================================== */
+  .uc-bento {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 220px;
+    gap: 14px;
+  }
+  .bento-card {
+    position: relative;
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--surface-strong), var(--surface));
+    border: 1px solid var(--border-2);
+    padding: 26px;
+    overflow: hidden;
+    cursor: default;
+    transition:
+      transform var(--t-short) var(--ease-soft),
+      border-color var(--t-short) var(--ease-soft),
+      box-shadow var(--t-short) var(--ease-soft);
+    display: flex;
+    flex-direction: column;
+  }
+  .bento-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(196, 181, 253, 0.30);
+    box-shadow: 0 24px 60px -24px rgba(118, 75, 162, 0.45);
+  }
+
+  .bento-feature { grid-column: span 4; grid-row: span 2; }
+  .bento-tall    { grid-column: span 2; grid-row: span 2; }
+  .bento-wide    { grid-column: span 4; }
+  .bento-small   { grid-column: span 2; }
+
+  .bento-tag {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  :root[data-theme='light'] .bento-tag { color: #6d28d9; }
+  .bento-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c4b5fd;
+    box-shadow: 0 0 10px #c4b5fd;
+  }
+  :root[data-theme='light'] .bento-tag::before { background: #6d28d9; box-shadow: 0 0 10px #6d28d9; }
+
+  .bento-title {
+    font-family: 'Inter Variable', Inter, sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.2;
+    color: var(--fg-strong);
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+  }
+  .bento-feature .bento-title { font-size: 28px; }
+
+  .bento-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--fg) 65%, transparent);
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .bento-outcomes {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--border-2);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bento-outcomes li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: color-mix(in srgb, var(--fg) 80%, transparent);
+  }
+  .bento-outcomes svg { color: #c4b5fd; flex-shrink: 0; }
+  :root[data-theme='light'] .bento-outcomes svg { color: #6d28d9; }
+
+  /* small cards: hide outcome list to keep them tight */
+  .bento-small .bento-outcomes { display: none; }
+
+  /* ── Responsive ────────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .studio-stage { grid-template-columns: 1fr; gap: 24px; }
+    .studio-tabs { display: none; }
+  }
+  @media (max-width: 900px) {
+    .uc-bento { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+    .bento-feature, .bento-tall, .bento-wide, .bento-small {
+      grid-column: span 2;
+      grid-row: span 1;
+      min-height: 220px;
+    }
+  }
+  @media (max-width: 600px) {
+    .studio-panel { padding: 28px 24px; min-height: auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .studio-progress-bar { transition: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  type Outcome = string;
+  type Case = {
+    tag: string;
+    title: string;
+    body: string;
+    outcomes: Outcome[];
+  };
+
+  const dataEl = document.getElementById('uc-cases-data');
+  if (dataEl) {
+    const CASES: Case[] = JSON.parse(dataEl.textContent || '[]');
+    let studioTrigger: ScrollTrigger | null = null;
+
+    /* ─────────────────────────────────────────────
+       View toggle
+       ───────────────────────────────────────────── */
+    const toggleBtns = document.querySelectorAll<HTMLButtonElement>('.uc-toggle-btn');
+    const variants = document.querySelectorAll<HTMLElement>('.uc-variant');
+    toggleBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.view;
+        toggleBtns.forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle('is-on', on);
+          b.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        variants.forEach((v) => v.classList.toggle('is-on', v.dataset.variant === target));
+        if (target === 'bento') {
+          if (studioTrigger) {
+            studioTrigger.kill();
+            studioTrigger = null;
+          }
+          requestAnimationFrame(() => ScrollTrigger.refresh());
+        } else if (target === 'studio') {
+          requestAnimationFrame(() => {
+            buildStudioScene();
+            ScrollTrigger.refresh();
+          });
+        }
+      });
+    });
+
+    /* ─────────────────────────────────────────────
+       VARIANT 1 — CASE STUDIO
+       ───────────────────────────────────────────── */
+    const studioVariant = document.querySelector<HTMLElement>('[data-studio-variant]');
+    const studioTabs = document.querySelectorAll<HTMLButtonElement>('.studio-tab');
+    const studioPanel = document.querySelector<HTMLElement>('[data-studio-panel]');
+    const studioInner = document.querySelector<HTMLElement>('[data-studio-inner]');
+    const studioMetaNo = document.querySelector<HTMLElement>('[data-studio-meta-no]');
+    const studioMetaTag = document.querySelector<HTMLElement>('[data-studio-meta-tag]');
+    const studioTitle = document.querySelector<HTMLElement>('[data-studio-title]');
+    const studioBody = document.querySelector<HTMLElement>('[data-studio-body]');
+    const studioChecks = document.querySelector<HTMLElement>('[data-studio-checks]');
+    const studioProgressBar = document.querySelector<HTMLElement>('[data-studio-progress]');
+
+    let lastStudioIdx = -1;
+
+    function paintStudio(i: number, animate: boolean) {
+      if (i === lastStudioIdx) return;
+      lastStudioIdx = i;
+
+      const c = CASES[i];
+      const num = String(i + 1).padStart(2, '0');
+
+      studioTabs.forEach((tab, idx) => {
+        const on = idx === i;
+        tab.classList.toggle('is-active', on);
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+
+      if (studioPanel) studioPanel.dataset.bigno = num;
+      if (studioMetaNo) studioMetaNo.textContent = num;
+      if (studioMetaTag) {
+        studioMetaTag.setAttribute('data-i18n', `use.c.${i}.tag`);
+        studioMetaTag.textContent = c.tag;
+      }
+      if (studioTitle) {
+        studioTitle.setAttribute('data-i18n', `use.c.${i}.title`);
+        studioTitle.textContent = c.title;
+      }
+      if (studioBody) {
+        studioBody.setAttribute('data-i18n', `use.c.${i}.body`);
+        studioBody.textContent = c.body;
+      }
+      if (studioChecks) {
+        studioChecks.innerHTML = c.outcomes
+          .map(
+            (o, j) => `
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8l3.5 3.5L13 5" stroke="url(#ucCheckGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span data-i18n="use.c.${i}.o.${j}">${o}</span>
+            </li>`
+          )
+          .join('');
+      }
+      if (studioProgressBar) {
+        const pct = (i / Math.max(1, CASES.length - 1)) * 100;
+        studioProgressBar.style.width = pct + '%';
+      }
+
+      if (animate && studioInner) {
+        gsap.fromTo(
+          studioInner,
+          { y: 16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out', overwrite: true }
+        );
+      }
+
+      window.dispatchEvent(new CustomEvent('i18n:retranslate'));
+    }
+
+    function scrollToStudioStage(i: number) {
+      if (!studioTrigger) {
+        paintStudio(i, true);
+        return;
+      }
+      const last = CASES.length - 1;
+      const t = last <= 0 ? 0 : i / last;
+      const top = studioTrigger.start + (studioTrigger.end - studioTrigger.start) * t;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+
+    studioTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const i = parseInt(tab.dataset.i || '0', 10);
+        scrollToStudioStage(i);
+      });
+      tab.addEventListener('keydown', (e) => {
+        const idx = parseInt(tab.dataset.i || '0', 10);
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          const next = Math.min(CASES.length - 1, idx + 1);
+          studioTabs[next]?.focus();
+          scrollToStudioStage(next);
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const prev = Math.max(0, idx - 1);
+          studioTabs[prev]?.focus();
+          scrollToStudioStage(prev);
+        }
+      });
+    });
+
+    function buildStudioScene() {
+      if (studioTrigger) {
+        studioTrigger.kill();
+        studioTrigger = null;
+      }
+      if (!studioVariant) return;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) {
+        paintStudio(0, false);
+        return;
+      }
+
+      const total = CASES.length;
+      const last = total - 1;
+
+      studioTrigger = ScrollTrigger.create({
+        trigger: studioVariant,
+        start: 'center center',
+        end: '+=' + total * 70 + '%',
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        scrub: 0.4,
+        snap: {
+          snapTo: (v) => Math.round(v * last) / last,
+          duration: { min: 0.18, max: 0.4 },
+          ease: 'power1.inOut',
+          delay: 0.05,
+        },
+        onUpdate: (self) => {
+          const idx = Math.min(last, Math.floor(self.progress * total));
+          paintStudio(idx, true);
+        },
+      });
+    }
+
+    paintStudio(0, false);
+    buildStudioScene();
+
+    /* ─────────────────────────────────────────────
+       VARIANT 2 — BENTO mouse-tracking glow
+       (Falls back to .spotlight global mouse tracking
+        from Layout.astro if it's already wired; this
+        ensures it works even without that.)
+       ───────────────────────────────────────────── */
+    const bentoCards = document.querySelectorAll<HTMLElement>('[data-bento-card]');
+    bentoCards.forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const mx = ((e.clientX - rect.left) / rect.width) * 100;
+        const my = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--mx', mx + '%');
+        card.style.setProperty('--my', my + '%');
+      });
+    });
+  }
+</script>

@@ -1,5 +1,5 @@
 ---
-import { moduleGroups } from '../data/modules';
+import { moduleGroups, allModuleCount } from '../data/modules';
 
 const specialized: { codes: string; key: string; label: string }[] = [
   { codes: 'HM/HE', key: 'modules.spec.HM_HE', label: 'hub & endpoint adapters' },
@@ -8,6 +8,9 @@ const specialized: { codes: string; key: string; label: string }[] = [
   { codes: 'PD/PM', key: 'modules.spec.PD_PM', label: 'person master data' },
   { codes: 'YE',    key: 'modules.spec.YE',    label: 'year-end accounting' },
 ];
+
+const seed = moduleGroups[0];
+const seedModule = seed.modules[0];
 ---
 
 <section id="modules" class="section">
@@ -28,44 +31,112 @@ const specialized: { codes: string; key: string; label: string }[] = [
       </p>
     </div>
 
-    <div class="mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-stagger>
-      {moduleGroups.map((g) => (
-        <article class={`reveal group relative rounded-2xl p-[1px] bg-gradient-to-br ${g.hue} hover:scale-[1.01] transition-transform duration-[var(--t-short)] ease-[var(--ease-soft)]`} data-reveal="scale">
-          <div class="spotlight rounded-2xl bg-alpha-deep/80 backdrop-blur p-5 h-full">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <h3 class="text-lg font-semibold tracking-tight" data-i18n={`modules.group.${g.id}.title`}>{g.title}</h3>
-                <p class="text-xs text-white/50 mt-1.5" data-i18n={`modules.group.${g.id}.tagline`}>{g.tagline}</p>
-              </div>
-              <span class="font-mono text-[10px] px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white/55 tracking-wider whitespace-nowrap">
-                {g.modules.length} <span data-i18n="nav.modules">modules</span>
-              </span>
-            </div>
+    <div class="cap-stats reveal mt-8" data-reveal="scale">
+      <span class="cap-stat">
+        <span class="cap-stat-num" data-count data-count-duration="1100">{allModuleCount}</span>
+        <span class="cap-stat-label" data-i18n="modules.stat.modules">modules</span>
+      </span>
+      <span class="cap-stat-sep" aria-hidden="true">·</span>
+      <span class="cap-stat">
+        <span class="cap-stat-num" data-count data-count-duration="900">{moduleGroups.length}</span>
+        <span class="cap-stat-label" data-i18n="modules.stat.domains">domains</span>
+      </span>
+      <span class="cap-stat-sep" aria-hidden="true">·</span>
+      <span class="cap-stat">
+        <span class="cap-stat-num" data-count data-count-duration="900">1</span>
+        <span class="cap-stat-label" data-i18n="modules.stat.codebase">codebase</span>
+      </span>
+    </div>
 
-            {/* `data-modules-grid` opts this 4-col tile grid into the
-                proximity-glow runtime at the bottom of this file: hovering
-                one tile faintly brightens its row neighbors (3 sibling
-                tiles in the same row), reinforcing the "periodic table"
-                metaphor where rows have meaning. --tile-i carries the
-                per-tile stagger index for the entrance fade — see
-                .reveal .module-tile in global.css. */}
-            <div class="mt-5 grid grid-cols-4 gap-2" data-modules-grid>
-              {g.modules.map((m, i) => (
-                <div class="module-tile" data-code={m.code} style={`--tile-i:${i}`}>
-                  <span class="font-mono text-base font-semibold tracking-tight gradient-text-strong leading-none">
-                    {m.code}
-                  </span>
-                  <span class="text-[10px] text-white/55 leading-tight" data-i18n={`modules.m.${m.code}.name`}>{m.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </article>
+    <div class="cap-filters reveal mt-7" data-reveal="scale" role="tablist" data-mod-filters>
+      <button type="button" class="cap-filter is-active" data-mod-filter="all" role="tab" aria-selected="true">
+        <span data-i18n="modules.filters.all">All</span>
+        <span class="cap-filter-count">{allModuleCount}</span>
+      </button>
+      {moduleGroups.map((g) => (
+        <button type="button" class="cap-filter" data-mod-filter={g.id} role="tab" aria-selected="false">
+          <span data-i18n={`modules.group.${g.id}.title`}>{g.title}</span>
+          <span class="cap-filter-count">{g.modules.length}</span>
+        </button>
       ))}
     </div>
 
+    <div class="mod-board mt-10" data-mod-board>
+      <aside class="mod-spotlight reveal" data-reveal="blur">
+        <span class="mod-spot-grid" aria-hidden="true"></span>
+        <span class="mod-spot-glow" aria-hidden="true"></span>
+
+        <div class="mod-spot-meta">
+          <span class="mod-spot-live">
+            <span class="mod-spot-dot"></span>
+            <span data-i18n="modules.spotlight.live">Live module</span>
+          </span>
+          <span class="mod-spot-domain" data-mod-spot-domain data-i18n={`modules.group.${seed.id}.title`}>{seed.title}</span>
+        </div>
+
+        <div class="mod-spot-code-wrap">
+          <span class="mod-spot-code" data-mod-spot-code>{seedModule.code}</span>
+        </div>
+
+        <div class="mod-spot-name" data-mod-spot-name data-i18n={`modules.m.${seedModule.code}.name`}>{seedModule.name}</div>
+        <p class="mod-spot-desc" data-mod-spot-desc>{seedModule.desc}</p>
+
+        <div class="mod-spot-progress">
+          <span class="mod-spot-bar"><span class="mod-spot-bar-fill" data-mod-spot-fill></span></span>
+          <span class="mod-spot-counter">
+            <span data-mod-spot-i>1</span>
+            <span class="mod-spot-counter-sep">/</span>
+            <span data-mod-spot-n>{seed.modules.length}</span>
+          </span>
+        </div>
+
+        <div class="mod-spot-hint" data-i18n="modules.spotlight.hint">Hover any tile · auto-cycles</div>
+      </aside>
+
+      <div class="mod-grid">
+        {moduleGroups.map((g, gi) => (
+          <article class="mod-group reveal" data-reveal="left" data-mod-group={g.id} style={`--gi:${gi};--rd:${gi * 0.6}s`}>
+            <header class="mod-group-head">
+              <h3 class="mod-group-title" data-i18n={`modules.group.${g.id}.title`}>{g.title}</h3>
+              <span class="mod-group-count">{g.modules.length}</span>
+              <p class="mod-group-tagline" data-i18n={`modules.group.${g.id}.tagline`}>{g.tagline}</p>
+            </header>
+            <div class="mod-group-rail" aria-hidden="true">
+              <span class="mod-group-rail-pulse"></span>
+            </div>
+            <div class="mod-tiles">
+              {g.modules.map((m, mi) => (
+                <button
+                  type="button"
+                  class="mod-tile"
+                  data-mod-tile
+                  data-code={m.code}
+                  data-desc={m.desc}
+                  data-domain-key={`modules.group.${g.id}.title`}
+                  data-name-key={`modules.m.${m.code}.name`}
+                  data-i={mi}
+                  data-n={g.modules.length}
+                  style={`--mi:${mi}`}
+                  aria-label={`${m.code} · ${m.name}`}
+                >
+                  <span class="mod-tile-code">{m.code}</span>
+                  <span class="mod-tile-name" data-i18n={`modules.m.${m.code}.name`}>{m.name}</span>
+                  <span class="mod-tile-shine" aria-hidden="true"></span>
+                  <span class="mod-tile-corner" aria-hidden="true">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
+                      <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
     <div class="mt-10 reveal flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/55">
-      <span class="font-mono uppercase text-xs tracking-[0.18em] text-white/55" data-i18n="modules.specialized">+ specialized modules</span>
+      <span class="font-mono uppercase text-xs tracking-[0.18em] text-white/40" data-i18n="modules.specialized">+ specialized modules</span>
       {specialized.map((s) => (
         <span class="inline-flex items-center gap-2">
           <span class="font-mono text-xs gradient-text-strong">{s.codes}</span>
@@ -74,48 +145,132 @@ const specialized: { codes: string; key: string; label: string }[] = [
       ))}
     </div>
   </div>
-</section>
 
-<script>
-  // Row-proximity glow. When the pointer enters a .module-tile, the
-  // other tiles in its row get .is-near (faint brighten via global.css).
-  // The grid is a fixed 4-column layout, so a row is `floor(i/4)*4` …
-  // `+4`. We delegate one pointerover per [data-modules-grid] container
-  // and dedupe consecutive events on the same tile so the same brighten
-  // doesn't get reapplied on every micro-pixel of pointer movement.
-  //
-  // Reduced-motion users skip this entirely — the static gradient borders
-  // and resting tile state already tell the structural story.
-  const wireProximity = () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
-    document.querySelectorAll<HTMLElement>('[data-modules-grid]').forEach((grid) => {
-      if (grid.dataset.proximityWired === '1') return;
-      grid.dataset.proximityWired = '1';
-      const tiles = Array.from(grid.querySelectorAll<HTMLElement>('.module-tile'));
-      const cols = 4;
-      let last: HTMLElement | null = null;
-      const clear = () => {
-        if (last) {
-          tiles.forEach((t) => t.classList.remove('is-near'));
-          last = null;
+  <script is:inline>
+    (() => {
+      const board = document.querySelector('[data-mod-board]');
+      if (!board) return;
+      const tiles = Array.from(board.querySelectorAll('[data-mod-tile]'));
+      if (!tiles.length) return;
+
+      const spotCode   = board.querySelector('[data-mod-spot-code]');
+      const spotName   = board.querySelector('[data-mod-spot-name]');
+      const spotDesc   = board.querySelector('[data-mod-spot-desc]');
+      const spotDomain = board.querySelector('[data-mod-spot-domain]');
+      const spotFill   = board.querySelector('[data-mod-spot-fill]');
+      const spotI      = board.querySelector('[data-mod-spot-i]');
+      const spotN      = board.querySelector('[data-mod-spot-n]');
+      const filters    = Array.from(document.querySelectorAll('[data-mod-filters] [data-mod-filter]'));
+
+      let activeFilter = 'all';
+      let cycleIdx = 0;
+      let cycleTimer = 0;
+      let isPaused = false;
+      let inView = false;
+
+      const getCycleTiles = () =>
+        activeFilter === 'all'
+          ? tiles
+          : tiles.filter((t) => t.closest('[data-mod-group]')?.getAttribute('data-mod-group') === activeFilter);
+
+      const setSpot = (tile, animate = true) => {
+        if (!tile) return;
+        const swap = 'is-swapping';
+        const els = [spotCode, spotName, spotDesc, spotDomain].filter(Boolean);
+
+        const apply = () => {
+          const nameEl = tile.querySelector('.mod-tile-name');
+          const code = tile.getAttribute('data-code') || '';
+          const name = (nameEl && nameEl.textContent) || '';
+          const desc = tile.getAttribute('data-desc') || '';
+          const domainKey = tile.getAttribute('data-domain-key') || '';
+          const nameKey = tile.getAttribute('data-name-key') || '';
+          const groupEl = tile.closest('[data-mod-group]');
+          const domainTitle = groupEl ? groupEl.querySelector('.mod-group-title') : null;
+
+          if (spotCode) spotCode.textContent = code;
+          if (spotName) {
+            spotName.textContent = name;
+            if (nameKey) spotName.setAttribute('data-i18n', nameKey);
+          }
+          if (spotDesc) spotDesc.textContent = desc;
+          if (spotDomain) {
+            spotDomain.textContent = domainTitle ? domainTitle.textContent : '';
+            if (domainKey) spotDomain.setAttribute('data-i18n', domainKey);
+          }
+
+          const i = Number(tile.getAttribute('data-i') || 0);
+          const n = Number(tile.getAttribute('data-n') || 1);
+          if (spotFill) spotFill.style.width = (((i + 1) / n) * 100) + '%';
+          if (spotI) spotI.textContent = String(i + 1);
+          if (spotN) spotN.textContent = String(n);
+
+          tiles.forEach((t) => t.classList.toggle('is-active', t === tile));
+          els.forEach((el) => el.classList.remove(swap));
+        };
+
+        if (animate) {
+          els.forEach((el) => el.classList.add(swap));
+          setTimeout(apply, 180);
+        } else {
+          apply();
         }
       };
-      grid.addEventListener('pointerover', (e) => {
-        const target = e.target instanceof Element ? e.target.closest<HTMLElement>('.module-tile') : null;
-        if (!target || target === last) return;
-        last = target;
-        const idx = tiles.indexOf(target);
-        if (idx < 0) return;
-        const rowStart = Math.floor(idx / cols) * cols;
-        const rowEnd = rowStart + cols;
-        tiles.forEach((t, i) => {
-          t.classList.toggle('is-near', i >= rowStart && i < rowEnd && i !== idx);
+
+      const startCycle = () => {
+        stopCycle();
+        cycleTimer = window.setInterval(() => {
+          if (isPaused || !inView) return;
+          const cyc = getCycleTiles();
+          if (!cyc.length) return;
+          cycleIdx = (cycleIdx + 1) % cyc.length;
+          setSpot(cyc[cycleIdx]);
+        }, 3200);
+      };
+      const stopCycle = () => { if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = 0; } };
+
+      tiles.forEach((tile) => {
+        tile.addEventListener('mouseenter', () => {
+          isPaused = true;
+          setSpot(tile);
+          const cyc = getCycleTiles();
+          const idx = cyc.indexOf(tile);
+          if (idx >= 0) cycleIdx = idx;
+        });
+        tile.addEventListener('mouseleave', () => { isPaused = false; });
+        tile.addEventListener('focus', () => {
+          isPaused = true;
+          setSpot(tile);
+        });
+        tile.addEventListener('blur', () => { isPaused = false; });
+      });
+
+      filters.forEach((f) => {
+        f.addEventListener('click', () => {
+          const id = f.getAttribute('data-mod-filter') || 'all';
+          filters.forEach((x) => {
+            const on = x === f;
+            x.classList.toggle('is-active', on);
+            x.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          activeFilter = id;
+          board.querySelectorAll('[data-mod-group]').forEach((g) => {
+            const gid = g.getAttribute('data-mod-group');
+            const match = id === 'all' || gid === id;
+            g.classList.toggle('is-dim', !match);
+          });
+          cycleIdx = 0;
+          const cyc = getCycleTiles();
+          if (cyc.length) setSpot(cyc[0]);
         });
       });
-      grid.addEventListener('pointerleave', clear);
-    });
-  };
-  wireProximity();
-  document.addEventListener('astro:page-load', wireProximity);
-</script>
+
+      const visObs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { inView = e.isIntersecting; });
+      }, { threshold: 0.05 });
+      visObs.observe(board);
+
+      startCycle();
+    })();
+  </script>
+</section>

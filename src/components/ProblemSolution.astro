@@ -24,7 +24,7 @@ const minusPills = ['media breaks', 'data silos', 'license sprawl', 'integration
 const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field-level audit', 'azure germany'];
 ---
 
-<section id="why" class="section">
+<section id="why" class="section ps-section">
   <div class="absolute inset-0 -z-10 bg-grid opacity-30 mask-fade-bottom"></div>
 
   <div class="container-wide">
@@ -46,38 +46,30 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
       {/* Before */}
       <div class="reveal">
         <div class="flex items-center gap-2 mb-4">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-400 ps-pulse-dot"></span>
           <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-rose-300/80" data-i18n="ps.before.label">The fragmented stack</span>
         </div>
-        <div class="relative rounded-2xl border border-rose-500/15 bg-rose-500/[0.025] p-6 min-h-[320px]">
+        <div class="relative rounded-2xl border border-rose-500/15 bg-rose-500/[0.025] p-6 min-h-[320px] overflow-hidden">
           <svg class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
             <defs>
               <pattern id="brokenLines" width="36" height="36" patternUnits="userSpaceOnUse">
-                <path d="M0 0 L36 36" stroke="rgba(244,63,94,0.18)" stroke-width="0.5" stroke-dasharray="3 4"/>
+                <path d="M0 0 L36 36" stroke="rgba(244,63,94,0.18)" stroke-width="0.5" stroke-dasharray="3 4">
+                  <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="6s" repeatCount="indefinite"/>
+                </path>
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#brokenLines)"/>
           </svg>
-          {/* `.ps-tile` carries its rest rotation as a CSS variable so
-              the keyframe can settle to it after the fall. Tiles drop
-              from -40px above with ease-in for gravity, plus a 3px
-              overshoot at 85% for the brick "thud". 50ms per-tile
-              cascade so the stack collapses quickly without waiting
-              for each brick to settle. */}
           <div class="relative grid grid-cols-3 gap-3">
-            {fragmented.map((t, i) => {
-              const restR = i % 2 === 0 ? -1.5 : 1.5;
-              const span = i === 6 ? 'grid-column: 1 / span 3;' : '';
-              return (
-                <div
-                  class="ps-tile glass rounded-xl px-3 py-3 text-center"
-                  style={`--rest-r:${restR}deg; --tile-delay:${i * 50}ms; ${span}`}
-                >
-                  <div class="font-mono text-xs tracking-wider text-white/85">{t.code}</div>
-                  <div class="text-[10px] text-white/55 mt-1 uppercase tracking-wider" data-i18n={t.key}>{t.label}</div>
-                </div>
-              );
-            })}
+            {fragmented.map((t, i) => (
+              <div
+                class={`glass rounded-xl px-3 py-3 text-center ps-frag-tile ${i % 2 === 0 ? 'rotate-[-1.5deg]' : 'rotate-[1.5deg]'}`}
+                style={`--frag-i:${i}; transform-origin: center; ${i === 6 ? 'grid-column: 1 / span 3;' : ''}`}
+              >
+                <div class="font-mono text-xs tracking-wider text-white/85">{t.code}</div>
+                <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wider" data-i18n={t.key}>{t.label}</div>
+              </div>
+            ))}
           </div>
           <div class="mt-6 flex flex-wrap gap-2 text-[11px]">
             {minusPills.map((p, i) => (
@@ -89,18 +81,13 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
         </div>
       </div>
 
-      {/* Arrow — wrapped in its own .reveal so we have an `.is-visible` ancestor
-          to drive the path draw-in. --reveal-delay 700ms times the arrow to
-          land just as the last fragmented tile settles (last tile starts at
-          480ms + 600ms = ~1080ms); the path itself draws over --t-long
-          starting 100ms into the parent fade — so the arrow visibly "extends"
-          across the gap rather than appearing whole. */}
-      <div class="hidden lg:flex items-center justify-center px-2 reveal" style="--reveal-delay: 700ms;">
-        <div class="relative w-24 h-24">
+      {/* Arrow */}
+      <div class="hidden lg:flex items-center justify-center px-2">
+        <div class="relative w-24 h-24 ps-arrow-bloom">
           <div class="absolute inset-0 rounded-full bg-alpha-gradient blur-2xl opacity-50"></div>
           <div class="absolute inset-0 grid place-items-center">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
-              <path class="ps-arrow" d="M5 12h14M13 5l7 7-7 7" pathLength="1" stroke="url(#arrG)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" class="ps-arrow-svg">
+              <path d="M5 12h14M13 5l7 7-7 7" stroke="url(#arrG)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               <defs>
                 <linearGradient id="arrG" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stop-color="#667eea"/>
@@ -112,31 +99,27 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
         </div>
       </div>
 
-      {/* After — blooms in alongside the arrow draw (700ms, same beat
-          as the arrow start) instead of waiting for the arrow to fully
-          land. Reads less like "wait for the answer" and more like
-          "the answer is already arriving as you see the problem".
-          `.ps-after` scopes the α-mark ignition to this card only. */}
-      <div class="reveal ps-after" data-reveal="scale" style="--reveal-delay: 700ms;">
+      {/* After */}
+      <div class="reveal">
         <div class="flex items-center gap-2 mb-4">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 ps-pulse-dot ps-pulse-dot--green"></span>
           <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-200/80" data-i18n="ps.after.label">Alpha · one clean core</span>
         </div>
-        <div class="relative rounded-2xl p-[1px] bg-alpha-gradient overflow-hidden">
+        <div class="relative rounded-2xl p-[1px] bg-alpha-gradient overflow-hidden ps-after-shell">
           <div class="relative rounded-2xl bg-alpha-ink/95 p-6 min-h-[320px]">
-            <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-alpha-purple/30 blur-3xl"></div>
+            <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-alpha-purple/30 blur-3xl ps-blob-drift"></div>
             <div class="relative flex items-center gap-3 mb-5">
-              <span class="ps-alpha-mark relative inline-block w-10 h-10 rounded-lg bg-alpha-gradient shadow-glow-violet">
+              <span class="relative inline-block w-10 h-10 rounded-lg bg-alpha-gradient shadow-glow-violet ps-alpha-mark">
                 <span class="absolute inset-0 grid place-items-center text-white font-bold">α</span>
               </span>
               <div>
                 <div class="font-semibold tracking-tight" data-i18n="ps.after.title">Alpha Platform</div>
-                <div class="text-xs text-white/60 font-mono" data-i18n="ps.after.tagline">modular monolith · clean core</div>
+                <div class="text-xs text-white/45 font-mono" data-i18n="ps.after.tagline">modular monolith · clean core</div>
               </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
-              {consolidated.map((c) => (
-                <div class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/5">
+              {consolidated.map((c, i) => (
+                <div class="ps-cons-tile flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/5" style={`--cons-i:${i}`}>
                   <span class="font-mono text-[10px] font-semibold tracking-wider gradient-text-strong w-7 text-center">{c.code}</span>
                   <span class="text-xs text-white/75" data-i18n={c.key}>{c.label}</span>
                 </div>
@@ -153,5 +136,149 @@ const plusPills  = ['clean core', 'configuration-driven', 'multi-tenant', 'field
         </div>
       </div>
     </div>
+
   </div>
 </section>
+
+<style>
+  .ps-section { position: relative; }
+
+  /* ────────────── subtle motion ────────────── */
+  .ps-frag-tile {
+    opacity: 0;
+    transform: translateY(-90px) rotate(0deg) scale(0.92);
+    transition: transform var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft);
+    animation: none;
+  }
+  .reveal.is-visible .ps-frag-tile {
+    animation:
+      psFragDrop 720ms var(--ease-spring) calc(var(--frag-i, 0) * 110ms) both,
+      psFragWobble 7s ease-in-out calc(820ms + var(--frag-i, 0) * 110ms) infinite;
+  }
+  .ps-frag-tile:hover {
+    transform: translateY(-2px) rotate(0deg) scale(1.02);
+    border-color: rgba(244,63,94,0.30);
+  }
+
+  @keyframes psFragDrop {
+    0% {
+      opacity: 0;
+      transform: translateY(-90px) rotate(0deg) scale(0.92);
+    }
+    55% {
+      opacity: 1;
+      transform: translateY(6px) rotate(var(--rot, 0deg)) scale(1.03);
+    }
+    78% {
+      transform: translateY(-3px) rotate(var(--rot, 0deg)) scale(1);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotate(var(--rot, 0deg)) scale(1);
+    }
+  }
+
+  @keyframes psFragWobble {
+    0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+    50%      { transform: translateY(-3px) rotate(0deg); }
+  }
+  .ps-frag-tile.rotate-\[-1\.5deg\] { --rot: -1.5deg; }
+  .ps-frag-tile.rotate-\[1\.5deg\]  { --rot:  1.5deg; }
+
+  .ps-pulse-dot {
+    box-shadow: 0 0 0 0 rgba(244,63,94,0.6);
+    animation: psPulseDot 2.4s ease-out infinite;
+  }
+  .ps-pulse-dot--green {
+    box-shadow: 0 0 0 0 rgba(52,211,153,0.6);
+    animation-name: psPulseDotGreen;
+  }
+  @keyframes psPulseDot {
+    0%   { box-shadow: 0 0 0 0 rgba(244,63,94,0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(244,63,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(244,63,94,0); }
+  }
+  @keyframes psPulseDotGreen {
+    0%   { box-shadow: 0 0 0 0 rgba(52,211,153,0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(52,211,153,0); }
+    100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+  }
+
+  .ps-arrow-bloom .ps-arrow-svg {
+    animation: psArrowDrift 3s ease-in-out infinite;
+  }
+  @keyframes psArrowDrift {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(4px); }
+  }
+  .ps-arrow-bloom > div:first-child {
+    animation: psArrowGlow 3s ease-in-out infinite;
+  }
+  @keyframes psArrowGlow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%      { opacity: 0.85; transform: scale(1.08); }
+  }
+
+  .ps-after-shell {
+    background-size: 200% 200%;
+    animation: psShellSweep 9s linear infinite;
+  }
+  @keyframes psShellSweep {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .ps-blob-drift { animation: psBlobDrift 12s ease-in-out infinite; }
+  @keyframes psBlobDrift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+    50%      { transform: translate(-12px, 8px) scale(1.06); opacity: 0.8; }
+  }
+
+  .ps-alpha-mark { animation: psMarkPulse 3.4s ease-in-out infinite; }
+  @keyframes psMarkPulse {
+    0%, 100% { box-shadow: 0 0 60px rgba(102,126,234,0.40); }
+    50%      { box-shadow: 0 0 80px rgba(240,147,251,0.55); }
+  }
+
+  .ps-cons-tile {
+    transition: transform var(--t-short) var(--ease-soft),
+                background var(--t-short) var(--ease-soft),
+                border-color var(--t-short) var(--ease-soft),
+                box-shadow var(--t-short) var(--ease-soft);
+  }
+  .ps-cons-tile:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(240,147,251,0.25);
+    box-shadow: 0 0 0 1px rgba(240,147,251,0.10) inset;
+  }
+  .reveal.is-visible .ps-cons-tile {
+    animation: psConsLand 700ms var(--ease-spring) both;
+    animation-delay: calc(120ms + var(--cons-i, 0) * 60ms);
+  }
+  @keyframes psConsLand {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0)  scale(1); }
+  }
+
+
+  /* Reduced-motion: kill all decorative loops, keep state changes */
+  @media (prefers-reduced-motion: reduce) {
+    .ps-frag-tile,
+    .reveal.is-visible .ps-frag-tile,
+    .ps-arrow-bloom .ps-arrow-svg,
+    .ps-arrow-bloom > div:first-child,
+    .ps-after-shell,
+    .ps-blob-drift,
+    .ps-alpha-mark,
+    .ps-pulse-dot {
+      animation: none !important;
+    }
+    .ps-frag-tile {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
